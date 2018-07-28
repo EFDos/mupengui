@@ -35,21 +35,33 @@ namespace MupenGUI.Views {
 
         construct {
             list = new Gtk.ListBox ();
-            dir_label = new Granite.HeaderLabel ("Directory");
+            dir_label = new Granite.HeaderLabel ("Directory:");
             dir_label.set_padding(4, 0);
             this.orientation = Gtk.Orientation.VERTICAL;
             this.pack_start (dir_label, false, false, 2);
             this.pack_start (list, true, true, 0);
+
+            list.row_selected.connect ((row) => {
+                if (row != null) {
+                    var label = row.get_child () as Gtk.Label;
+                    Globals.CURRENT_ROM_PATH = Globals.CURRENT_ROM_DIR + "/" + label.label;
+                }
+            });
+
+            list.row_activated.connect ((row) => {
+                //var label = row.get_child () as Gtk.Label;
+                //Globals.CURRENT_ROM_PATH = Globals.CURRENT_ROM_DIR + "/" + label.label;
+                ActionManager.instance.dispatch(Actions.Rom.EXECUTION_REQUESTED);
+            });
         }
 
         public async void populate_list (string dir_name) {
 
             this.clear_list ();
 
-            var rom_list = yield FileSystem.list_dir_files (Globals.CURRENT_ROM_DIR, true);
+            var rom_list = yield FileSystem.list_dir_files (Globals.CURRENT_ROM_DIR);
 
             foreach (string s in rom_list) {
-                print("%s\n", s);
                 var label = new Gtk.Label (s);
                 label.halign = Gtk.Align.START;
                 label.set_padding(4, 0);
@@ -60,14 +72,13 @@ namespace MupenGUI.Views {
 
         public void clear_list () {
             foreach (var child in list.get_children ()) {
-                //child.destroy ();
                 list.remove (child);
                 child.destroy ();
             }
         }
 
         public void set_directory_name (string dir_name) {
-            dir_label.label = dir_name;
+            dir_label.label = "Directory: " + dir_name;
         }
     }
 }

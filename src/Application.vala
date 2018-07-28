@@ -47,9 +47,14 @@ namespace MupenGUI {
             var main = new Views.RomListView ();
             var headerbar = new Views.Window.HeaderBar ();
 
-            ActionManager.instance.get_action (Actions.Rom.ROM_DIRECTORY_CHOSEN).activate.connect(() => {
+            ActionManager.instance.get_action (Actions.Rom.DIRECTORY_CHOSEN).activate.connect(() => {
                 main.set_directory_name (Globals.CURRENT_ROM_DIR);
                 main.populate_list (Globals.CURRENT_ROM_DIR);
+            });
+
+            ActionManager.instance.get_action (Actions.Rom.EXECUTION_REQUESTED).activate.connect(() => {
+                var fpath = Globals.CURRENT_ROM_PATH.replace (" ", "\\ ");
+                Granite.Services.System.execute_command ("mupen64plus " + fpath);
             });
 
             window.set_titlebar (headerbar);

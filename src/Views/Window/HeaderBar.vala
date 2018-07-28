@@ -24,25 +24,21 @@
 /*                                                                      */
 /* Authored by: Douglas Muratore <www.sinz.com.br>                      */
 /************************************************************************/
-using Granite;
-using Granite.Widgets;
 using MupenGUI;
 using MupenGUI.Services;
 
 namespace MupenGUI.Views.Window {
     class HeaderBar : Gtk.HeaderBar {
         construct {
-            var button_settings = new Gtk.Button
-                    .from_icon_name ("open-menu", Gtk.IconSize.LARGE_TOOLBAR);
-
-            Gtk.Button button_rom_dir = new Gtk.Button
-                    .from_icon_name ("folder-saved-search",
-                                     Gtk.IconSize.LARGE_TOOLBAR);
+            var button_settings = new Gtk.Button.from_icon_name ("open-menu", Gtk.IconSize.LARGE_TOOLBAR);
+            var button_rom_dir = new Gtk.Button.from_icon_name ("folder-saved-search", Gtk.IconSize.LARGE_TOOLBAR);
+            var button_play_rom = new Gtk.Button.from_icon_name ("media-playback-start-symbolic", Gtk.IconSize.MENU);
 
 
             this.get_style_context ().add_class ("default-decoration");
             //css_context.add_class (Gtk.STYLE_CLASS_FLAT);
             this.show_close_button = true;
+            this.pack_start (button_play_rom);
             this.pack_start (button_rom_dir);
             this.pack_end (button_settings);
 
@@ -50,8 +46,13 @@ namespace MupenGUI.Views.Window {
                 var res = FileSystem.choose_dir ("Select Roms Directory");
                 if (res != null) {
                     Globals.CURRENT_ROM_DIR = res;
-                    ActionManager.instance
-                            .dispatch (Actions.Rom.ROM_DIRECTORY_CHOSEN);
+                    ActionManager.instance.dispatch (Actions.Rom.DIRECTORY_CHOSEN);
+                }
+            });
+
+            button_play_rom.clicked.connect (() => {
+                if (Globals.CURRENT_ROM_PATH != null) {
+                    ActionManager.instance.dispatch (Actions.Rom.EXECUTION_REQUESTED);
                 }
             });
         }

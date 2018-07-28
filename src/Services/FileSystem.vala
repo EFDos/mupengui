@@ -47,6 +47,9 @@ namespace MupenGUI.Services.FileSystem {
 
         filter.add_mime_type ("inode/directory");
         filter.add_pattern ("*.n64");
+        filter.add_pattern ("*.N64");
+        filter.add_pattern ("*.z64");
+        filter.add_pattern ("*.Z64");
 
         chooser.set_filter (filter);
 
@@ -93,7 +96,12 @@ namespace MupenGUI.Services.FileSystem {
 
                     } else if (file_info.get_file_type () == FileType.REGULAR) {
 
-                        files += file_info.get_name ();
+                        var fname = file_info.get_name ().down ();
+
+                        if (fname.has_suffix (".n64") || fname.has_suffix (".z64")) {
+                            files += file_info.get_name ();
+                        }
+
                     }
 
                 }

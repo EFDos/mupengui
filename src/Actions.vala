@@ -26,6 +26,7 @@
 /************************************************************************/
 
 namespace MupenGUI.Actions.Rom {
-    public const string ROM_DIRECTORY_CHOSEN = "MupenGUI.Actions.RDC";
-    public const string ROM_CURSOR_CHANGED = "MupenGUI.Action.RCC";
+    public const string DIRECTORY_CHOSEN = "MupenGUI.Actions.RDC";
+    public const string CURSOR_CHANGED = "MupenGUI.Action.RCC";
+    public const string EXECUTION_REQUESTED = "MupenGUI.Action.RER";
 }
