@@ -25,6 +25,8 @@
 /* Authored by: Douglas Muratore <www.sinz.com.br>                      */
 /************************************************************************/
 
+using MupenGUI.Services;
+
 namespace MupenGUI.Views {
     class RomListView : Gtk.Box {
 
@@ -40,12 +42,27 @@ namespace MupenGUI.Views {
             this.pack_start (list, true, true, 0);
         }
 
-        public void populate_list (string[] rom_list) {
+        public async void populate_list (string dir_name) {
+
+            this.clear_list ();
+
+            var rom_list = yield FileSystem.list_dir_files (Globals.CURRENT_ROM_DIR, true);
+
             foreach (string s in rom_list) {
+                print("%s\n", s);
                 var label = new Gtk.Label (s);
                 label.halign = Gtk.Align.START;
                 label.set_padding(4, 0);
                 list.add (label);
+                list.show_all ();
+            }
+        }
+
+        public void clear_list () {
+            foreach (var child in list.get_children ()) {
+                //child.destroy ();
+                list.remove (child);
+                child.destroy ();
             }
         }
 

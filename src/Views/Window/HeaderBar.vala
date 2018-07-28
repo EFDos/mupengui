@@ -47,7 +47,7 @@ namespace MupenGUI.Views.Window {
             this.pack_end (button_settings);
 
             button_rom_dir.clicked.connect (() => {
-                var res = FileSystem.choose_directory ("Select Roms Directory");
+                var res = FileSystem.choose_dir ("Select Roms Directory");
                 if (res != null) {
                     Globals.CURRENT_ROM_DIR = res;
                     ActionManager.instance

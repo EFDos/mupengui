@@ -47,12 +47,10 @@ namespace MupenGUI {
             var main = new Views.RomListView ();
             var headerbar = new Views.Window.HeaderBar ();
 
-            ActionManager.instance.get_action (Actions.Rom.ROM_DIRECTORY_CHOSEN)
-                    .activate.connect(() => {
-                        print("change dir action received");
-                        print("current rom dir: %s", Globals.CURRENT_ROM_DIR);
-                        main.set_directory_name (Globals.CURRENT_ROM_DIR);
-                });
+            ActionManager.instance.get_action (Actions.Rom.ROM_DIRECTORY_CHOSEN).activate.connect(() => {
+                main.set_directory_name (Globals.CURRENT_ROM_DIR);
+                main.populate_list (Globals.CURRENT_ROM_DIR);
+            });
 
             window.set_titlebar (headerbar);
             window.title = "MupenGUI";

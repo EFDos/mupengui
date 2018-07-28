@@ -29,7 +29,7 @@ namespace MupenGUI.Services.FileSystem {
 
     public static Gtk.ApplicationWindow window_ref = null;
 
-    public static string choose_directory (string dialog_title) {
+    public static string choose_dir (string dialog_title) {
 
         string return_string = "";
 
@@ -46,6 +46,7 @@ namespace MupenGUI.Services.FileSystem {
         var filter = new Gtk.FileFilter ();
 
         filter.add_mime_type ("inode/directory");
+        filter.add_pattern ("*.n64");
 
         chooser.set_filter (filter);
 
@@ -56,5 +57,53 @@ namespace MupenGUI.Services.FileSystem {
         chooser.close ();
 
         return return_string;
+    }
+
+    public static async string[] list_dir_files (string dir_name, bool recursive = false) {
+
+        File dir = File.new_for_path (dir_name);
+        string[] files = {};
+
+        if (!dir.query_exists ()) {
+            error ("list_dir_files: Directory %s doesn't exist.\n", dir_name);
+        } else if (dir.query_file_type (0) != FileType.DIRECTORY) {
+            error ("list_dir_files: %s is not a directory.\n", dir_name);
+        }
+
+        try {
+            var enumerator = yield dir.enumerate_children_async (FileAttribute.STANDARD_NAME, 0, Priority.DEFAULT);
+
+            while (true) {
+
+                var nfiles = yield enumerator.next_files_async (10, Priority.DEFAULT);
+
+                if (nfiles == null) {
+                    break;
+                }
+
+                foreach (var file_info in nfiles) {
+
+                    if (file_info.get_file_type () == FileType.DIRECTORY && recursive) {
+
+                    var file_array = yield list_dir_files (dir_name + "/" + file_info.get_name (), true);
+
+                    foreach (string s in file_array) {
+                        files += s;
+                    }
+
+                    } else if (file_info.get_file_type () == FileType.REGULAR) {
+
+                        files += file_info.get_name ();
+                    }
+
+                }
+
+
+            }
+        } catch (Error _error) {
+            error ("list_dir_files: " + _error.message);
+        }
+
+        return files;
     }
 }
