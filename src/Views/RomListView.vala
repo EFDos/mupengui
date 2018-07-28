@@ -32,12 +32,16 @@ namespace MupenGUI.Views {
 
         private Gtk.ListBox list;
         private Granite.HeaderLabel dir_label;
+        public Granite.Widgets.Toast toaster {get; construct;}
 
         construct {
             list = new Gtk.ListBox ();
             dir_label = new Granite.HeaderLabel ("Directory:");
+            toaster = new Granite.Widgets.Toast ("Info");
+
             dir_label.set_padding(4, 0);
             this.orientation = Gtk.Orientation.VERTICAL;
+            this.add (toaster);
             this.pack_start (dir_label, false, false, 2);
             this.pack_start (list, true, true, 0);
 
@@ -49,8 +53,6 @@ namespace MupenGUI.Views {
             });
 
             list.row_activated.connect ((row) => {
-                //var label = row.get_child () as Gtk.Label;
-                //Globals.CURRENT_ROM_PATH = Globals.CURRENT_ROM_DIR + "/" + label.label;
                 ActionManager.instance.dispatch(Actions.Rom.EXECUTION_REQUESTED);
             });
         }

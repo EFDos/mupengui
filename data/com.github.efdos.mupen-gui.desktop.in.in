@@ -1,10 +1,10 @@
 [Desktop Entry]
 Type=Application
-Name=
+Name=MupenGUI
 Comment=
 GenericName=
 Exec=@EXEC_NAME@ %U
 Icon=com.github.efdos.mupen-gui
 Terminal=false
-Categories=Utility;GTK;Development;
+Categories=Utility;Game;
 Keywords=Develop

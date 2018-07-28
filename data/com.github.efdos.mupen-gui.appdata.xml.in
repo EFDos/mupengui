@@ -5,9 +5,9 @@
   <metadata_license>CC0-1.0</metadata_license>
   <project_group>Douglas Muratore</project_group>
   <project_license>GPL-3.0+</project_license>
-  <name></name>
-  <summary></summary>
-  <description></description>
+  <name>MupenGUI</name>
+  <summary>Sexy Mupen64 FrontEnd</summary>
+  <description>Mupen64Plus FrontEnd based on Elementary OS guidelines</description>
   <releases>
     <release version="0.0.1" date="2018-05-05"/>
   </releases>

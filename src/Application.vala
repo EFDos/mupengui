@@ -32,6 +32,8 @@ using MupenGUI.Services;
 namespace MupenGUI {
     public class Application : Granite.Application {
 
+        private Views.RomListView main_view;
+
         public Application () {
             Object(
                 application_id: "com.github.efdos.mupen-gui",
@@ -41,15 +43,16 @@ namespace MupenGUI {
 
         protected override void activate () {
             var window = new Gtk.ApplicationWindow (this);
+            var headerbar = new Views.Window.HeaderBar ();
+            main_view = new Views.RomListView ();
 
             FileSystem.window_ref = window;
+            ActionManager.instance.application_ref = this;
 
-            var main = new Views.RomListView ();
-            var headerbar = new Views.Window.HeaderBar ();
 
             ActionManager.instance.get_action (Actions.Rom.DIRECTORY_CHOSEN).activate.connect(() => {
-                main.set_directory_name (Globals.CURRENT_ROM_DIR);
-                main.populate_list (Globals.CURRENT_ROM_DIR);
+                main_view.set_directory_name (Globals.CURRENT_ROM_DIR);
+                main_view.populate_list (Globals.CURRENT_ROM_DIR);
             });
 
             ActionManager.instance.get_action (Actions.Rom.EXECUTION_REQUESTED).activate.connect(() => {
@@ -60,8 +63,13 @@ namespace MupenGUI {
             window.set_titlebar (headerbar);
             window.title = "MupenGUI";
             window.set_default_size (900, 640);
-            window.add (main);
+            window.add (this.main_view);
             window.show_all ();
+        }
+
+        public void grant_a_toast (string toast_msg) {
+            main_view.toaster.title = toast_msg;
+            main_view.toaster.send_notification ();
         }
 
         public static int main (string[] args) {

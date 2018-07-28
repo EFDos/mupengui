@@ -53,6 +53,8 @@ namespace MupenGUI.Views.Window {
             button_play_rom.clicked.connect (() => {
                 if (Globals.CURRENT_ROM_PATH != null) {
                     ActionManager.instance.dispatch (Actions.Rom.EXECUTION_REQUESTED);
+                } else {
+                    ActionManager.instance.application_ref.grant_a_toast ("No ROM is selected.");
                 }
             });
         }

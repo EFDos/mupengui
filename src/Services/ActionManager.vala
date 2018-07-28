@@ -41,10 +41,12 @@ namespace MupenGUI.Services {
         }
 
         public SimpleActionGroup action_group {get; construct;}
+        public MupenGUI.Application application_ref {set; get;}
 
         private ActionManager () {
             Object (
-                action_group: new SimpleActionGroup ()
+                action_group: new SimpleActionGroup (),
+                application_ref: null
             );
         }
 
