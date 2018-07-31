@@ -1,5 +1,5 @@
 /************************************************************************/
-/*  RomListView.vala                                                    */
+/*  DisplaySettings.vala                                                */
 /************************************************************************/
 /*                       This file is part of:                          */
 /*                           MupenGUI                                   */
@@ -25,60 +25,20 @@
 /* Authored by: Douglas Muratore <www.sinz.com.br>                      */
 /************************************************************************/
 
-using MupenGUI.Services;
+namespace MupenGUI.Services {
+    public class DisplaySettings : Granite.Services.Settings {
+        public bool fullscreen {get; set;}
 
-namespace MupenGUI.Views {
-    public class RomListView : Gtk.Box {
-
-        private Gtk.ListBox list;
-        private Granite.HeaderLabel dir_label;
-
-        construct {
-            list = new Gtk.ListBox ();
-            dir_label = new Granite.HeaderLabel ("Directory:");
-
-            dir_label.set_padding(4, 0);
-            this.orientation = Gtk.Orientation.VERTICAL;
-            this.pack_start (dir_label, false, false, 2);
-            this.pack_start (list, true, true, 0);
-
-            list.row_selected.connect ((row) => {
-                if (row != null) {
-                    var label = row.get_child () as Gtk.Label;
-                    Globals.CURRENT_ROM_PATH = Globals.CURRENT_ROM_DIR + "/" + label.label;
-                }
-            });
-
-            list.activate_cursor_row.connect ((row) => {
-                ActionManager.instance.dispatch(Actions.Rom.EXECUTION_REQUESTED);
-            });
+        public DisplaySettings () {
+            base ("MupenGUI.DisplaySettings");
         }
 
-        public async void populate_list (string dir_name) {
-
-            Globals.CURRENT_ROM_PATH = "";
-            this.clear_list ();
-
-            var rom_list = yield FileSystem.list_dir_files (Globals.CURRENT_ROM_DIR);
-
-            foreach (string s in rom_list) {
-                var label = new Gtk.Label (s);
-                label.halign = Gtk.Align.START;
-                label.set_padding(4, 0);
-                list.add (label);
-                list.show_all ();
+        protected override void verify (string key) {
+            switch (key) {
+                case "fullscreen":
+                break;
             }
         }
 
-        public void clear_list () {
-            foreach (var child in list.get_children ()) {
-                list.remove (child);
-                child.destroy ();
-            }
-        }
-
-        public void set_directory_name (string dir_name) {
-            dir_label.label = "Directory: " + dir_name;
-        }
     }
 }

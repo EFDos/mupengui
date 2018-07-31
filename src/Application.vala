@@ -32,7 +32,7 @@ using MupenGUI.Services;
 namespace MupenGUI {
     public class Application : Granite.Application {
 
-        private Views.RomListView main_view;
+        private Views.MainView main_view;
 
         public Application () {
             Object(
@@ -44,21 +44,10 @@ namespace MupenGUI {
         protected override void activate () {
             var window = new Gtk.ApplicationWindow (this);
             var headerbar = new Views.Window.HeaderBar ();
-            main_view = new Views.RomListView ();
+            main_view = new Views.MainView ();
 
             FileSystem.window_ref = window;
             ActionManager.instance.application_ref = this;
-
-
-            ActionManager.instance.get_action (Actions.Rom.DIRECTORY_CHOSEN).activate.connect(() => {
-                main_view.set_directory_name (Globals.CURRENT_ROM_DIR);
-                main_view.populate_list (Globals.CURRENT_ROM_DIR);
-            });
-
-            ActionManager.instance.get_action (Actions.Rom.EXECUTION_REQUESTED).activate.connect(() => {
-                var fpath = Globals.CURRENT_ROM_PATH.replace (" ", "\\ ");
-                Granite.Services.System.execute_command ("mupen64plus " + fpath);
-            });
 
             window.set_titlebar (headerbar);
             window.title = "MupenGUI";

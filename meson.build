@@ -88,7 +88,9 @@ message ('Adds files to build')
 code_files = files(
     'src/Application.vala',
     'src/Actions.vala',
+    'src/Views/MainView.vala',
     'src/Views/RomListView.vala',
+    'src/Views/SettingsView.vala',
     'src/Views/Window/HeaderBar.vala',
     'src/Services/FileSystem.vala',
     'src/Services/ActionManager.vala',

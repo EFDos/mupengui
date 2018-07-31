@@ -26,7 +26,7 @@
 /************************************************************************/
 
 namespace MupenGUI.Services {
-    class ActionManager : Object {
+    public class ActionManager : Object {
 
         private static ActionManager _instance = null;
 

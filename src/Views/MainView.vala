@@ -1,5 +1,5 @@
 /************************************************************************/
-/*  RomListView.vala                                                    */
+/*  MainView.vala                                                       */
 /************************************************************************/
 /*                       This file is part of:                          */
 /*                           MupenGUI                                   */
@@ -28,57 +28,49 @@
 using MupenGUI.Services;
 
 namespace MupenGUI.Views {
-    public class RomListView : Gtk.Box {
+    public class MainView : Gtk.Box {
 
-        private Gtk.ListBox list;
-        private Granite.HeaderLabel dir_label;
+        public Granite.Widgets.Toast toaster {get; construct;}
 
         construct {
-            list = new Gtk.ListBox ();
-            dir_label = new Granite.HeaderLabel ("Directory:");
+            Gtk.Stack stack = new Gtk.Stack ();
+            RomListView rom_view = new RomListView ();
+            SettingsView settings_view = new SettingsView ();
+            toaster = new Granite.Widgets.Toast ("Info");
 
-            dir_label.set_padding(4, 0);
+            stack.add_named (rom_view, "rom_view");
+            stack.add_named (settings_view, "settings_view");
+
             this.orientation = Gtk.Orientation.VERTICAL;
-            this.pack_start (dir_label, false, false, 2);
-            this.pack_start (list, true, true, 0);
+            this.add (toaster);
+            this.pack_start (stack);
 
-            list.row_selected.connect ((row) => {
-                if (row != null) {
-                    var label = row.get_child () as Gtk.Label;
-                    Globals.CURRENT_ROM_PATH = Globals.CURRENT_ROM_DIR + "/" + label.label;
+
+            var manager = Services.ActionManager.instance;
+
+            manager.get_action (Actions.Rom.DIRECTORY_CHOSEN).activate.connect(() => {
+                rom_view.set_directory_name (Globals.CURRENT_ROM_DIR);
+                rom_view.populate_list (Globals.CURRENT_ROM_DIR);
+            });
+
+            manager.get_action (Actions.Rom.EXECUTION_REQUESTED).activate.connect(() => {
+                if (Globals.CURRENT_ROM_PATH.length == 0) {
+                    return;
                 }
+                var fpath = Globals.CURRENT_ROM_PATH.replace (" ", "\\ ");
+                    manager.application_ref.grant_a_toast ("Launching Mupen64plus");
+                Granite.Services.System.execute_command ("mupen64plus " + fpath);
             });
 
-            list.activate_cursor_row.connect ((row) => {
-                ActionManager.instance.dispatch(Actions.Rom.EXECUTION_REQUESTED);
+            manager.get_action (Actions.General.SETTINGS_OPEN).activate.connect (() => {
+                //last_visible_child_name = this.get_visible_child_name ();
+                stack.set_visible_child_full("settings_view", Gtk.StackTransitionType.SLIDE_LEFT_RIGHT);
             });
-        }
 
-        public async void populate_list (string dir_name) {
-
-            Globals.CURRENT_ROM_PATH = "";
-            this.clear_list ();
-
-            var rom_list = yield FileSystem.list_dir_files (Globals.CURRENT_ROM_DIR);
-
-            foreach (string s in rom_list) {
-                var label = new Gtk.Label (s);
-                label.halign = Gtk.Align.START;
-                label.set_padding(4, 0);
-                list.add (label);
-                list.show_all ();
-            }
-        }
-
-        public void clear_list () {
-            foreach (var child in list.get_children ()) {
-                list.remove (child);
-                child.destroy ();
-            }
-        }
-
-        public void set_directory_name (string dir_name) {
-            dir_label.label = "Directory: " + dir_name;
+            manager.get_action (Actions.General.SETTINGS_CLOSE).activate.connect (() => {
+                //last_visible_child_name = this.get_visible_child_name ();
+                stack.set_visible_child_full("rom_view", Gtk.StackTransitionType.SLIDE_LEFT_RIGHT);
+            });
         }
     }
 }

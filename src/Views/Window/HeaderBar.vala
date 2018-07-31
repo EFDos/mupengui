@@ -28,7 +28,10 @@ using MupenGUI;
 using MupenGUI.Services;
 
 namespace MupenGUI.Views.Window {
-    class HeaderBar : Gtk.HeaderBar {
+   public class HeaderBar : Gtk.HeaderBar {
+
+        private bool settings_open = false;
+
         construct {
             var button_settings = new Gtk.Button.from_icon_name ("open-menu", Gtk.IconSize.LARGE_TOOLBAR);
             var button_rom_dir = new Gtk.Button.from_icon_name ("folder-saved-search", Gtk.IconSize.LARGE_TOOLBAR);
@@ -42,19 +45,31 @@ namespace MupenGUI.Views.Window {
             this.pack_start (button_rom_dir);
             this.pack_end (button_settings);
 
+            var manager = ActionManager.instance;
+
+            button_settings.clicked.connect (() => {
+                if (!settings_open) {
+                    manager.dispatch (Actions.General.SETTINGS_OPEN);
+                    settings_open = true;
+                } else {
+                    manager.dispatch (Actions.General.SETTINGS_CLOSE);
+                    settings_open = false;
+                }
+            });
+
             button_rom_dir.clicked.connect (() => {
                 var res = FileSystem.choose_dir ("Select Roms Directory");
                 if (res != null) {
                     Globals.CURRENT_ROM_DIR = res;
-                    ActionManager.instance.dispatch (Actions.Rom.DIRECTORY_CHOSEN);
+                    manager.dispatch (Actions.Rom.DIRECTORY_CHOSEN);
                 }
             });
 
             button_play_rom.clicked.connect (() => {
                 if (Globals.CURRENT_ROM_PATH != null) {
-                    ActionManager.instance.dispatch (Actions.Rom.EXECUTION_REQUESTED);
+                    manager.dispatch (Actions.Rom.EXECUTION_REQUESTED);
                 } else {
-                    ActionManager.instance.application_ref.grant_a_toast ("No ROM is selected.");
+                    manager.application_ref.grant_a_toast ("No ROM is selected.");
                 }
             });
         }

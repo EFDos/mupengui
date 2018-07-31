@@ -25,8 +25,15 @@
 /* Authored by: Douglas Muratore <www.sinz.com.br>                      */
 /************************************************************************/
 
-namespace MupenGUI.Actions.Rom {
-    public const string DIRECTORY_CHOSEN = "MupenGUI.Actions.RDC";
-    public const string CURSOR_CHANGED = "MupenGUI.Action.RCC";
-    public const string EXECUTION_REQUESTED = "MupenGUI.Action.RER";
+namespace MupenGUI.Actions {
+    namespace Rom {
+        public const string DIRECTORY_CHOSEN = "MupenGUI.Actions.RDC";
+        public const string CURSOR_CHANGED = "MupenGUI.Action.RCC";
+        public const string EXECUTION_REQUESTED = "MupenGUI.Action.RER";
+    }
+
+    namespace General {
+        public const string SETTINGS_OPEN = "MupenGUI.Actions.GSO";
+        public const string SETTINGS_CLOSE = "MupenGUI.Actions.GSC";
+    }
 }
