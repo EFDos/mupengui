@@ -31,13 +31,16 @@ namespace MupenGUI.Views {
     public class RomListView : Gtk.Box {
 
         private Gtk.ListBox list;
-        private Granite.HeaderLabel dir_label;
+        private Gtk.Label dir_label;
 
         construct {
             list = new Gtk.ListBox ();
-            dir_label = new Granite.HeaderLabel ("Directory:");
+            dir_label = new Gtk.Label ("Directory:");
 
-            dir_label.set_padding(4, 0);
+            dir_label.set_padding (4, 0);
+            dir_label.set_halign (Gtk.Align.CENTER);
+            dir_label.get_style_context ().add_class (Granite.STYLE_CLASS_H3_LABEL);
+
             this.orientation = Gtk.Orientation.VERTICAL;
             this.pack_start (dir_label, false, false, 2);
             this.pack_start (list, true, true, 0);
@@ -61,9 +64,16 @@ namespace MupenGUI.Views {
 
             var rom_list = yield FileSystem.list_dir_files (Globals.CURRENT_ROM_DIR);
 
+            if (rom_list.length == 0) {
+                ActionManager.instance.application_ref.grant_a_toast ("No N64 Roms found in directory");
+                var label = new Granite.HeaderLabel ("Romless Directory");
+                label.halign = Gtk.Align.CENTER;
+                list.add (label);
+                list.show_all ();
+            }
+
             foreach (string s in rom_list) {
-                var label = new Gtk.Label (s);
-                label.halign = Gtk.Align.START;
+                var label = new Granite.HeaderLabel (s);
                 label.set_padding(4, 0);
                 list.add (label);
                 list.show_all ();

@@ -26,18 +26,30 @@
 /************************************************************************/
 
 namespace MupenGUI.Services {
+
+    public class UISettings : Granite.Services.Settings {
+        public string rom_dir {get; set;}
+
+        public UISettings () {
+            base ("com.github.efdos.mupen-gui.ui");
+        }
+
+        protected override void verify (string key) {
+            switch (key) {
+                case "rom-dir":
+                    if (rom_dir == null) {
+                        rom_dir = "";
+                    }
+                break;
+            }
+        }
+    }
+
     public class DisplaySettings : Granite.Services.Settings {
         public bool fullscreen {get; set;}
 
         public DisplaySettings () {
             base ("com.github.efdos.mupen-gui.display");
-        }
-
-        protected override void verify (string key) {
-            switch (key) {
-                case "fullscreen":
-                break;
-            }
         }
 
     }

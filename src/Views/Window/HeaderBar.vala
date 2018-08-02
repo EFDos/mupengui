@@ -34,7 +34,7 @@ namespace MupenGUI.Views.Window {
 
         construct {
             var button_settings = new Gtk.Button.from_icon_name ("open-menu", Gtk.IconSize.LARGE_TOOLBAR);
-            var button_rom_dir = new Gtk.Button.from_icon_name ("folder-saved-search", Gtk.IconSize.LARGE_TOOLBAR);
+            var button_rom_dir = new Gtk.Button.from_icon_name ("folder-open-symbolic", Gtk.IconSize.MENU);
             var button_play_rom = new Gtk.Button.from_icon_name ("media-playback-start-symbolic", Gtk.IconSize.MENU);
 
 

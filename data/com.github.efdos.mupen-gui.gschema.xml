@@ -10,4 +10,13 @@
     </key>
 
   </schema>
+
+  <schema id="com.github.efdos.mupen-gui.ui" path="/com/github/efdos/mupen-gui/ui/" gettext-domain="mupen-gui">
+    <key name="rom-dir" type="s">
+      <default>""</default>
+      <summary>Saved rom directory</summary>
+      <description>Saved rom directory to be automatically opened.</description>
+    </key>
+  </schema>
+
 </schemalist>

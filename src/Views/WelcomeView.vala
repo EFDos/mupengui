@@ -25,6 +25,8 @@
 /* Authored by: Douglas Muratore <www.sinz.com.br>                      */
 /************************************************************************/
 
+using MupenGUI.Services;
+
 namespace MupenGUI.Views {
     public class WelcomeView : Granite.Widgets.Welcome {
 
@@ -33,6 +35,18 @@ namespace MupenGUI.Views {
                 title: "Welcome to MupenGUI",
                 subtitle: "A sexy frontend to Mupen64plus"
             );
+        }
+
+        construct {
+            append ("folder-open", "Open ROM Directory", "Your N64 roms will be listed from this directory.");
+
+            activated.connect ((index) => {
+                var res = FileSystem.choose_dir ("Select Roms Directory");
+                if (res != null) {
+                    Globals.CURRENT_ROM_DIR = res;
+                    ActionManager.instance.dispatch (Actions.Rom.DIRECTORY_CHOSEN);
+                }
+            });
         }
     }
 }

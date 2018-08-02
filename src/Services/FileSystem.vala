@@ -68,9 +68,11 @@ namespace MupenGUI.Services.FileSystem {
         string[] files = {};
 
         if (!dir.query_exists ()) {
-            error ("list_dir_files: Directory %s doesn't exist.\n", dir_name);
+            print ("list_dir_files: Directory %s doesn't exist.\n", dir_name);
+            return files;
         } else if (dir.query_file_type (0) != FileType.DIRECTORY) {
-            error ("list_dir_files: %s is not a directory.\n", dir_name);
+            print ("list_dir_files: %s is not a directory.\n", dir_name);
+            return files;
         }
 
         try {

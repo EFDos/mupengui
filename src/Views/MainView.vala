@@ -31,16 +31,29 @@ namespace MupenGUI.Views {
     public class MainView : Gtk.Box {
 
         public Granite.Widgets.Toast toaster {get; construct;}
+
         private string last_visible_child_name;
+        private Gtk.Stack stack;
+        private UISettings ui_settings;
+        private RomListView rom_view;
 
         construct {
-            Gtk.Stack stack = new Gtk.Stack ();
-            RomListView rom_view = new RomListView ();
-            WelcomeView welcome_view = new WelcomeView ();
-            SettingsView settings_view = new SettingsView ();
+            var welcome_view = new WelcomeView ();
+            var settings_view = new SettingsView ();
+
+            stack = new Gtk.Stack ();
+            rom_view = new RomListView ();
+            ui_settings = new UISettings ();
+
             toaster = new Granite.Widgets.Toast ("Info");
 
-            stack.add_named (welcome_view, "welcome_view");
+            if (ui_settings.rom_dir.length == 0 || ui_settings.rom_dir == null) {
+                stack.add_named (welcome_view, "welcome_view");
+            } else {
+                Globals.CURRENT_ROM_DIR = ui_settings.rom_dir;
+                update ();
+            }
+
             stack.add_named (rom_view, "rom_view");
             stack.add_named (settings_view, "settings_view");
 
@@ -48,13 +61,10 @@ namespace MupenGUI.Views {
             this.add (toaster);
             this.pack_start (stack);
 
-
-            var manager = Services.ActionManager.instance;
+            var manager = ActionManager.instance;
 
             manager.get_action (Actions.Rom.DIRECTORY_CHOSEN).activate.connect(() => {
-                rom_view.set_directory_name (Globals.CURRENT_ROM_DIR);
-                rom_view.populate_list (Globals.CURRENT_ROM_DIR);
-                stack.set_visible_child_full ("rom_view", Gtk.StackTransitionType.CROSSFADE);
+                update ();
             });
 
             manager.get_action (Actions.Rom.EXECUTION_REQUESTED).activate.connect(() => {
@@ -62,8 +72,19 @@ namespace MupenGUI.Views {
                     return;
                 }
                 var fpath = Globals.CURRENT_ROM_PATH.replace (" ", "\\ ");
-                    manager.application_ref.grant_a_toast ("Launching Mupen64plus");
-                Granite.Services.System.execute_command ("mupen64plus " + fpath);
+                manager.application_ref.grant_a_toast ("Launching Mupen64plus");
+
+                var display_settings = new DisplaySettings ();
+                var command = new StringBuilder ();
+                command.append ("mupen64plus");
+
+                if (display_settings.fullscreen) {
+                    command.append(" --fullscreen");
+                }
+
+                command.append (" " + fpath);
+
+                Granite.Services.System.execute_command (command.str);
             });
 
             manager.get_action (Actions.General.SETTINGS_OPEN).activate.connect (() => {
@@ -74,6 +95,15 @@ namespace MupenGUI.Views {
             manager.get_action (Actions.General.SETTINGS_CLOSE).activate.connect (() => {
                 stack.set_visible_child_full(last_visible_child_name, Gtk.StackTransitionType.SLIDE_LEFT_RIGHT);
             });
+        }
+
+        public void update () {
+            rom_view.set_directory_name (Globals.CURRENT_ROM_DIR);
+            rom_view.populate_list (Globals.CURRENT_ROM_DIR);
+
+            ui_settings.rom_dir = Globals.CURRENT_ROM_DIR;
+
+            stack.set_visible_child_full ("rom_view", Gtk.StackTransitionType.CROSSFADE);
         }
     }
 }
