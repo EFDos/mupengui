@@ -91,9 +91,10 @@ code_files = files(
     'src/Views/MainView.vala',
     'src/Views/RomListView.vala',
     'src/Views/SettingsView.vala',
+    'src/Views/WelcomeView.vala',
     'src/Views/Window/HeaderBar.vala',
     'src/Views/Settings/DisplaySettingsPage.vala',
-    'src/Services/DisplaySettings.vala',
+    'src/Services/Settings.vala',
     'src/Services/FileSystem.vala',
     'src/Services/ActionManager.vala',
     'src/Services/Globals.vala'
@@ -103,7 +104,7 @@ message ('Defines executable')
 
 install_data(
     join_paths ('data', meson.project_name() + '.gschema.xml'),
-    install_dir: join_paths(get_option('datadir'), 'glib-2.0', 'schemas')
+    install_dir: join_paths(get_option('datadir'), 'glib-2.0/schemas')
 )
 
 executable(
@@ -112,3 +113,5 @@ executable(
     dependencies: dependencies,
     install: true
 )
+
+meson.add_install_script('scripts/post_install.py')

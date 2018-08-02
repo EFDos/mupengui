@@ -30,7 +30,7 @@ namespace MupenGUI.Services {
         public bool fullscreen {get; set;}
 
         public DisplaySettings () {
-            base ("com.github.efdos.mupen-gui");
+            base ("com.github.efdos.mupen-gui.display");
         }
 
         protected override void verify (string key) {

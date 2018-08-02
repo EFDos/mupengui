@@ -38,17 +38,16 @@ namespace MupenGUI.Views.Settings {
         }
 
         construct {
-            /*var modal = new Granite.Widgets.ModeButton ();
-            modal.append_text ("Fullscreen");
-            modal.append_text ("Windowed");*/
 
             var settings = new Services.DisplaySettings ();
 
             var fullscreen_label = new Gtk.Label ("Fullscreen");
             var fullscreen_switch = new Gtk.Switch ();
 
+            fullscreen_switch.state_set (settings.fullscreen);
+
             fullscreen_switch.state_set.connect ((state) => {
-              //  settings.fullscreen = state;
+                settings.fullscreen = state;
                 print(state.to_string ());
             });
 

@@ -1,5 +1,5 @@
 /************************************************************************/
-/*  ActionManager.vala                                                  */
+/*  WelcomeView.vala                                                    */
 /************************************************************************/
 /*                       This file is part of:                          */
 /*                           MupenGUI                                   */
@@ -25,51 +25,14 @@
 /* Authored by: Douglas Muratore <www.sinz.com.br>                      */
 /************************************************************************/
 
-namespace MupenGUI.Services {
-    public class ActionManager : Object {
+namespace MupenGUI.Views {
+    public class WelcomeView : Granite.Widgets.Welcome {
 
-        private static ActionManager _instance = null;
-
-        public static ActionManager instance {
-            get {
-                if (_instance == null) {
-                    _instance = new ActionManager ();
-                }
-
-                return _instance;
-            }
-        }
-
-        public SimpleActionGroup action_group {get; construct;}
-        public unowned MupenGUI.Application application_ref {set; get;}
-
-        private ActionManager () {
+        public WelcomeView () {
             Object (
-                action_group: new SimpleActionGroup (),
-                application_ref: null
+                title: "Welcome to MupenGUI",
+                subtitle: "A sexy frontend to Mupen64plus"
             );
-        }
-
-        public SimpleAction add_action (string action_name) {
-            var action = new SimpleAction (action_name, null);
-            action_group.add_action (action);
-            return action;
-        }
-
-        public SimpleAction get_action (string name) {
-            if (!this.action_group.has_action (name)) {
-                return this.add_action (name);
-            }
-
-            return this.action_group.lookup_action (name) as SimpleAction;
-        }
-
-        public void dispatch (string name) {
-            this.action_group.activate_action (name, null);
-        }
-
-        public void remove (string name) {
-            this.action_group.remove_action (name);
         }
     }
 }

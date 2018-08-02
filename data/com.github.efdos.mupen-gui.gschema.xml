@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <schemalist>
-  <schema id="com.github.efdos.mupen-gui" path="/com/github/efdos/mupen-gui/" gettext-domain="mupen-gui">
+  <schema id="com.github.efdos.mupen-gui.display" path="/com/github/efdos/mupen-gui/display/"
+    gettext-domain="mupen-gui">
 
     <key name="fullscreen" type="b">
       <default>false</default>

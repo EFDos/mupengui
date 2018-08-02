@@ -31,13 +31,16 @@ namespace MupenGUI.Views {
     public class MainView : Gtk.Box {
 
         public Granite.Widgets.Toast toaster {get; construct;}
+        private string last_visible_child_name;
 
         construct {
             Gtk.Stack stack = new Gtk.Stack ();
             RomListView rom_view = new RomListView ();
+            WelcomeView welcome_view = new WelcomeView ();
             SettingsView settings_view = new SettingsView ();
             toaster = new Granite.Widgets.Toast ("Info");
 
+            stack.add_named (welcome_view, "welcome_view");
             stack.add_named (rom_view, "rom_view");
             stack.add_named (settings_view, "settings_view");
 
@@ -51,6 +54,7 @@ namespace MupenGUI.Views {
             manager.get_action (Actions.Rom.DIRECTORY_CHOSEN).activate.connect(() => {
                 rom_view.set_directory_name (Globals.CURRENT_ROM_DIR);
                 rom_view.populate_list (Globals.CURRENT_ROM_DIR);
+                stack.set_visible_child_full ("rom_view", Gtk.StackTransitionType.CROSSFADE);
             });
 
             manager.get_action (Actions.Rom.EXECUTION_REQUESTED).activate.connect(() => {
@@ -63,13 +67,12 @@ namespace MupenGUI.Views {
             });
 
             manager.get_action (Actions.General.SETTINGS_OPEN).activate.connect (() => {
-                //last_visible_child_name = this.get_visible_child_name ();
+                last_visible_child_name = stack.get_visible_child_name ();
                 stack.set_visible_child_full("settings_view", Gtk.StackTransitionType.SLIDE_LEFT_RIGHT);
             });
 
             manager.get_action (Actions.General.SETTINGS_CLOSE).activate.connect (() => {
-                //last_visible_child_name = this.get_visible_child_name ();
-                stack.set_visible_child_full("rom_view", Gtk.StackTransitionType.SLIDE_LEFT_RIGHT);
+                stack.set_visible_child_full(last_visible_child_name, Gtk.StackTransitionType.SLIDE_LEFT_RIGHT);
             });
         }
     }
