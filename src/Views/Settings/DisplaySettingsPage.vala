@@ -1,5 +1,5 @@
 /************************************************************************/
-/*  SettingsView.vala                                                   */
+/*  DisplaySettingsPage.vala                                           */
 /************************************************************************/
 /*                       This file is part of:                          */
 /*                           MupenGUI                                   */
@@ -25,19 +25,35 @@
 /* Authored by: Douglas Muratore <www.sinz.com.br>                      */
 /************************************************************************/
 
-namespace MupenGUI.Views {
-    public class SettingsView : Gtk.Paned {
+namespace MupenGUI.Views.Settings {
+    public class DisplaySettingsPage : Granite.SimpleSettingsPage {
+        public DisplaySettingsPage () {
+            Object (
+                //activable: true,
+                description: "Configure Mupen64 Display Settings.",
+                header: "General",
+                icon_name: "video-display",
+                title: "Display Settings"
+            );
+        }
+
         construct {
+            /*var modal = new Granite.Widgets.ModeButton ();
+            modal.append_text ("Fullscreen");
+            modal.append_text ("Windowed");*/
 
-            var settings_page = new Views.Settings.DisplaySettingsPage ();
-            var stack = new Gtk.Stack ();
+            var settings = new Services.DisplaySettings ();
 
-            stack.add_named (settings_page, "settings_page");
+            var fullscreen_label = new Gtk.Label ("Fullscreen");
+            var fullscreen_switch = new Gtk.Switch ();
 
-            var settings_sidebar = new Granite.SettingsSidebar (stack);
+            fullscreen_switch.state_set.connect ((state) => {
+              //  settings.fullscreen = state;
+                print(state.to_string ());
+            });
 
-            add (settings_sidebar);
-            add (stack);
+            content_area.attach (fullscreen_label, 0, 0, 1, 1);
+            content_area.attach (fullscreen_switch, 1, 0, 1, 1);
         }
     }
 }

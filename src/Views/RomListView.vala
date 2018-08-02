@@ -56,7 +56,7 @@ namespace MupenGUI.Views {
 
         public async void populate_list (string dir_name) {
 
-            Globals.CURRENT_ROM_PATH = "";
+            Globals.CURRENT_ROM_PATH = null;
             this.clear_list ();
 
             var rom_list = yield FileSystem.list_dir_files (Globals.CURRENT_ROM_DIR);
