@@ -53,4 +53,12 @@ namespace MupenGUI.Services {
         }
 
     }
+
+    public class InputSettings : Granite.Services.Settings {
+        public string input_device {get; set;}
+
+        public InputSettings () {
+            base ("com.github.efdos.mupen-gui.input");
+        }
+    }
 }

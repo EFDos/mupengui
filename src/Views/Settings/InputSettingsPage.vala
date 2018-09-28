@@ -1,5 +1,5 @@
 /************************************************************************/
-/*  SettingsView.vala                                                   */
+/*  DisplaySettingsPage.vala                                           */
 /************************************************************************/
 /*                       This file is part of:                          */
 /*                           MupenGUI                                   */
@@ -25,18 +25,37 @@
 /* Authored by: Douglas Muratore <www.sinz.com.br>                      */
 /************************************************************************/
 
-namespace MupenGUI.Views {
-    public class SettingsView : Gtk.Paned {
+namespace MupenGUI.Views.Settings {
+    public class InputSettingsPage : Granite.SimpleSettingsPage {
+        public InputSettingsPage () {
+            Object (
+                //activable: true,
+                description: "Configure Mupen64 Input Settings.",
+                icon_name: "input-gaming",
+                title: "Input Settings"
+            );
+        }
+
         construct {
-            var stack = new Gtk.Stack ();
 
-            stack.add_named (new Views.Settings.DisplaySettingsPage (), "display_page");
-            stack.add_named (new Views.Settings.InputSettingsPage (), "input_page");
+            var settings = new Services.InputSettings ();
 
-            var settings_sidebar = new Granite.SettingsSidebar (stack);
+            var device_label = new Gtk.Label ("Input Device");
+            var device_name_box = new Gtk.ListBox ();
 
-            add (settings_sidebar);
-            add (stack);
+            var keyboard_entry = new Gtk.Entry ();
+            keyboard_entry.set_text("keyboard");
+
+            device_name_box.insert(keyboard_entry, 0);
+            /*fullscreen_switch.state_set (settings.fullscreen);
+
+            fullscreen_switch.state_set.connect ((state) => {
+                settings.fullscreen = state;
+                print(state.to_string ());
+            });*/
+
+            content_area.attach (device_label, 0, 0, 1, 1);
+            content_area.attach (device_name_box, 1, 0, 1, 1);
         }
     }
 }

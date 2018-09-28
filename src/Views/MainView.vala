@@ -71,7 +71,7 @@ namespace MupenGUI.Views {
                 if (Globals.CURRENT_ROM_PATH.length == 0) {
                     return;
                 }
-                var fpath = Globals.CURRENT_ROM_PATH.replace (" ", "\\ ");
+                var rom_path = Globals.CURRENT_ROM_PATH.replace (" ", "\\ ");
                 manager.application_ref.grant_a_toast ("Launching Mupen64plus");
 
                 var display_settings = new DisplaySettings ();
@@ -82,9 +82,11 @@ namespace MupenGUI.Views {
                     command.append(" --fullscreen");
                 }
 
-                command.append (" " + fpath);
+                command.append (" " + rom_path);
 
-                Granite.Services.System.execute_command (command.str);
+                if (!Granite.Services.System.execute_command (command.str)) {
+                    manager.application_ref.grant_a_toast ("Error trying to launch mupen64plus.");
+                }
             });
 
             manager.get_action (Actions.General.SETTINGS_OPEN).activate.connect (() => {

@@ -94,6 +94,7 @@ code_files = files(
     'src/Views/WelcomeView.vala',
     'src/Views/Window/HeaderBar.vala',
     'src/Views/Settings/DisplaySettingsPage.vala',
+    'src/Views/Settings/InputSettingsPage.vala',
     'src/Services/Settings.vala',
     'src/Services/FileSystem.vala',
     'src/Services/ActionManager.vala',
@@ -103,7 +104,7 @@ code_files = files(
 message ('Defines executable')
 
 install_data(
-    join_paths ('data', meson.project_name() + '.gschema.xml'),
+    join_paths('data', meson.project_name() + '.gschema.xml'),
     install_dir: join_paths(get_option('datadir'), 'glib-2.0/schemas')
 )
 

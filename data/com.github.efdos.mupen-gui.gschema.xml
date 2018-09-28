@@ -11,6 +11,17 @@
 
   </schema>
 
+  <schema id="com.github.efdos.mupen-gui.input" path="/com/github/efdos/mupen-gui/input/"
+    gettext-domain="mupen-gui">
+
+    <key name="input-device" type="s">
+      <default>"Keyboard"</default>
+      <summary>Primary device for input.</summary>
+      <description>Defines the input device (keyboard, joypad etc...).</description>
+    </key>
+
+  </schema>
+
   <schema id="com.github.efdos.mupen-gui.ui" path="/com/github/efdos/mupen-gui/ui/" gettext-domain="mupen-gui">
     <key name="rom-dir" type="s">
       <default>""</default>
