@@ -27,7 +27,7 @@ message ('Listing dependencies')
 
 dependencies = [
     dependency('gio-unix-2.0', version: '>=2.20'),
-    dependency('granite'),
+    dependency('granite')
 ]
 
 # Adds subfolders specific build system
@@ -86,6 +86,7 @@ appstream_file = i18n.merge_file(
 message ('Adds files to build')
 
 code_files = files(
+    'src/C/test.c',
     'src/Application.vala',
     'src/Actions.vala',
     'src/Views/MainView.vala',
