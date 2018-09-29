@@ -29,7 +29,7 @@
  * Mupen64 C API *
  *****************/
 
-delegate void callback_type();
+delegate void callback_type(); // For when the C core needs to call Vala functions.
 
 extern int m64_load_corelib (char* libpath);
 extern int m64_unload_corelib ();
@@ -41,7 +41,8 @@ extern int m64_unload_plugin (int type);
 
 extern int m64_command (int command, int param_int = 0, void* param_ptr = null);
 
-extern void m64_set_emustop_callback(callback_type callback);
+extern void m64_set_emustop_callback (callback_type callback);
+extern int m64_set_fullscreen (bool b = true);
 extern void m64_set_verbose (bool b = true);
 
 extern char* m64_get_rom_goodname ();
@@ -73,7 +74,7 @@ namespace MupenGUI.Services {
             ADVANCE_FRAME
         }
 
-        public enum m64PluginType{
+        public enum m64PluginType {
             NULL = 0,
             RSP = 1,
             VIDEO,
@@ -82,8 +83,23 @@ namespace MupenGUI.Services {
             CORE
         }
 
+        public enum m64CoreParam {
+          EMU_STATE = 1,
+          VIDEO_MODE,
+          SAVESTATE_SLOT,
+          SPEED_FACTOR,
+          SPEED_LIMITER,
+          VIDEO_SIZE,
+          AUDIO_VOLUME,
+          AUDIO_MUTE,
+          INPUT_GAMESHARK,
+          STATE_LOADCOMPLETE,
+          STATE_SAVECOMPLETE
+        }
+
         private static Mupen64API _instance = null;
         private bool initialized = false;
+        private bool rom_loaded = false;
         private string goodname = "";
 
         public static Mupen64API instance {
@@ -96,6 +112,7 @@ namespace MupenGUI.Services {
             }
         }
 
+        // Callbacks so we can call Vala code on Mupen64's state changes
         public static void _CAPICALLBACK_emulation_stop () {
             Mupen64API.instance.on_emulation_stop();
         }
@@ -170,6 +187,7 @@ namespace MupenGUI.Services {
                     }
                     builder.erase(0, 1);
                     goodname = builder.str;
+                    rom_loaded = true;
                 }
 
                 var err = 0;
@@ -186,8 +204,24 @@ namespace MupenGUI.Services {
             return true;
         }
 
-        public void set_verbose (bool b) {
+        public async void start_emulation () {
+            if (!initialized || !rom_loaded) {
+                stderr.printf ("Error: Mupen64 needs to be initialized and a ROM needs to be loaded " +
+                               "before starting emulation.\n");
+            }
+
+            m64_command (m64Command.EXECUTE);
+        }
+
+        public void set_verbose (bool b = true) {
             m64_set_verbose (b);
+        }
+
+        public void set_fullscreen (bool b = true) {
+            var err = m64_set_fullscreen (b);
+            if (err != 0) {
+                stderr.printf ("Error code: %d\n", err);
+            }
         }
 
         public string get_rom_goodname () {
@@ -195,7 +229,8 @@ namespace MupenGUI.Services {
         }
 
         public void on_emulation_stop() {
-            m64_command(m64Command.ROM_CLOSE);
+            m64_command (m64Command.ROM_CLOSE);
+            rom_loaded = false;
         }
     }
 }

@@ -2,35 +2,52 @@
 #include "dynlib.h"
 #include "m64p_common.h"
 #include "m64p_frontend.h"
+#include "m64p_config.h"
 #include <stdio.h>
 
 typedef void (*fptr_emustop_callback)();
 
-fptr_emustop_callback g_emustop_callback = NULL;
+static fptr_emustop_callback g_emustop_callback = NULL;
 
-ptr_CoreStartup g_core_startup = NULL;
-ptr_CoreShutdown g_core_shutdown = NULL;
-ptr_CoreDoCommand g_core_do_command = NULL;
-ptr_CoreAttachPlugin g_core_attach_plugin = NULL;
-ptr_CoreDetachPlugin g_core_detach_plugin = NULL;
+static ptr_CoreStartup g_core_startup = NULL;
+static ptr_CoreShutdown g_core_shutdown = NULL;
+static ptr_CoreDoCommand g_core_do_command = NULL;
+static ptr_CoreAttachPlugin g_core_attach_plugin = NULL;
+static ptr_CoreDetachPlugin g_core_detach_plugin = NULL;
 
-m64p_dynlib_handle g_core_handle            = NULL;
-m64p_dynlib_handle g_plugin_video_handle    = NULL;
-m64p_dynlib_handle g_plugin_audio_handle    = NULL;
-m64p_dynlib_handle g_plugin_input_handle    = NULL;
-m64p_dynlib_handle g_plugin_rsp_handle      = NULL;
+static ptr_ConfigListSections     g_config_list_sections;
+static ptr_ConfigOpenSection      g_config_open_section;
+static ptr_ConfigDeleteSection    g_config_delete_section;
+static ptr_ConfigSaveSection      g_config_save_section;
+static ptr_ConfigListParameters   ConfigListParameters;
+static ptr_ConfigSaveFile         g_config_save_file;
+static ptr_ConfigSetParameter     g_config_set_parameter;
+static ptr_ConfigGetParameter     ConfigGetParameter;
+static ptr_ConfigGetParameterType ConfigGetParameterType;
+static ptr_ConfigGetParameterHelp ConfigGetParameterHelp;
+static ptr_ConfigSetDefaultInt    ConfigSetDefaultInt;
+static ptr_ConfigSetDefaultFloat  ConfigSetDefaultFloat;
+static ptr_ConfigSetDefaultBool   ConfigSetDefaultBool;
+static ptr_ConfigSetDefaultString ConfigSetDefaultString;
+static ptr_ConfigGetParamInt      ConfigGetParamInt;
+static ptr_ConfigGetParamFloat    ConfigGetParamFloat;
+static ptr_ConfigGetParamBool     ConfigGetParamBool;
+static ptr_ConfigGetParamString   ConfigGetParamString;
 
-m64p_rom_settings g_current_rom_settings;
-m64p_rom_header g_current_rom_header;
+static m64p_dynlib_handle g_core_handle            = NULL;
+static m64p_dynlib_handle g_plugin_video_handle    = NULL;
+static m64p_dynlib_handle g_plugin_audio_handle    = NULL;
+static m64p_dynlib_handle g_plugin_input_handle    = NULL;
+static m64p_dynlib_handle g_plugin_rsp_handle      = NULL;
 
-boolean g_rom_settings_loaded = FALSE;
-boolean g_rom_header_loaded = FALSE;
-boolean g_verbose = FALSE;
+static m64p_handle g_config_video_handle = NULL;
 
-void m64_set_verbose(boolean b)
-{
-    g_verbose = b;
-}
+static m64p_rom_settings g_current_rom_settings;
+static m64p_rom_header g_current_rom_header;
+
+static boolean g_rom_settings_loaded = FALSE;
+static boolean g_rom_header_loaded = FALSE;
+static boolean g_verbose = FALSE;
 
 void m64_set_emustop_callback(fptr_emustop_callback callback)
 {
@@ -64,7 +81,6 @@ void m64_state_callback(void*            context,
 {
     if (param_changed == M64CORE_EMU_STATE) {
         if (new_value == 1) {
-            printf("Info: Core emulation has stopped.\n");
             if (g_emustop_callback != NULL) {
                 g_emustop_callback();
             }
@@ -80,22 +96,32 @@ int m64_load_corelib(const char* path)
         return open_result;
     }
 
-    g_core_startup = dynlib_getproc (g_core_handle, "CoreStartup");
+    printf("Info: Loading Core functions.\n");
+    g_core_startup = dynlib_getproc(g_core_handle, "CoreStartup");
     g_core_shutdown = dynlib_getproc(g_core_handle, "CoreShutdown");
     g_core_do_command = dynlib_getproc(g_core_handle, "CoreDoCommand");
     g_core_attach_plugin = dynlib_getproc(g_core_handle, "CoreAttachPlugin");
     g_core_detach_plugin = dynlib_getproc(g_core_handle, "CoreDetachPlugin");
+
+    printf("Info: Loading Config functions.\n");
+    g_config_open_section = dynlib_getproc(g_core_handle, "ConfigOpenSection");
+    g_config_set_parameter = dynlib_getproc(g_core_handle, "ConfigSetParameter");
 
     return M64ERR_SUCCESS;
 }
 
 int m64_start_corelib(char* config_path, char* data_path)
 {
-    return (*g_core_startup)(0x020001,
-                             config_path,
-                             data_path,
-                             "CoreDebug", m64_debug_callback,
-                             "CoreState", m64_state_callback);
+    m64p_error retval = (*g_core_startup)(0x020001,
+                                          config_path,
+                                          data_path,
+                                          "CoreDebug", m64_debug_callback,
+                                          "CoreState", m64_state_callback);
+
+    printf("Info: Opening Config handles\n");
+    (*g_config_open_section)("Video-General", &g_config_video_handle);
+
+    return retval;
 }
 
 int m64_shutdown_corelib()
@@ -365,8 +391,30 @@ int m64_command(m64p_command command, int param_int, void* param_ptr)
             g_rom_settings_loaded = FALSE;
             g_rom_header_loaded = FALSE;
             break;
+        case M64CMD_CORE_STATE_SET:
+            if (param_int == M64CORE_VIDEO_MODE) {
+                printf("Info: Trying to set video mode to: %d\n", *(int*)param_ptr);
+            }
         default:
             break;
+    }
+
+    return retval;
+}
+
+
+void m64_set_verbose(boolean b)
+{
+    g_verbose = b;
+}
+
+int m64_set_fullscreen(boolean b)
+{
+    int v = b ? 1 : 0;
+    int retval = (*g_config_set_parameter)(g_config_video_handle, "Fullscreen", M64TYPE_BOOL, &v);
+
+    if (retval != M64ERR_SUCCESS) {
+        printf("Error: Failed to set parameter Fullscreen.\n");
     }
 
     return retval;

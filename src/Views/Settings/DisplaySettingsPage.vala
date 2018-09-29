@@ -48,6 +48,7 @@ namespace MupenGUI.Views.Settings {
 
             fullscreen_switch.state_set.connect ((state) => {
                 settings.fullscreen = state;
+                Services.Mupen64API.instance.set_fullscreen (state);
                 print(state.to_string ());
             });
 

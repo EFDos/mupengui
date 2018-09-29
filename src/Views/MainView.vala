@@ -71,30 +71,16 @@ namespace MupenGUI.Views {
                 if (Globals.CURRENT_ROM_PATH.length == 0) {
                     return;
                 }
-                /*var rom_path = Globals.CURRENT_ROM_PATH.replace (" ", "\\ ");
-                manager.application_ref.grant_a_toast ("Launching Mupen64plus");
 
                 var display_settings = new DisplaySettings ();
-                var command = new StringBuilder ();
-                command.append ("mupen64plus");
-
-                if (display_settings.fullscreen) {
-                    command.append(" --fullscreen");
-                }
-
-                command.append (" " + rom_path);
-
-                if (!Granite.Services.System.execute_command (command.str)) {
-                    manager.application_ref.grant_a_toast ("Error trying to launch mupen64plus.");
-                }*/
                 var rom_data = Services.FileSystem.load_rom_file (Globals.CURRENT_ROM_PATH);
 
                 if (Mupen64API.instance.run_command (Mupen64API.m64Command.ROM_OPEN,
                                                       (int) rom_data.get_size (),
                                                       rom_data.get_buffer ()))
                 {
-                    manager.application_ref.grant_a_toast ("Loaded Rom: " + Mupen64API.instance.get_rom_goodname ());
-                    Mupen64API.instance.run_command (Mupen64API.m64Command.EXECUTE, 0, null);
+                    manager.application_ref.grant_a_toast ("Executing Rom: " + Mupen64API.instance.get_rom_goodname ());
+                    Mupen64API.instance.start_emulation.begin ();
                 } else {
                     manager.application_ref.grant_a_toast ("Error loading Rom File: " + Globals.CURRENT_ROM_PATH);
                 }
@@ -112,7 +98,7 @@ namespace MupenGUI.Views {
 
         public void update () {
             rom_view.set_directory_name (Globals.CURRENT_ROM_DIR);
-            rom_view.populate_list (Globals.CURRENT_ROM_DIR);
+            rom_view.populate_list.begin (Globals.CURRENT_ROM_DIR);
 
             ui_settings.rom_dir = Globals.CURRENT_ROM_DIR;
 
