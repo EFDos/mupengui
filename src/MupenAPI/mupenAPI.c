@@ -8,6 +8,11 @@ ptr_CoreShutdown g_core_shutdown = NULL;
 ptr_CoreDoCommand g_core_do_command = NULL;
 m64p_dynlib_handle g_core_handle = NULL;
 
+m64p_rom_settings g_current_rom_settings;
+m64p_rom_header g_current_rom_header;
+
+boolean g_rom_settings_loaded = FALSE;
+boolean g_rom_header_loaded = FALSE;
 boolean g_verbose = FALSE;
 
 void m64_set_verbose(boolean b)
@@ -45,8 +50,8 @@ int m64_load_corelib()
     }
 
     g_core_startup = dynlib_getproc (g_core_handle, "CoreStartup");
-    g_core_shutdown = dynlib_getproc(g_core_shutdown, "CoreShutdown");
-    g_core_do_command = dynlib_getproc(g_core_do_command, "CoreDoCommand");
+    g_core_shutdown = dynlib_getproc(g_core_handle, "CoreShutdown");
+    g_core_do_command = dynlib_getproc(g_core_handle, "CoreDoCommand");
 
     return M64ERR_SUCCESS;
 }
@@ -77,5 +82,40 @@ int m64_unload_corelib()
 
 int m64_command(m64p_command command, int param_int, void* param_ptr)
 {
-    return (*g_core_do_command)(command, param_int, param_ptr);
+    int retval = (*g_core_do_command)(command, param_int, param_ptr);
+
+    switch (command)
+    {
+        case M64CMD_ROM_OPEN:
+            if ((*g_core_do_command)(M64CMD_ROM_GET_SETTINGS, sizeof(m64p_rom_settings), &g_current_rom_settings) !=
+                    M64ERR_SUCCESS)
+            {
+                printf("Error: Failed to load ROM settings.\n");
+            }
+            g_rom_settings_loaded = TRUE;
+            if ((*g_core_do_command)(M64CMD_ROM_GET_HEADER, sizeof(m64p_rom_header), &g_current_rom_header) !=
+                    M64ERR_SUCCESS)
+            {
+                printf("Error: Failed to load ROM header.\n");
+            }
+            g_rom_header_loaded = TRUE;
+            break;
+        case M64CMD_ROM_CLOSE:
+            g_rom_settings_loaded = FALSE;
+            g_rom_header_loaded = FALSE;
+            break;
+        default:
+            break;
+    }
+
+    return retval;
+}
+
+char* m64_get_rom_goodname ()
+{
+    if (!g_rom_settings_loaded) {
+        return NULL;
+    }
+
+    return g_current_rom_settings.goodname;
 }

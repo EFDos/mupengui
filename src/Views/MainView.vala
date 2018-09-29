@@ -89,11 +89,14 @@ namespace MupenGUI.Views {
                 }*/
                 var rom_data = Services.FileSystem.load_rom_file (Globals.CURRENT_ROM_PATH);
 
-                if (!Mupen64API.instance.run_command (Mupen64API.m64Command.ROM_OPEN,
+                if (Mupen64API.instance.run_command (Mupen64API.m64Command.ROM_OPEN,
                                                       (int) rom_data.get_size (),
-                                                      rom_data.get_data ()))
+                                                      rom_data.get_buffer ()))
                 {
-                    manager.application_ref.grant_a_toast ("Error loading Rom File.");
+                    manager.application_ref.grant_a_toast ("Loaded Rom: " + Mupen64API.instance.get_rom_goodname ());
+                    Mupen64API.instance.run_command (Mupen64API.m64Command.EXECUTE, 0, null);
+                } else {
+                    manager.application_ref.grant_a_toast ("Error loading Rom File: " + Globals.CURRENT_ROM_PATH);
                 }
             });
 

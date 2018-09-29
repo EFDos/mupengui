@@ -33,7 +33,7 @@ namespace MupenGUI.Services.FileSystem {
         private uint8[] buffer = null;
         private long size = 0;
 
-        public BinaryRomData (uint8[] data, long psize) {
+        public BinaryRomData (uint8* data, long psize) {
             if (data == null || psize == 0) {
                 return;
             }
@@ -42,7 +42,7 @@ namespace MupenGUI.Services.FileSystem {
             size = psize;
         }
 
-        public uint8[] get_data () { return buffer; }
+        public uint8[] get_buffer () { return buffer; }
         public long get_size () { return size; }
     }
 

@@ -33,7 +33,10 @@ extern int m64_unload_corelib ();
 extern int m64_start_corelib (char* pconfig_path, char* pdata_path);
 extern int m64_shutdown_corelib ();
 extern int m64_command (int command, int param_int, void* param_ptr);
+
 extern void m64_set_verbose (bool b);
+
+extern char* m64_get_rom_goodname ();
 
 namespace MupenGUI.Services {
     class Mupen64API : Object {
@@ -64,6 +67,7 @@ namespace MupenGUI.Services {
 
         private static Mupen64API _instance = null;
         private bool initialized = false;
+        private string goodname = "";
 
         public static Mupen64API instance {
             get {
@@ -125,11 +129,31 @@ namespace MupenGUI.Services {
                 stderr.printf ("Error code: %d", result);
                 return false;
             }
+
+            if (command == m64Command.ROM_OPEN) {
+                var builder = new StringBuilder ();
+                char* c_string = m64_get_rom_goodname ();
+                if (c_string != null) {
+                    char c = c_string[0];
+                    int it = 0;
+                    while (c != '\0') {
+                        builder.append_c (c);
+                        c = c_string[it++];
+                    }
+                    builder.erase(0, 1);
+                    goodname = builder.str;
+                }
+            }
+
             return true;
         }
 
         public void set_verbose (bool b) {
             m64_set_verbose (b);
+        }
+
+        public string get_rom_goodname () {
+            return goodname;
         }
     }
 }
