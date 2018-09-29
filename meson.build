@@ -98,6 +98,7 @@ code_files = files(
     'src/Views/Window/HeaderBar.vala',
     'src/Views/Settings/DisplaySettingsPage.vala',
     'src/Views/Settings/InputSettingsPage.vala',
+    'src/Services/Mupen64API.vala',
     'src/Services/Settings.vala',
     'src/Services/FileSystem.vala',
     'src/Services/ActionManager.vala',

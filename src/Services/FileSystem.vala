@@ -29,6 +29,47 @@ namespace MupenGUI.Services.FileSystem {
 
     public static Gtk.ApplicationWindow window_ref = null;
 
+    public class BinaryRomData : Object {
+        private uint8[] buffer = null;
+        private long size = 0;
+
+        public BinaryRomData (uint8[] data, long psize) {
+            if (data == null || psize == 0) {
+                return;
+            }
+            buffer = new uint8[psize];
+            Memory.copy (buffer, data, psize);
+            size = psize;
+        }
+
+        public uint8[] get_data () { return buffer; }
+        public long get_size () { return size; }
+    }
+
+    public static BinaryRomData load_rom_file (string path) {
+        try {
+            File file = File.new_for_path (path);
+
+            var file_stream = file.read ();
+            var data_stream = new DataInputStream (file_stream);
+            data_stream.set_byte_order (DataStreamByteOrder.LITTLE_ENDIAN);
+
+            long rom_length = 0;
+            file_stream.seek (0, SeekType.END);
+            rom_length = (long)file_stream.tell ();
+            file_stream.seek (0, SeekType.SET);
+
+            uint8[] buffer = new uint8[rom_length];
+
+            data_stream.read (buffer);
+
+            return new BinaryRomData (buffer, rom_length);
+        } catch (Error e) {
+            stderr.printf ("Error: %s\n", e.message);
+            return new BinaryRomData (null, 0);
+        }
+    }
+
     public static string choose_dir (string dialog_title) {
 
         string return_string = "";

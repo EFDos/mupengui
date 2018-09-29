@@ -71,7 +71,7 @@ namespace MupenGUI.Views {
                 if (Globals.CURRENT_ROM_PATH.length == 0) {
                     return;
                 }
-                var rom_path = Globals.CURRENT_ROM_PATH.replace (" ", "\\ ");
+                /*var rom_path = Globals.CURRENT_ROM_PATH.replace (" ", "\\ ");
                 manager.application_ref.grant_a_toast ("Launching Mupen64plus");
 
                 var display_settings = new DisplaySettings ();
@@ -86,6 +86,14 @@ namespace MupenGUI.Views {
 
                 if (!Granite.Services.System.execute_command (command.str)) {
                     manager.application_ref.grant_a_toast ("Error trying to launch mupen64plus.");
+                }*/
+                var rom_data = Services.FileSystem.load_rom_file (Globals.CURRENT_ROM_PATH);
+
+                if (!Mupen64API.instance.run_command (Mupen64API.m64Command.ROM_OPEN,
+                                                      (int) rom_data.get_size (),
+                                                      rom_data.get_data ()))
+                {
+                    manager.application_ref.grant_a_toast ("Error loading Rom File.");
                 }
             });
 
