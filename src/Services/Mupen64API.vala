@@ -28,6 +28,9 @@
 /*****************
  * Mupen64 C API *
  *****************/
+
+delegate void callback_type();
+
 extern int m64_load_corelib (char* libpath);
 extern int m64_unload_corelib ();
 extern int m64_start_corelib (char* pconfig_path, char* pdata_path);
@@ -36,9 +39,10 @@ extern int m64_shutdown_corelib ();
 extern int m64_load_plugin (int type, char* libpath);
 extern int m64_unload_plugin (int type);
 
-extern int m64_command (int command, int param_int, void* param_ptr);
+extern int m64_command (int command, int param_int = 0, void* param_ptr = null);
 
-extern void m64_set_verbose (bool b);
+extern void m64_set_emustop_callback(callback_type callback);
+extern void m64_set_verbose (bool b = true);
 
 extern char* m64_get_rom_goodname ();
 
@@ -92,6 +96,10 @@ namespace MupenGUI.Services {
             }
         }
 
+        public static void _CAPICALLBACK_emulation_stop () {
+            Mupen64API.instance.on_emulation_stop();
+        }
+
         private Mupen64API () {
             // do nothing for now
         }
@@ -117,6 +125,8 @@ namespace MupenGUI.Services {
                 stderr.printf ("Error: Failed to initialize Mupen64Plus Core. Error code: %d\n", result);
                 return false;
             }
+
+            m64_set_emustop_callback(_CAPICALLBACK_emulation_stop);
 
             return initialized = true;
         }
@@ -182,6 +192,10 @@ namespace MupenGUI.Services {
 
         public string get_rom_goodname () {
             return goodname;
+        }
+
+        public void on_emulation_stop() {
+            m64_command(m64Command.ROM_CLOSE);
         }
     }
 }

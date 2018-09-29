@@ -4,6 +4,10 @@
 #include "m64p_frontend.h"
 #include <stdio.h>
 
+typedef void (*fptr_emustop_callback)();
+
+fptr_emustop_callback g_emustop_callback = NULL;
+
 ptr_CoreStartup g_core_startup = NULL;
 ptr_CoreShutdown g_core_shutdown = NULL;
 ptr_CoreDoCommand g_core_do_command = NULL;
@@ -28,6 +32,11 @@ void m64_set_verbose(boolean b)
     g_verbose = b;
 }
 
+void m64_set_emustop_callback(fptr_emustop_callback callback)
+{
+    g_emustop_callback = callback;
+}
+
 void m64_debug_callback(void* context, int level, const char* message)
 {
     if (level == M64MSG_ERROR) {
@@ -46,6 +55,20 @@ void m64_debug_callback(void* context, int level, const char* message)
     }
     else {
         printf("%s Unknown: %s\n", (const char *) context, message);
+    }
+}
+
+void m64_state_callback(void*            context,
+                        m64p_core_param  param_changed,
+                        int              new_value)
+{
+    if (param_changed == M64CORE_EMU_STATE) {
+        if (new_value == 1) {
+            printf("Info: Core emulation has stopped.\n");
+            if (g_emustop_callback != NULL) {
+                g_emustop_callback();
+            }
+        }
     }
 }
 
@@ -68,7 +91,11 @@ int m64_load_corelib(const char* path)
 
 int m64_start_corelib(char* config_path, char* data_path)
 {
-    return (*g_core_startup)(0x020001, config_path, data_path, "Core", m64_debug_callback, NULL, NULL);
+    return (*g_core_startup)(0x020001,
+                             config_path,
+                             data_path,
+                             "CoreDebug", m64_debug_callback,
+                             "CoreState", m64_state_callback);
 }
 
 int m64_shutdown_corelib()
