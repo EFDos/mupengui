@@ -27,8 +27,6 @@
 
 using MupenGUI.Services;
 
-extern int printf_from_c();
-
 namespace MupenGUI.Views {
     public class MainView : Gtk.Box {
 
@@ -85,9 +83,6 @@ namespace MupenGUI.Views {
                 }
 
                 command.append (" " + rom_path);
-
-                var result = printf_from_c();
-                print("Result from C is: " + result.to_string());
 
                 if (!Granite.Services.System.execute_command (command.str)) {
                     manager.application_ref.grant_a_toast ("Error trying to launch mupen64plus.");

@@ -29,6 +29,10 @@ using Granite.Widgets;
 using MupenGUI;
 using MupenGUI.Services;
 
+extern int m64_start_corelib(char* pconfig_path, char* pdata_path);
+extern int m64_shutdown_corelib();
+extern void m64_set_verbose(bool b);
+
 namespace MupenGUI {
     public class Application : Granite.Application {
 
@@ -63,8 +67,30 @@ namespace MupenGUI {
 
         public static int main (string[] args) {
 
+            foreach (string arg in args) {
+                if (arg == "--verbose" || arg == "-v") {
+                    m64_set_verbose (true);
+                }
+            }
+
+            var result = m64_start_corelib (null, null);
+            if (result == 0) {
+                print ("Info: Mupen64Plus Core Initialized.\n");
+            } else {
+                print ("Error: Failed to initialize Mupen64Plus Core. Error code: %d\n", result);
+                return result;
+            }
+
             var app = new MupenGUI.Application ();
-            return app.run (args);
+            var app_retval = app.run (args);
+
+            result = m64_shutdown_corelib ();
+            if (result != 0) {
+                print ("Error: Failed to shutting down Mupen64Plus Core. Error code: %d\n", result);
+                return result;
+            }
+
+            return app_retval;
         }
     }
 }
