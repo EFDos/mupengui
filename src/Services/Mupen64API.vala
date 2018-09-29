@@ -28,10 +28,14 @@
 /*****************
  * Mupen64 C API *
  *****************/
-extern int m64_load_corelib ();
+extern int m64_load_corelib (char* libpath);
 extern int m64_unload_corelib ();
 extern int m64_start_corelib (char* pconfig_path, char* pdata_path);
 extern int m64_shutdown_corelib ();
+
+extern int m64_load_plugin (int type, char* libpath);
+extern int m64_unload_plugin (int type);
+
 extern int m64_command (int command, int param_int, void* param_ptr);
 
 extern void m64_set_verbose (bool b);
@@ -65,6 +69,15 @@ namespace MupenGUI.Services {
             ADVANCE_FRAME
         }
 
+        public enum m64PluginType{
+            NULL = 0,
+            RSP = 1,
+            VIDEO,
+            AUDIO,
+            INPUT,
+            CORE
+        }
+
         private static Mupen64API _instance = null;
         private bool initialized = false;
         private string goodname = "";
@@ -89,7 +102,7 @@ namespace MupenGUI.Services {
         }
 
         public bool init () {
-            var result = m64_load_corelib ();
+            var result = m64_load_corelib ("/usr/lib/x86_64-linux-gnu/libmupen64plus.so.2");
             if (result == 0) {
                 stderr.printf ("Info: Mupen64Plus Dynamic Library Loaded.\n");
             } else {
@@ -109,6 +122,11 @@ namespace MupenGUI.Services {
         }
 
         public void shutdown () {
+            m64_unload_plugin (m64PluginType.RSP);
+            m64_unload_plugin (m64PluginType.VIDEO);
+            m64_unload_plugin (m64PluginType.AUDIO);
+            m64_unload_plugin (m64PluginType.INPUT);
+
             var result = m64_shutdown_corelib ();
             if (result != 0) {
                 stderr.printf ("Error: Failed to shut down Mupen64Plus Core. Error code: %d\n", result);
@@ -143,6 +161,16 @@ namespace MupenGUI.Services {
                     builder.erase(0, 1);
                     goodname = builder.str;
                 }
+
+                var err = 0;
+                err = m64_load_plugin (m64PluginType.VIDEO, "/usr/lib/x86_64-linux-gnu/mupen64plus/mupen64plus-video-z64.so");
+                if (err != 0) { stderr.printf ("Error code: %d\n", err); }
+                err = m64_load_plugin (m64PluginType.AUDIO, "/usr/lib/x86_64-linux-gnu/mupen64plus/mupen64plus-audio-sdl.so");
+                if (err != 0) { stderr.printf ("Error code: %d\n", err); }
+                err = m64_load_plugin (m64PluginType.INPUT, "/usr/lib/x86_64-linux-gnu/mupen64plus/mupen64plus-input-sdl.so");
+                if (err != 0) { stderr.printf ("Error code: %d\n", err); }
+                err = m64_load_plugin (m64PluginType.RSP, "/usr/lib/x86_64-linux-gnu/mupen64plus/mupen64plus-rsp-z64.so");
+                if (err != 0) { stderr.printf ("Error code: %d\n", err); }
             }
 
             return true;
