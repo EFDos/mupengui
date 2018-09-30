@@ -27,6 +27,29 @@
 
 namespace MupenGUI.Views.Settings {
     public class InputSettingsPage : Granite.SimpleSettingsPage {
+
+        string[] button_list = {
+            "DPad R",
+            "DPad L",
+            "DPad U",
+            "DPad D",
+            "Start",
+            "Axis U",
+            "Axis L",
+            "Axis U",
+            "Axis D",
+            "Z",
+            "A",
+            "B",
+            "C R",
+            "C L",
+            "C U",
+            "C D",
+            "R",
+            "L"
+        };
+        uint button_list_it = 0;
+
         public InputSettingsPage () {
             Object (
                 //activable: true,
@@ -40,22 +63,76 @@ namespace MupenGUI.Views.Settings {
 
             var settings = new Services.InputSettings ();
 
-            var device_label = new Gtk.Label ("Input Device");
-            var device_name_box = new Gtk.ListBox ();
+            var controller_label = new Granite.HeaderLabel ("Controller");
+            var set_controls_button = new Gtk.Button.with_label ("Set Buttons");
 
-            var keyboard_entry = new Gtk.Entry ();
-            keyboard_entry.set_text("keyboard");
+            Gtk.ListStore list_store = new Gtk.ListStore (1, typeof (int));
+		    Gtk.TreeIter iter;
 
-            device_name_box.insert(keyboard_entry, 0);
-            /*fullscreen_switch.state_set (settings.fullscreen);
+		    list_store.append (out iter);
+		    list_store.set (iter, 0, 1);
+		    list_store.append (out iter);
+		    list_store.set (iter, 0, 2);
+		    list_store.append (out iter);
+		    list_store.set (iter, 0, 3);
+		    list_store.append (out iter);
+		    list_store.set (iter, 0, 4);
+
+            Gtk.ComboBox controller_list_box = new Gtk.ComboBox.with_model (list_store);
+            Gtk.CellRendererText renderer = new Gtk.CellRendererText ();
+		    controller_list_box.pack_start (renderer, true);
+		    controller_list_box.add_attribute (renderer, "text", 0);
+		    controller_list_box.active = 0;
+
+            set_controls_button.clicked.connect (() => {
+                var message_dialog = new Granite.MessageDialog.with_image_from_icon_name (
+                        "Set Button " + button_list[0],
+                        "Press a key or joystick button...",
+                        "applications-development",
+                        Gtk.ButtonsType.CANCEL
+                );
+
+                message_dialog.event.connect ((event) => {
+                    switch (event.type)
+                    {
+                        case Gdk.EventType.KEY_RELEASE:
+                            print ("keyval for %s: %u\n", button_list[button_list_it], event.key.keyval);
+                            if (++button_list_it > button_list.length - 1) {
+                                button_list_it = 0;
+                                message_dialog.close ();
+                            }
+                            message_dialog.primary_text = "Set Button " + button_list[button_list_it];
+                            break;
+                        case Gdk.EventType.BUTTON_RELEASE:
+                            print ("fuck me button pressed\n");
+                            //print ("keyval for %s: %u\n", button_list[button_list_it], event.key.keyval);
+                            if (++button_list_it > button_list.length - 1) {
+                                button_list_it = 0;
+                                message_dialog.close ();
+                            }
+                            message_dialog.primary_text = "Set Button " + button_list[button_list_it];
+                            break;
+                    }
+                });
+
+                message_dialog.close.connect (() => {
+                    button_list_it = 0;
+                });
+
+                message_dialog.run ();
+                message_dialog.destroy ();
+            });
+
+/*            fullscreen_switch.state_set (settings.fullscreen);
 
             fullscreen_switch.state_set.connect ((state) => {
                 settings.fullscreen = state;
                 print(state.to_string ());
             });*/
 
-            content_area.attach (device_label, 0, 0, 1, 1);
-            content_area.attach (device_name_box, 1, 0, 1, 1);
+            content_area.attach (controller_label, 0, 0, 1, 1);
+            content_area.attach (controller_list_box, 1, 0, 1, 1);
+            content_area.attach (set_controls_button, 0, 2, 1, 2);
         }
     }
 }
