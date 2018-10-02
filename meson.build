@@ -89,6 +89,7 @@ message ('Adds files to build')
 code_files = files(
     'src/MupenAPI/mupenAPI.c',
     'src/MupenAPI/dynlib.c',
+    'src/JoystickAPI/joy_listener.c',
     'src/Application.vala',
     'src/Actions.vala',
     'src/Views/MainView.vala',
@@ -99,6 +100,7 @@ code_files = files(
     'src/Views/Settings/DisplaySettingsPage.vala',
     'src/Views/Settings/InputSettingsPage.vala',
     'src/Services/Mupen64API.vala',
+    'src/Services/JoystickListener.vala',
     'src/Services/Settings.vala',
     'src/Services/FileSystem.vala',
     'src/Services/ActionManager.vala',

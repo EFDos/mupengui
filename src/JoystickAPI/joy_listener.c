@@ -1,5 +1,5 @@
 /************************************************************************/
-/*  Application.vala                                                    */
+/*  joy_listener.c                                                      */
 /************************************************************************/
 /*                       This file is part of:                          */
 /*                           MupenGUI                                   */
@@ -24,61 +24,74 @@
 /*                                                                      */
 /* Authored by: Douglas Muratore <www.sinz.com.br>                      */
 /************************************************************************/
-using Granite;
-using Granite.Widgets;
-using MupenGUI;
-using MupenGUI.Services;
 
-namespace MupenGUI {
-    public class Application : Granite.Application {
+#include <stdio.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <sys/ioctl.h>
+#include <linux/joystick.h>
 
-        private Views.MainView main_view;
+#define JOY_DEV "/dev/input/js0"
 
-        public Application () {
-            Object(
-                application_id: "com.github.efdos.mupen-gui",
-                flags: ApplicationFlags.FLAGS_NONE
-            );
-        }
+int test_joystick()
+{
+	int joy_fd, *axis=NULL, num_of_axis=0, num_of_buttons=0, x;
+	char *button=NULL, name_of_joystick[80];
+	struct js_event js;
 
-        protected override void activate () {
-            var window = new Gtk.ApplicationWindow (this);
-            var headerbar = new Views.Window.HeaderBar ();
-            main_view = new Views.MainView ();
+	if( ( joy_fd = open( JOY_DEV , O_RDONLY)) == -1 )
+	{
+		printf( "Couldn't open joystick\n" );
+		return -1;
+	}
 
-            FileSystem.window_ref = window;
-            ActionManager.instance.application_ref = this;
+	ioctl( joy_fd, JSIOCGAXES, &num_of_axis );
+	ioctl( joy_fd, JSIOCGBUTTONS, &num_of_buttons );
+	ioctl( joy_fd, JSIOCGNAME(80), &name_of_joystick );
 
-            window.set_titlebar (headerbar);
-            window.title = "MupenGUI";
-            window.set_default_size (900, 640);
-            window.add (this.main_view);
-            window.show_all ();
-        }
+	axis = (int *) calloc( num_of_axis, sizeof( int ) );
+	button = (char *) calloc( num_of_buttons, sizeof( char ) );
 
-        public void grant_a_toast (string toast_msg) {
-            main_view.toaster.title = toast_msg;
-            main_view.toaster.send_notification ();
-        }
+	printf("Joystick detected: %s\n\t%d axis\n\t%d buttons\n\n"
+		, name_of_joystick
+		, num_of_axis
+		, num_of_buttons );
 
-        public static int main (string[] args) {
+	fcntl( joy_fd, F_SETFL, O_NONBLOCK );	/* use non-blocking mode */
 
-            if (!Mupen64API.instance.init ()) {
-                return 1;
-            }
+	while( 1 ) 	/* infinite loop */
+	{
 
-            JoystickListener.instance.init ();
+			/* read the joystick state */
+		read(joy_fd, &js, sizeof(struct js_event));
 
-            foreach (string arg in args) {
-                if (arg == "--verbose" || arg == "-v") {
-                    Mupen64API.instance.set_verbose (true);
-                }
-            }
+			/* see what to do with the event */
+		switch (js.type & ~JS_EVENT_INIT)
+		{
+			case JS_EVENT_AXIS:
+				axis   [ js.number ] = js.value;
+				break;
+			case JS_EVENT_BUTTON:
+				button [ js.number ] = js.value;
+				break;
+		}
 
-            var app = new MupenGUI.Application ();
-            var app_retval = app.run (args);
+			/* print the results */
+		printf( "X: %6d  Y: %6d  ", axis[0], axis[1] );
 
-            return app_retval;
-        }
-    }
+		if( num_of_axis > 2 )
+			printf("Z: %6d  ", axis[2] );
+
+		if( num_of_axis > 3 )
+			printf("R: %6d  ", axis[3] );
+
+		for( x=0 ; x<num_of_buttons ; ++x )
+			printf("B%d: %d  ", x, button[x] );
+
+		printf("  \r");
+		fflush(stdout);
+	}
+
+	close( joy_fd );	/* too bad we never get here */
+	return 0;
 }
