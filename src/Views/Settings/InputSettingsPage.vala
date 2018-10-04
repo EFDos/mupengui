@@ -85,38 +85,39 @@ namespace MupenGUI.Views.Settings {
 		    controller_list_box.active = 0;
 
             set_controls_button.clicked.connect (() => {
-                var message_dialog = new Granite.MessageDialog.with_image_from_icon_name (
+                var message_dialog = new Widgets.JoystickEventDialog.with_image_from_icon_name (
                         "Set Button " + button_list[0],
                         "Press a key or joystick button...",
                         "applications-development",
                         Gtk.ButtonsType.CANCEL
                 );
+                Services.JoystickListener.instance.start ();
 
-                message_dialog.event.connect ((event) => {
-                    switch (event.type)
-                    {
-                        case Gdk.EventType.KEY_RELEASE:
-                            print ("keyval for %s: %u\n", button_list[button_list_it], event.key.keyval);
-                            if (++button_list_it > button_list.length - 1) {
-                                button_list_it = 0;
-                                message_dialog.close ();
-                            }
-                            message_dialog.primary_text = "Set Button " + button_list[button_list_it];
-                            break;
-                        case Gdk.EventType.BUTTON_RELEASE:
-                            print ("fuck me button pressed\n");
-                            //print ("keyval for %s: %u\n", button_list[button_list_it], event.key.keyval);
-                            if (++button_list_it > button_list.length - 1) {
-                                button_list_it = 0;
-                                message_dialog.close ();
-                            }
-                            message_dialog.primary_text = "Set Button " + button_list[button_list_it];
-                            break;
+                message_dialog.key_release_event.connect ((event) => {
+                    print ("keyval for %s: %u\n", button_list[button_list_it], event.key.keyval);
+                    if (++button_list_it > button_list.length - 1) {
+                        button_list_it = 0;
+                        message_dialog.close ();
                     }
+                    message_dialog.primary_text = "Set Button " + button_list[button_list_it];
+                });
+
+                message_dialog.joystick_event.connect ((event) => {
+                    print ("joystick pressed, omg, I can't even believe it.\n");
+                    if (++button_list_it > button_list.length - 1) {
+                        message_dialog.close ();
+                    }
+                    message_dialog.primary_text = "Set Button " + button_list[button_list_it];
                 });
 
                 message_dialog.close.connect (() => {
                     button_list_it = 0;
+                    Services.JoystickListener.instance.stop ();
+                });
+
+                message_dialog.response.connect ((response_id) => {
+                    button_list_it = 0;
+                    Services.JoystickListener.instance.stop ();
                 });
 
                 message_dialog.run ();

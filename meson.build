@@ -20,7 +20,7 @@ i18n = import('i18n')
 # Set our translation domain
 message ('Set our translation domain')
 
-add_global_arguments('-DGETTEXT_PACKAGE=\"@0@\"'.format (meson.project_name()), language:'c')
+add_global_arguments('-DGETTEXT_PACKAGE=\"@0@\" --thread'.format (meson.project_name()), language:'c')
 
 # Adding deps
 message ('Listing dependencies')
@@ -99,6 +99,7 @@ code_files = files(
     'src/Views/Window/HeaderBar.vala',
     'src/Views/Settings/DisplaySettingsPage.vala',
     'src/Views/Settings/InputSettingsPage.vala',
+    'src/Views/Widgets/JoystickEventDialog.vala',
     'src/Services/Mupen64API.vala',
     'src/Services/JoystickListener.vala',
     'src/Services/Settings.vala',

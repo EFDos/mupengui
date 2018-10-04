@@ -24,7 +24,8 @@
 /*                                                                      */
 /* Authored by: Douglas Muratore <www.sinz.com.br>                      */
 /************************************************************************/
-
+#include "../MupenAPI/common.h"
+#include <stdlib.h>
 #include <stdio.h>
 #include <fcntl.h>
 #include <unistd.h>
@@ -33,53 +34,77 @@
 
 #define JOY_DEV "/dev/input/js0"
 
-int test_joystick()
-{
-	int joy_fd, *axis=NULL, num_of_axis=0, num_of_buttons=0, x;
-	char *button=NULL, name_of_joystick[80];
-	struct js_event js;
+int g_joy_fd = 0;
+int* g_axis = NULL;
+char* g_button = NULL;
 
-	if( ( joy_fd = open( JOY_DEV , O_RDONLY)) == -1 )
+struct js_event g_js;
+
+boolean joy_init ()
+{
+    int num_of_axis=0, num_of_buttons=0; //, x;
+	char name_of_joystick[80];
+
+	if( ( g_joy_fd = open( JOY_DEV , O_RDONLY)) == -1 )
 	{
 		printf( "Couldn't open joystick\n" );
-		return -1;
+		return FALSE;
 	}
 
-	ioctl( joy_fd, JSIOCGAXES, &num_of_axis );
-	ioctl( joy_fd, JSIOCGBUTTONS, &num_of_buttons );
-	ioctl( joy_fd, JSIOCGNAME(80), &name_of_joystick );
+	ioctl( g_joy_fd, JSIOCGAXES, &num_of_axis );
+	ioctl( g_joy_fd, JSIOCGBUTTONS, &num_of_buttons );
+	ioctl( g_joy_fd, JSIOCGNAME(80), &name_of_joystick );
 
-	axis = (int *) calloc( num_of_axis, sizeof( int ) );
-	button = (char *) calloc( num_of_buttons, sizeof( char ) );
+	g_axis = (int *) calloc( num_of_axis, sizeof( int ) );
+	g_button = (char *) calloc( num_of_buttons, sizeof( char ) );
+
+    for (int i = 0 ; i < num_of_axis ; ++i) {
+        g_axis[i] = 0;
+    }
+
+    for (int i = 0 ; i < num_of_buttons ; ++i) {
+        g_button[i] = 0;
+    }
 
 	printf("Joystick detected: %s\n\t%d axis\n\t%d buttons\n\n"
 		, name_of_joystick
 		, num_of_axis
 		, num_of_buttons );
 
-	fcntl( joy_fd, F_SETFL, O_NONBLOCK );	/* use non-blocking mode */
+	fcntl( g_joy_fd, F_SETFL, O_NONBLOCK );	/* use non-blocking mode */
+    return TRUE;
+}
 
-	while( 1 ) 	/* infinite loop */
+int joy_event_loop()
+{
+	// read the joystick state
+	read(g_joy_fd, &g_js, sizeof(struct js_event));
+
+			// see what to do with the event
+	switch (g_js.type & ~JS_EVENT_INIT)
 	{
+		case JS_EVENT_AXIS:
+			if (g_axis[g_js.number] != 0 && g_js.value == 0) {
+                g_axis[g_js.number] = 0;
+                return g_js.number + 100;
+            }
+            g_axis[g_js.number] = g_js.value;
+            break;
+		case JS_EVENT_BUTTON:
+			if (g_button[g_js.number] != 0 && g_js.value == 0) {
+                g_button[g_js.number] = 0;
+                return g_js.number;
+            }
+            g_button[g_js.number] = g_js.value;
+            break;
+        default:
+            break;
+	}
 
-			/* read the joystick state */
-		read(joy_fd, &js, sizeof(struct js_event));
+			// print the results
+		//printf( "X: %6d  Y: %6d  ", g_axis[0], g_axis[1] );
 
-			/* see what to do with the event */
-		switch (js.type & ~JS_EVENT_INIT)
-		{
-			case JS_EVENT_AXIS:
-				axis   [ js.number ] = js.value;
-				break;
-			case JS_EVENT_BUTTON:
-				button [ js.number ] = js.value;
-				break;
-		}
-
-			/* print the results */
-		printf( "X: %6d  Y: %6d  ", axis[0], axis[1] );
-
-		if( num_of_axis > 2 )
+		/*if( num_of_axis > 2 )
 			printf("Z: %6d  ", axis[2] );
 
 		if( num_of_axis > 3 )
@@ -89,9 +114,8 @@ int test_joystick()
 			printf("B%d: %d  ", x, button[x] );
 
 		printf("  \r");
-		fflush(stdout);
-	}
+		fflush(stdout);*/
 
-	close( joy_fd );	/* too bad we never get here */
-	return 0;
+	//close( joy_fd );	// too bad we never get here
+	return -1;
 }
