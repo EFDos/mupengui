@@ -24,6 +24,7 @@
 /*                                                                      */
 /* Authored by: Douglas Muratore <www.sinz.com.br>                      */
 /************************************************************************/
+using MupenGUI.Configuration;
 
 /*****************
  * Mupen64 C API *
@@ -41,6 +42,8 @@ extern int m64_unload_plugin (int type);
 
 extern int m64_command (int command, int param_int = 0, void* param_ptr = null);
 
+extern int m64_bind_ctrl_button(uint controller, char* button_name, char* value);
+
 extern void m64_set_emustop_callback (callback_type callback);
 extern int m64_set_fullscreen (bool b = true);
 extern void m64_set_verbose (bool b = true);
@@ -51,50 +54,50 @@ namespace MupenGUI.Services {
     class Mupen64API : Object {
 
         public enum m64Command {
-            NOP = 0,
-            ROM_OPEN,
-            ROM_CLOSE,
-            ROM_GET_HEADER,
-            ROM_GET_SETTINGS,
-            EXECUTE,
-            STOP,
-            PAUSE,
-            RESUME,
-            CORE_STATE_QUERY,
-            STATE_LOAD,
-            STATE_SAVE,
-            STATE_SET_SLOT,
-            SEND_SDL_KEYDOWN,
-            SEND_SDL_KEYUP,
-            SET_FRAME_CALLBACK,
-            TAKE_NEXT_SCREENSHOT,
-            CORE_STATE_SET,
-            READ_SCREEN,
-            RESET,
-            ADVANCE_FRAME
+            Nop = 0,
+            RomOpen,
+            RomClose,
+            RomGetHeader,
+            RomGetSetting,
+            Execute,
+            Stop,
+            Pause,
+            Resume,
+            CoreStateQuery,
+            StateLoad,
+            StateSave,
+            StateSetSlot,
+            SendSDLKeydown,
+            SendSDLKeyup,
+            SetFrameCallback,
+            TakeNextScreenshot,
+            CoreStateSet,
+            ReadScreen,
+            Reset,
+            AdvanceFrame
         }
 
         public enum m64PluginType {
-            NULL = 0,
+            Null = 0,
             RSP = 1,
-            VIDEO,
-            AUDIO,
-            INPUT,
-            CORE
+            Video,
+            Audio,
+            Input,
+            Core
         }
 
         public enum m64CoreParam {
-          EMU_STATE = 1,
-          VIDEO_MODE,
-          SAVESTATE_SLOT,
-          SPEED_FACTOR,
-          SPEED_LIMITER,
-          VIDEO_SIZE,
-          AUDIO_VOLUME,
-          AUDIO_MUTE,
-          INPUT_GAMESHARK,
-          STATE_LOADCOMPLETE,
-          STATE_SAVECOMPLETE
+            EmuState = 1,
+            VideoMode,
+            SaveStateSlot,
+            SpeedFactor,
+            SpeedLimiter,
+            VideoSize,
+            AudioVolume,
+            AudioMute,
+            InputGameShark,
+            StateLoadComplete,
+            StateSaveComplete
         }
 
         private static Mupen64API _instance = null;
@@ -128,17 +131,13 @@ namespace MupenGUI.Services {
 
         public bool init () {
             var result = m64_load_corelib ("/usr/lib/x86_64-linux-gnu/libmupen64plus.so.2");
-            if (result == 0) {
-                stderr.printf ("Info: Mupen64Plus Dynamic Library Loaded.\n");
-            } else {
+            if (result != 0) {
                 stderr.printf ("Error: Failed to load Mupen64Plus Dynamic Library. Error code: %d\n", result);
                 return false;
             }
 
             result = m64_start_corelib (null, null);
-            if (result == 0) {
-                stderr.printf ("Info: Mupen64Plus Core Initialized.\n");
-            } else {
+            if (result != 0) {
                 stderr.printf ("Error: Failed to initialize Mupen64Plus Core. Error code: %d\n", result);
                 return false;
             }
@@ -150,9 +149,9 @@ namespace MupenGUI.Services {
 
         public void shutdown () {
             m64_unload_plugin (m64PluginType.RSP);
-            m64_unload_plugin (m64PluginType.VIDEO);
-            m64_unload_plugin (m64PluginType.AUDIO);
-            m64_unload_plugin (m64PluginType.INPUT);
+            m64_unload_plugin (m64PluginType.Video);
+            m64_unload_plugin (m64PluginType.Audio);
+            m64_unload_plugin (m64PluginType.Input);
 
             var result = m64_shutdown_corelib ();
             if (result != 0) {
@@ -175,7 +174,7 @@ namespace MupenGUI.Services {
                 return false;
             }
 
-            if (command == m64Command.ROM_OPEN) {
+            if (command == m64Command.RomOpen) {
                 var builder = new StringBuilder ();
                 char* c_string = m64_get_rom_goodname ();
                 if (c_string != null) {
@@ -191,11 +190,11 @@ namespace MupenGUI.Services {
                 }
 
                 var err = 0;
-                err = m64_load_plugin (m64PluginType.VIDEO, "/usr/lib/x86_64-linux-gnu/mupen64plus/mupen64plus-video-z64.so");
+                err = m64_load_plugin (m64PluginType.Video, "/usr/lib/x86_64-linux-gnu/mupen64plus/mupen64plus-video-z64.so");
                 if (err != 0) { stderr.printf ("Error code: %d\n", err); }
-                err = m64_load_plugin (m64PluginType.AUDIO, "/usr/lib/x86_64-linux-gnu/mupen64plus/mupen64plus-audio-sdl.so");
+                err = m64_load_plugin (m64PluginType.Audio, "/usr/lib/x86_64-linux-gnu/mupen64plus/mupen64plus-audio-sdl.so");
                 if (err != 0) { stderr.printf ("Error code: %d\n", err); }
-                err = m64_load_plugin (m64PluginType.INPUT, "/usr/lib/x86_64-linux-gnu/mupen64plus/mupen64plus-input-sdl.so");
+                err = m64_load_plugin (m64PluginType.Input, "/usr/lib/x86_64-linux-gnu/mupen64plus/mupen64plus-input-sdl.so");
                 if (err != 0) { stderr.printf ("Error code: %d\n", err); }
                 err = m64_load_plugin (m64PluginType.RSP, "/usr/lib/x86_64-linux-gnu/mupen64plus/mupen64plus-rsp-z64.so");
                 if (err != 0) { stderr.printf ("Error code: %d\n", err); }
@@ -210,7 +209,7 @@ namespace MupenGUI.Services {
                                "before starting emulation.\n");
             }
 
-            m64_command (m64Command.EXECUTE);
+            m64_command (m64Command.Execute);
         }
 
         public void set_verbose (bool b = true) {
@@ -224,12 +223,82 @@ namespace MupenGUI.Services {
             }
         }
 
+        public void bind_controller_button(uint controller, ButtonConfig button, int val) {
+            string button_string = null;
+            string key_string = "key(" + val.to_string () + ")";
+            switch (button.button_id)
+            {
+                case DPadRight:
+                    button_string = "DPad R";
+                    break;
+                case DPadLeft:
+                    button_string = "DPad L";
+                    break;
+                case DPadDown:
+                    button_string = "DPad D";
+                    break;
+                case DPadUp:
+                    button_string = "DPad U";
+                    break;
+                case Start:
+                    button_string = "Start";
+                    break;
+                case TriggerZ:
+                    button_string = "Z Trig";
+                    break;
+                case ButtonB:
+                    button_string = "B Button";
+                    break;
+                case ButtonA:
+                    button_string = "A Button";
+                    break;
+                case CButtonRight:
+                    button_string = "C Button R";
+                    break;
+                case CButtonLeft:
+                    button_string = "C Button L";
+                    break;
+                case CButtonDown:
+                    button_string = "C Button D";
+                    break;
+                case CButtonUp:
+                    button_string = "C Button U";
+                    break;
+                case ShoulderR:
+                    button_string = "R Trig";
+                    break;
+                case ShoulderL:
+                    button_string = "L Trig";
+                    break;
+                case MempakSwitch:
+                    button_string = "Mempak switch";
+                    break;
+                case RumblepakSwitch:
+                    button_string = "Rumblepak switch";
+                    break;
+                case AxisX:
+                    button_string = "X Axis";
+                    break;
+                case AxisY:
+                    button_string = "Y Axis";
+                    break;
+            }
+            int retval = m64_bind_ctrl_button(controller, button_string, key_string);
+            if (retval != 0) {
+                stderr.printf("Error: Failed to bind button %s. Error code: %d\n", button_string, retval);
+            }
+        }
+
         public string get_rom_goodname () {
             return goodname;
         }
 
         public void on_emulation_stop() {
-            m64_command (m64Command.ROM_CLOSE);
+            m64_command (m64Command.RomClose);
+            m64_unload_plugin (m64PluginType.RSP);
+            m64_unload_plugin (m64PluginType.Video);
+            m64_unload_plugin (m64PluginType.Audio);
+            m64_unload_plugin (m64PluginType.Input);
             rom_loaded = false;
         }
     }

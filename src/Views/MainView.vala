@@ -72,10 +72,9 @@ namespace MupenGUI.Views {
                     return;
                 }
 
-                var display_settings = new DisplaySettings ();
                 var rom_data = Services.FileSystem.load_rom_file (Globals.CURRENT_ROM_PATH);
 
-                if (Mupen64API.instance.run_command (Mupen64API.m64Command.ROM_OPEN,
+                if (Mupen64API.instance.run_command (Mupen64API.m64Command.RomOpen,
                                                       (int) rom_data.get_size (),
                                                       rom_data.get_buffer ()))
                 {

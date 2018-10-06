@@ -25,28 +25,29 @@
 /* Authored by: Douglas Muratore <www.sinz.com.br>                      */
 /************************************************************************/
 
+using MupenGUI.Configuration;
+
 namespace MupenGUI.Views.Settings {
+
     public class InputSettingsPage : Granite.SimpleSettingsPage {
 
-        string[] button_list = {
-            "DPad R",
-            "DPad L",
-            "DPad U",
-            "DPad D",
-            "Start",
-            "Axis U",
-            "Axis L",
-            "Axis U",
-            "Axis D",
-            "Z",
-            "A",
-            "B",
-            "C R",
-            "C L",
-            "C U",
-            "C D",
-            "R",
-            "L"
+        ButtonConfig[] button_list = {
+            new ButtonConfig("D Right", ButtonConfig.ButtonID.DPadRight),
+            new ButtonConfig("D Left", ButtonConfig.ButtonID.DPadLeft),
+            new ButtonConfig("D Down", ButtonConfig.ButtonID.DPadDown),
+            new ButtonConfig("D Up", ButtonConfig.ButtonID.DPadUp),
+            new ButtonConfig("Start", ButtonConfig.ButtonID.Start),
+            new ButtonConfig("Trigger Z", ButtonConfig.ButtonID.TriggerZ),
+            new ButtonConfig("Button B", ButtonConfig.ButtonID.ButtonB),
+            new ButtonConfig("Button A", ButtonConfig.ButtonID.ButtonA),
+            new ButtonConfig("C Right", ButtonConfig.ButtonID.CButtonRight),
+            new ButtonConfig("C Left", ButtonConfig.ButtonID.CButtonLeft),
+            new ButtonConfig("C Down", ButtonConfig.ButtonID.CButtonDown),
+            new ButtonConfig("C Up", ButtonConfig.ButtonID.CButtonUp),
+            new ButtonConfig("Trigger R", ButtonConfig.ButtonID.ShoulderR),
+            new ButtonConfig("Trigger L", ButtonConfig.ButtonID.ShoulderL),
+            new ButtonConfig("Axis X", ButtonConfig.ButtonID.AxisX),
+            new ButtonConfig("Axis Y", ButtonConfig.ButtonID.AxisY)
         };
         uint button_list_it = 0;
 
@@ -60,8 +61,6 @@ namespace MupenGUI.Views.Settings {
         }
 
         construct {
-
-            var settings = new Services.InputSettings ();
 
             var controller_label = new Granite.HeaderLabel ("Controller");
             var set_controls_button = new Gtk.Button.with_label ("Set Buttons");
@@ -86,7 +85,7 @@ namespace MupenGUI.Views.Settings {
 
             set_controls_button.clicked.connect (() => {
                 var message_dialog = new Widgets.JoystickEventDialog.with_image_from_icon_name (
-                        "Set Button " + button_list[0],
+                        "Set Button " + button_list[0].name,
                         "Press a key or joystick button...",
                         "applications-development",
                         Gtk.ButtonsType.CANCEL
@@ -94,12 +93,13 @@ namespace MupenGUI.Views.Settings {
                 Services.JoystickListener.instance.start ();
 
                 message_dialog.key_release_event.connect ((event) => {
-                    print ("keyval for %s: %u\n", button_list[button_list_it], event.key.keyval);
+                    //print ("keyval for %s: %u\n", button_list[button_list_it].name, event.key.keyval);
+                    Services.Mupen64API.instance.bind_controller_button (0, button_list[button_list_it], (int)event.key.keyval);
                     if (++button_list_it > button_list.length - 1) {
                         button_list_it = 0;
                         message_dialog.close ();
                     }
-                    message_dialog.primary_text = "Set Button " + button_list[button_list_it];
+                    message_dialog.primary_text = "Set Button " + button_list[button_list_it].name;
                 });
 
                 message_dialog.joystick_event.connect ((event) => {
@@ -107,7 +107,7 @@ namespace MupenGUI.Views.Settings {
                     if (++button_list_it > button_list.length - 1) {
                         message_dialog.close ();
                     }
-                    message_dialog.primary_text = "Set Button " + button_list[button_list_it];
+                    message_dialog.primary_text = "Set Button " + button_list[button_list_it].name;
                 });
 
                 message_dialog.close.connect (() => {
@@ -123,13 +123,6 @@ namespace MupenGUI.Views.Settings {
                 message_dialog.run ();
                 message_dialog.destroy ();
             });
-
-/*            fullscreen_switch.state_set (settings.fullscreen);
-
-            fullscreen_switch.state_set.connect ((state) => {
-                settings.fullscreen = state;
-                print(state.to_string ());
-            });*/
 
             content_area.attach (controller_label, 0, 0, 1, 1);
             content_area.attach (controller_list_box, 1, 0, 1, 1);

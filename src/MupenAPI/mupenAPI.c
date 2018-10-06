@@ -41,24 +41,24 @@ static ptr_CoreDoCommand g_core_do_command = NULL;
 static ptr_CoreAttachPlugin g_core_attach_plugin = NULL;
 static ptr_CoreDetachPlugin g_core_detach_plugin = NULL;
 
-static ptr_ConfigListSections     g_config_list_sections;
+//static ptr_ConfigListSections     g_config_list_sections;
 static ptr_ConfigOpenSection      g_config_open_section;
-static ptr_ConfigDeleteSection    g_config_delete_section;
+//static ptr_ConfigDeleteSection    g_config_delete_section;
 static ptr_ConfigSaveSection      g_config_save_section;
-static ptr_ConfigListParameters   ConfigListParameters;
-static ptr_ConfigSaveFile         g_config_save_file;
+//static ptr_ConfigListParameters   ConfigListParameters;
+//static ptr_ConfigSaveFile         g_config_save_file;
 static ptr_ConfigSetParameter     g_config_set_parameter;
-static ptr_ConfigGetParameter     ConfigGetParameter;
-static ptr_ConfigGetParameterType ConfigGetParameterType;
-static ptr_ConfigGetParameterHelp ConfigGetParameterHelp;
-static ptr_ConfigSetDefaultInt    ConfigSetDefaultInt;
-static ptr_ConfigSetDefaultFloat  ConfigSetDefaultFloat;
-static ptr_ConfigSetDefaultBool   ConfigSetDefaultBool;
-static ptr_ConfigSetDefaultString ConfigSetDefaultString;
-static ptr_ConfigGetParamInt      ConfigGetParamInt;
-static ptr_ConfigGetParamFloat    ConfigGetParamFloat;
-static ptr_ConfigGetParamBool     ConfigGetParamBool;
-static ptr_ConfigGetParamString   ConfigGetParamString;
+//static ptr_ConfigGetParameter     ConfigGetParameter;
+//static ptr_ConfigGetParameterType ConfigGetParameterType;
+//static ptr_ConfigGetParameterHelp ConfigGetParameterHelp;
+//static ptr_ConfigSetDefaultInt    ConfigSetDefaultInt;
+//static ptr_ConfigSetDefaultFloat  ConfigSetDefaultFloat;
+//static ptr_ConfigSetDefaultBool   ConfigSetDefaultBool;
+//static ptr_ConfigSetDefaultString ConfigSetDefaultString;
+//static ptr_ConfigGetParamInt      ConfigGetParamInt;
+//static ptr_ConfigGetParamFloat    ConfigGetParamFloat;
+//static ptr_ConfigGetParamBool     ConfigGetParamBool;
+//static ptr_ConfigGetParamString   ConfigGetParamString;
 
 static m64p_dynlib_handle g_core_handle            = NULL;
 static m64p_dynlib_handle g_plugin_video_handle    = NULL;
@@ -66,7 +66,8 @@ static m64p_dynlib_handle g_plugin_audio_handle    = NULL;
 static m64p_dynlib_handle g_plugin_input_handle    = NULL;
 static m64p_dynlib_handle g_plugin_rsp_handle      = NULL;
 
-static m64p_handle g_config_video_handle = NULL;
+static m64p_handle g_conf_video_handle = NULL;
+static m64p_handle g_conf_inputctrl_handle[4];
 
 static m64p_rom_settings g_current_rom_settings;
 static m64p_rom_header g_current_rom_header;
@@ -83,13 +84,13 @@ void m64_set_emustop_callback(fptr_emustop_callback callback)
 void m64_debug_callback(void* context, int level, const char* message)
 {
     if (level == M64MSG_ERROR) {
-        printf("%s Error: %s\n", (const char *) context, message);
+        printf("%s M64API Error: %s\n", (const char *) context, message);
     } else if (level == M64MSG_WARNING) {
-        printf("%s Warning: %s\n", (const char *) context, message);
+        printf("%s M64API Warning: %s\n", (const char *) context, message);
     } else if (level == M64MSG_INFO) {
         printf("%s: %s\n", (const char *) context, message);
     } else if (level == M64MSG_STATUS) {
-        printf("%s Status: %s\n", (const char *) context, message);
+        printf("%s M64API Status: %s\n", (const char *) context, message);
     } else if (level == M64MSG_VERBOSE)
     {
         if (g_verbose) {
@@ -114,7 +115,7 @@ void m64_state_callback(void*            context,
     }
 }
 
-int m64_load_corelib(const char* path)
+m64p_error m64_load_corelib(const char* path)
 {
     m64p_error open_result = dynlib_open(&g_core_handle, path);
 
@@ -122,21 +123,22 @@ int m64_load_corelib(const char* path)
         return open_result;
     }
 
-    printf("Info: Loading Core functions.\n");
+    printf("M64API Info: Loading Core functions.\n");
     g_core_startup = dynlib_getproc(g_core_handle, "CoreStartup");
     g_core_shutdown = dynlib_getproc(g_core_handle, "CoreShutdown");
     g_core_do_command = dynlib_getproc(g_core_handle, "CoreDoCommand");
     g_core_attach_plugin = dynlib_getproc(g_core_handle, "CoreAttachPlugin");
     g_core_detach_plugin = dynlib_getproc(g_core_handle, "CoreDetachPlugin");
 
-    printf("Info: Loading Config functions.\n");
+    printf("M64API Info: Loading Config functions.\n");
     g_config_open_section = dynlib_getproc(g_core_handle, "ConfigOpenSection");
+    g_config_save_section = dynlib_getproc(g_core_handle, "ConfigSaveSection");
     g_config_set_parameter = dynlib_getproc(g_core_handle, "ConfigSetParameter");
 
     return M64ERR_SUCCESS;
 }
 
-int m64_start_corelib(char* config_path, char* data_path)
+m64p_error m64_start_corelib(char* config_path, char* data_path)
 {
     m64p_error retval = (*g_core_startup)(0x020001,
                                           config_path,
@@ -144,18 +146,22 @@ int m64_start_corelib(char* config_path, char* data_path)
                                           "CoreDebug", m64_debug_callback,
                                           "CoreState", m64_state_callback);
 
-    printf("Info: Opening Config handles\n");
-    (*g_config_open_section)("Video-General", &g_config_video_handle);
+    printf("M64API Info: Opening Config handles\n");
+    (*g_config_open_section)("Video-General", &g_conf_video_handle);
+    (*g_config_open_section)("Input-SDL-Control1", &g_conf_inputctrl_handle[0]);
+    (*g_config_open_section)("Input-SDL-Control2", &g_conf_inputctrl_handle[1]);
+    (*g_config_open_section)("Input-SDL-Control3", &g_conf_inputctrl_handle[2]);
+    (*g_config_open_section)("Input-SDL-Control4", &g_conf_inputctrl_handle[3]);
 
     return retval;
 }
 
-int m64_shutdown_corelib()
+m64p_error m64_shutdown_corelib()
 {
     return (*g_core_shutdown)();
 }
 
-int m64_unload_corelib()
+m64p_error m64_unload_corelib()
 {
     if (g_core_handle == NULL) {
         return M64ERR_INVALID_STATE;
@@ -170,7 +176,7 @@ int m64_unload_corelib()
     return M64ERR_SUCCESS;
 }
 
-int m64_load_plugin(m64p_plugin_type type, const char* path)
+m64p_error m64_load_plugin(m64p_plugin_type type, const char* path)
 {
     if (path == NULL) {
         return M64ERR_INPUT_INVALID;
@@ -188,25 +194,25 @@ int m64_load_plugin(m64p_plugin_type type, const char* path)
 
             err = dynlib_open(&g_plugin_rsp_handle, path);
             if (err != M64ERR_SUCCESS) {
-                printf("Error: Failed to load RSP plugin: %s\n", path);
+                printf("M64API Error: Failed to load RSP plugin: %s\n", path);
                 return err;
             }
 
             plugin_startup = dynlib_getproc (g_plugin_rsp_handle, "PluginStartup");
             if (plugin_startup == NULL) {
-                printf("Error: library '%s' broken.  No PluginStartup() function found.", path);
+                printf("M64API Error: library '%s' broken.  No PluginStartup() function found.", path);
                 return M64ERR_PLUGIN_FAIL;
             }
 
             err = (*plugin_startup)(g_core_handle, "RSP_PLUGIN", m64_debug_callback);
             if (err != M64ERR_SUCCESS) {
-                printf("Error: RSP plugin library '%s' failed to start.", path);
+                printf("M64API Error: RSP plugin library '%s' failed to start.", path);
                 return err;
             }
 
             err = (*g_core_attach_plugin)(type, g_plugin_rsp_handle);
             if (err != M64ERR_SUCCESS) {
-                printf("Error: Failed to attach RSP plugin: %s\n", path);
+                printf("M64API Error: Failed to attach RSP plugin: %s\n", path);
                 return err;
             }
             break;
@@ -217,25 +223,25 @@ int m64_load_plugin(m64p_plugin_type type, const char* path)
 
             err = dynlib_open(&g_plugin_video_handle, path);
             if (err != M64ERR_SUCCESS) {
-                printf("Error: Failed to load Video plugin: %s\n", path);
+                printf("M64API Error: Failed to load Video plugin: %s\n", path);
                 return err;
             }
 
             plugin_startup = dynlib_getproc (g_plugin_video_handle, "PluginStartup");
             if (plugin_startup == NULL) {
-                printf("Error: library '%s' broken.  No PluginStartup() function found.", path);
+                printf("M64API Error: library '%s' broken.  No PluginStartup() function found.", path);
                 return M64ERR_PLUGIN_FAIL;
             }
 
             err = (*plugin_startup)(g_core_handle, "GFX_PLUGIN", m64_debug_callback);
             if (err != M64ERR_SUCCESS) {
-                printf("Error: Video plugin library '%s' failed to start.", path);
+                printf("M64API Error: Video plugin library '%s' failed to start.", path);
                 return err;
             }
 
             err = (*g_core_attach_plugin)(type, g_plugin_video_handle);
             if (err != M64ERR_SUCCESS) {
-                printf("Error: Failed to attach Video plugin: %s\n", path);
+                printf("M64API Error: Failed to attach Video plugin: %s\n", path);
                 return err;
             }
             break;
@@ -246,25 +252,25 @@ int m64_load_plugin(m64p_plugin_type type, const char* path)
 
             err = dynlib_open(&g_plugin_audio_handle, path);
             if (err != M64ERR_SUCCESS) {
-                printf("Error: Failed to load Audio plugin: %s\n", path);
+                printf("M64API Error: Failed to load Audio plugin: %s\n", path);
                 return err;
             }
 
             plugin_startup = dynlib_getproc (g_plugin_audio_handle, "PluginStartup");
             if (plugin_startup == NULL) {
-                printf("Error: library '%s' broken.  No PluginStartup() function found.", path);
+                printf("M64API Error: library '%s' broken.  No PluginStartup() function found.", path);
                 return M64ERR_PLUGIN_FAIL;
             }
 
             err = (*plugin_startup)(g_core_handle, "AUDIO_PLUGIN", m64_debug_callback);
             if (err != M64ERR_SUCCESS) {
-                printf("Error: Audio plugin library '%s' failed to start.", path);
+                printf("M64API Error: Audio plugin library '%s' failed to start.", path);
                 return err;
             }
 
             err = (*g_core_attach_plugin)(type, g_plugin_audio_handle);
             if (err != M64ERR_SUCCESS) {
-                printf("Error: Failed to attach Audio plugin: %s\n", path);
+                printf("M64API Error: Failed to attach Audio plugin: %s\n", path);
                 return err;
             }
             break;
@@ -275,25 +281,25 @@ int m64_load_plugin(m64p_plugin_type type, const char* path)
 
             err = dynlib_open(&g_plugin_input_handle, path);
             if (err != M64ERR_SUCCESS) {
-                printf("Error: Failed to load Input plugin: %s\n", path);
+                printf("M64API Error: Failed to load Input plugin: %s\n", path);
                 return err;
             }
 
             plugin_startup = dynlib_getproc (g_plugin_input_handle, "PluginStartup");
             if (plugin_startup == NULL) {
-                printf("Error: library '%s' broken.  No PluginStartup() function found.", path);
+                printf("M64API Error: library '%s' broken.  No PluginStartup() function found.", path);
                 return M64ERR_PLUGIN_FAIL;
             }
 
             err = (*plugin_startup)(g_core_handle, "INPUT_PLUGIN", m64_debug_callback);
             if (err != M64ERR_SUCCESS) {
-                printf("Error: Input plugin library '%s' failed to start.", path);
+                printf("M64API Error: Input plugin library '%s' failed to start.", path);
                 return err;
             }
 
             err = (*g_core_attach_plugin)(type, g_plugin_input_handle);
             if (err != M64ERR_SUCCESS) {
-                printf("Error: Failed to attach Input plugin: %s\n", path);
+                printf("M64API Error: Failed to attach Input plugin: %s\n", path);
                 return err;
             }
             break;
@@ -304,7 +310,7 @@ int m64_load_plugin(m64p_plugin_type type, const char* path)
     return err;
 }
 
-int m64_unload_plugin(m64p_plugin_type type)
+m64p_error m64_unload_plugin(m64p_plugin_type type)
 {
     m64p_error err = M64ERR_SUCCESS;
 
@@ -317,13 +323,13 @@ int m64_unload_plugin(m64p_plugin_type type)
 
             err = (*g_core_detach_plugin)(type);
             if (err != M64ERR_SUCCESS) {
-                printf("Error: Failed to detach RSP plugin.\n");
+                printf("M64API Error: Failed to detach RSP plugin.\n");
                 return err;
             }
 
             err = dynlib_close(g_plugin_rsp_handle);
             if (err != M64ERR_SUCCESS) {
-                printf("Error: Failed to unload RSP plugin.\n");
+                printf("M64API Error: Failed to unload RSP plugin.\n");
                 return err;
             }
 
@@ -336,13 +342,13 @@ int m64_unload_plugin(m64p_plugin_type type)
 
             err = (*g_core_detach_plugin)(type);
             if (err != M64ERR_SUCCESS) {
-                printf("Error: Failed to detach Video plugin.\n");
+                printf("M64API Error: Failed to detach Video plugin.\n");
                 return err;
             }
 
             err = dynlib_close(g_plugin_video_handle);
             if (err != M64ERR_SUCCESS) {
-                printf("Error: Failed to unload Video plugin.\n");
+                printf("M64API Error: Failed to unload Video plugin.\n");
                 return err;
             }
 
@@ -355,13 +361,13 @@ int m64_unload_plugin(m64p_plugin_type type)
 
             err = (*g_core_detach_plugin)(type);
             if (err != M64ERR_SUCCESS) {
-                printf("Error: Failed to detach Audio plugin.\n");
+                printf("M64API Error: Failed to detach Audio plugin.\n");
                 return err;
             }
 
             err = dynlib_close(g_plugin_audio_handle);
             if (err != M64ERR_SUCCESS) {
-                printf("Error: Failed to unload Audio plugin.\n");
+                printf("M64API Error: Failed to unload Audio plugin.\n");
                 return err;
             }
 
@@ -374,13 +380,13 @@ int m64_unload_plugin(m64p_plugin_type type)
 
             err = (*g_core_detach_plugin)(type);
             if (err != M64ERR_SUCCESS) {
-                printf("Error: Failed to detach Input plugin.\n");
+                printf("M64API Error: Failed to detach Input plugin.\n");
                 return err;
             }
 
             err = dynlib_close(g_plugin_input_handle);
             if (err != M64ERR_SUCCESS) {
-                printf("Error: Failed to unload Input plugin.\n");
+                printf("M64API Error: Failed to unload Input plugin.\n");
                 return err;
             }
 
@@ -393,9 +399,9 @@ int m64_unload_plugin(m64p_plugin_type type)
     return err;
 }
 
-int m64_command(m64p_command command, int param_int, void* param_ptr)
+m64p_error m64_command(m64p_command command, int param_int, void* param_ptr)
 {
-    int retval = (*g_core_do_command)(command, param_int, param_ptr);
+    m64p_error retval = (*g_core_do_command)(command, param_int, param_ptr);
 
     switch (command)
     {
@@ -403,13 +409,13 @@ int m64_command(m64p_command command, int param_int, void* param_ptr)
             if ((*g_core_do_command)(M64CMD_ROM_GET_SETTINGS, sizeof(m64p_rom_settings), &g_current_rom_settings) !=
                     M64ERR_SUCCESS)
             {
-                printf("Error: Failed to load ROM settings.\n");
+                printf("M64API Error: Failed to load ROM settings.\n");
             }
             g_rom_settings_loaded = TRUE;
             if ((*g_core_do_command)(M64CMD_ROM_GET_HEADER, sizeof(m64p_rom_header), &g_current_rom_header) !=
                     M64ERR_SUCCESS)
             {
-                printf("Error: Failed to load ROM header.\n");
+                printf("M64API Error: Failed to load ROM header.\n");
             }
             g_rom_header_loaded = TRUE;
             break;
@@ -419,7 +425,7 @@ int m64_command(m64p_command command, int param_int, void* param_ptr)
             break;
         case M64CMD_CORE_STATE_SET:
             if (param_int == M64CORE_VIDEO_MODE) {
-                printf("Info: Trying to set video mode to: %d\n", *(int*)param_ptr);
+                printf("M64API Info: Trying to set video mode to: %d\n", *(int*)param_ptr);
             }
         default:
             break;
@@ -434,14 +440,28 @@ void m64_set_verbose(boolean b)
     g_verbose = b;
 }
 
-int m64_set_fullscreen(boolean b)
+m64p_error m64_set_fullscreen(boolean b)
 {
     int v = b ? 1 : 0;
-    int retval = (*g_config_set_parameter)(g_config_video_handle, "Fullscreen", M64TYPE_BOOL, &v);
+    m64p_error retval = (*g_config_set_parameter)(g_conf_video_handle, "Fullscreen", M64TYPE_BOOL, &v);
 
     if (retval != M64ERR_SUCCESS) {
-        printf("Error: Failed to set parameter Fullscreen.\n");
+        printf("M64API Error: Failed to set parameter Fullscreen.\n");
     }
+
+    return retval;
+}
+
+m64p_error m64_bind_ctrl_button(unsigned int controller, const char* button_name, const char* value)
+{
+    m64p_error retval = (*g_config_set_parameter)(g_conf_inputctrl_handle[controller],
+                                                  button_name,
+                                                  M64TYPE_STRING, value);
+
+    if (retval != M64ERR_SUCCESS) {
+        printf("M64API Error: Failed to set parameter %s.\n", button_name);
+    }
+    printf("M64API Info: Set button on controller: %u. {%s, %s}\n", controller, button_name, value);
 
     return retval;
 }

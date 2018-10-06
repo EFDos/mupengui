@@ -39,15 +39,13 @@ namespace MupenGUI.Views.Settings {
 
         construct {
 
-            var settings = new Services.DisplaySettings ();
-
             var fullscreen_label = new Gtk.Label ("Fullscreen");
             var fullscreen_switch = new Gtk.Switch ();
 
-            fullscreen_switch.state_set (settings.fullscreen);
+            //TODO: Read State from Mupen64API
+            fullscreen_switch.state_set (false);
 
             fullscreen_switch.state_set.connect ((state) => {
-                settings.fullscreen = state;
                 Services.Mupen64API.instance.set_fullscreen (state);
             });
 

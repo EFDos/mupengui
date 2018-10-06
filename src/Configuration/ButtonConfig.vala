@@ -1,5 +1,5 @@
 /************************************************************************/
-/*  DisplaySettings.vala                                                */
+/*  ButtonConfig.vala                                                   */
 /************************************************************************/
 /*                       This file is part of:                          */
 /*                           MupenGUI                                   */
@@ -24,24 +24,39 @@
 /*                                                                      */
 /* Authored by: Douglas Muratore <www.sinz.com.br>                      */
 /************************************************************************/
+namespace MupenGUI.Configuration {
+    public class ButtonConfig : Object {
 
-namespace MupenGUI.Services {
-
-    public class UISettings : Granite.Services.Settings {
-        public string rom_dir {get; set;}
-
-        public UISettings () {
-            base ("com.github.efdos.mupen-gui.ui");
+        public enum ButtonID {
+            DPadRight,
+            DPadLeft,
+            DPadDown,
+            DPadUp,
+            Start,
+            TriggerZ,
+            ButtonB,
+            ButtonA,
+            CButtonRight,
+            CButtonLeft,
+            CButtonDown,
+            CButtonUp,
+            ShoulderR,
+            ShoulderL,
+            MempakSwitch,
+            RumblepakSwitch,
+            AxisX,
+            AxisY
         }
 
-        protected override void verify (string key) {
-            switch (key) {
-                case "rom-dir":
-                    if (rom_dir == null) {
-                        rom_dir = "";
-                    }
-                break;
-            }
+        public string name {construct; get;}
+        public ButtonID button_id {construct; get;}
+        public int value {set; get;}
+
+        public ButtonConfig(string p_name, ButtonID p_button_id) {
+            Object(
+                name: p_name,
+                button_id: p_button_id
+            );
         }
     }
 }
