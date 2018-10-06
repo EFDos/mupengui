@@ -63,9 +63,10 @@ namespace MupenGUI.Views.Settings {
         construct {
 
             var controller_label = new Granite.HeaderLabel ("Controller");
+            var device_label = new Granite.HeaderLabel ("Device");
             var set_controls_button = new Gtk.Button.with_label ("Set Buttons");
 
-            Gtk.ListStore list_store = new Gtk.ListStore (1, typeof (int));
+            var list_store = new Gtk.ListStore (1, typeof (int));
 		    Gtk.TreeIter iter;
 
 		    list_store.append (out iter);
@@ -77,11 +78,25 @@ namespace MupenGUI.Views.Settings {
 		    list_store.append (out iter);
 		    list_store.set (iter, 0, 4);
 
-            Gtk.ComboBox controller_list_box = new Gtk.ComboBox.with_model (list_store);
-            Gtk.CellRendererText renderer = new Gtk.CellRendererText ();
+            var controller_list_box = new Gtk.ComboBox.with_model (list_store);
+            var renderer = new Gtk.CellRendererText ();
 		    controller_list_box.pack_start (renderer, true);
 		    controller_list_box.add_attribute (renderer, "text", 0);
 		    controller_list_box.active = 0;
+
+            var dlist_store = new Gtk.ListStore (1, typeof (string));
+            Gtk.TreeIter d_iter;
+
+            dlist_store.append(out d_iter);
+            dlist_store.set (d_iter, 0, "Keyboard");
+            dlist_store.append(out d_iter);
+            dlist_store.set (d_iter, 0, "Joystick");
+
+            var device_list_box = new Gtk.ComboBox.with_model (dlist_store);
+            renderer = new Gtk.CellRendererText ();
+            device_list_box.pack_start (renderer, true);
+            device_list_box.add_attribute (renderer, "text", 0);
+            device_list_box.active = 0;
 
             set_controls_button.clicked.connect (() => {
                 var message_dialog = new Widgets.JoystickEventDialog.with_image_from_icon_name (
@@ -93,8 +108,8 @@ namespace MupenGUI.Views.Settings {
                 Services.JoystickListener.instance.start ();
 
                 message_dialog.key_release_event.connect ((event) => {
-                    //print ("keyval for %s: %u\n", button_list[button_list_it].name, event.key.keyval);
-                    Services.Mupen64API.instance.bind_controller_button (0, button_list[button_list_it], (int)event.key.keyval);
+                    print ("keyval for %s: %u\n", button_list[button_list_it].name, event.key.hardware_keycode);
+                    //Services.Mupen64API.instance.bind_controller_button (0, button_list[button_list_it], (int)event.key.keyval);
                     if (++button_list_it > button_list.length - 1) {
                         button_list_it = 0;
                         message_dialog.close ();
@@ -126,6 +141,8 @@ namespace MupenGUI.Views.Settings {
 
             content_area.attach (controller_label, 0, 0, 1, 1);
             content_area.attach (controller_list_box, 1, 0, 1, 1);
+            content_area.attach (device_label, 0, 1, 1, 1);
+            content_area.attach (device_list_box, 1, 1, 1, 1);
             content_area.attach (set_controls_button, 0, 2, 1, 2);
         }
     }
