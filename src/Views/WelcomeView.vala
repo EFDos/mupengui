@@ -33,7 +33,7 @@ namespace MupenGUI.Views {
         public WelcomeView () {
             Object (
                 title: "Welcome to MupenGUI",
-                subtitle: "A sexy frontend to Mupen64plus"
+                subtitle: "A sexy frontend for Mupen64plus"
             );
         }
 

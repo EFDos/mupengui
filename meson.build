@@ -1,5 +1,5 @@
 # project name and programming language
-project('com.github.efdos.mupen-gui', 'vala', 'c', version: '0.1.0')
+project('com.github.efdos.mupen-gui', 'vala', 'c', version: '0.3.2')
 
 message ('project name and programming language')
 

@@ -1,7 +1,16 @@
 # MupenGUI
 ### Summary
-Frontend Application written in Vala and C.
-This frontend features:
+Frontend Application written in Vala and C, still in development.
+
+![Alt text](data/screenshots/Welcome.png?raw=true "Welcome Screen")
+
+![Alt text](data/screenshots/Pantheon_Running.png?raw=true "Running SM64")
+
+![Alt text](data/screenshots/KDE_Welcome.png?raw=true "Looking sexy on KDE")
+
+![Alt text](data/screenshots/KDE_Input.png?raw=true "The whole reason why I'm making this")
+
+This frontend's goal for the first release is to feature:
 
 * Basic graphics configuration (Fullscreen, resolution ...)
 * Mupen64plus plugins configuration
