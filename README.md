@@ -47,5 +47,5 @@ Your system must be at least compatible with a Gnome Environment and libgranite 
 `ninja install`
 *must be sudo if you're installing on your system*
 
-###Credits
+### Credits
 Base N64 Controller used to design the icon by David Swanson from the Noun Project.
