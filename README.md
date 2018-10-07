@@ -1,6 +1,6 @@
 # MupenGUI
 ### Summary
-Frontend Application written in Vala and C, still in development.
+Mupen64plus Frontend Application written in Vala and C, still in development.
 
 ![Alt text](data/screenshots/Welcome.png?raw=true "Welcome Screen")
 
