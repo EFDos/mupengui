@@ -24,7 +24,7 @@
 /*                                                                      */
 /* Authored by: Douglas Muratore <www.sinz.com.br>                      */
 /************************************************************************/
-
+using MupenGUI.Services;
 using MupenGUI.Configuration;
 
 namespace MupenGUI.Views.Settings {
@@ -88,10 +88,14 @@ namespace MupenGUI.Views.Settings {
             var dlist_store = new Gtk.ListStore (1, typeof (string));
             Gtk.TreeIter d_iter;
 
+            var device_list = JoystickListener.instance.get_device_list ();
             dlist_store.append(out d_iter);
             dlist_store.set (d_iter, 0, "Keyboard");
-            dlist_store.append(out d_iter);
-            dlist_store.set (d_iter, 0, "Joystick");
+
+            device_list.foreach ((str) => {
+                dlist_store.append(out d_iter);
+                dlist_store.set (d_iter, 0, "Joystick " + str);
+            });
 
             var device_list_box = new Gtk.ComboBox.with_model (dlist_store);
             renderer = new Gtk.CellRendererText ();

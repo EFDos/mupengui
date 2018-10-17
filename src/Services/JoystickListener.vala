@@ -24,8 +24,14 @@
 /*                                                                      */
 /* Authored by: Douglas Muratore <www.sinz.com.br>                      */
 /************************************************************************/
+using MupenGUI.Configuration;
+using MupenGUI.Views.Widgets;
 
 extern bool joy_init ();
+extern void joy_shutdown ();
+extern uint joy_get_total ();
+extern char* joy_get_name (uint id);
+extern void joy_set_current (uint id);
 extern int joy_event_loop ();
 
 namespace MupenGUI.Services {
@@ -34,7 +40,7 @@ namespace MupenGUI.Services {
 
         private static JoystickListener _instance = null;
         private Thread<void*> event_thread = null;
-        private unowned Views.Widgets.JoystickEventDialog joy_dialog = null;
+        private unowned JoystickEventDialog joy_dialog = null;
         private bool thread_run = false;
 
         public static JoystickListener instance {
@@ -47,7 +53,11 @@ namespace MupenGUI.Services {
             }
         }
 
-        JoystickListener () {
+        private JoystickListener () {
+        }
+
+        ~JoystickListener () {
+            joy_shutdown ();
         }
 
         public bool init () {
@@ -59,13 +69,9 @@ namespace MupenGUI.Services {
             if (event_thread != null) {
                 return;
             }
-            try {
-                thread_run = true;
-                event_thread = new Thread<void*> ("joy_event_thread", _joystick_event_func);
-                print("started thread.\n");
-            } catch (ThreadError e) {
-                stderr.printf ("Error: %s", e.message);
-            }
+            thread_run = true;
+            event_thread = new Thread<void*> ("joy_event_thread", _joystick_event_func);
+            print("started thread.\n");
         }
 
         public void stop () {
@@ -82,13 +88,40 @@ namespace MupenGUI.Services {
             event_thread = null;
         }
 
-        public void register_dialog (Views.Widgets.JoystickEventDialog dialog) {
+        public void set_listening_device (uint device_id) {
+            joy_set_current (device_id);
+        }
+
+        public GenericArray<string> get_device_list () {
+            var device_list = new GenericArray<string> ();
+
+            for (int i = 0 ; i < joy_get_total () ; ++i) {
+                char* c_name = joy_get_name (i);
+                if (c_name != null) {
+                    var builder = new StringBuilder ();
+                    char c = c_name[0];
+                    int it = 0;
+                    while (c != '\0') {
+                        builder.append_c (c);
+                        c = c_name[it++];
+                    }
+                    builder.erase(0, 1);
+                    var str = builder.str;
+                    device_list.add (str);
+                    //device_list.append_val (new DeviceConfig(str, i));
+                }
+            }
+
+            return device_list;
+        }
+
+        public void register_dialog (JoystickEventDialog dialog) {
             lock (joy_dialog) {
                 joy_dialog = dialog;
             }
         }
 
-        public void unregister_dialog (Views.Widgets.JoystickEventDialog dialog) {
+        public void unregister_dialog (JoystickEventDialog dialog) {
             lock (joy_dialog) {
                 if (joy_dialog == dialog) {
                     joy_dialog = null;

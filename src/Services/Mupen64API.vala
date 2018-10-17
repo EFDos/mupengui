@@ -42,8 +42,10 @@ extern int m64_unload_plugin (int type);
 
 extern int m64_command (int command, int param_int = 0, void* param_ptr = null);
 
-extern int m64_bind_ctrl_button(uint controller, char* button_name, char* value);
+extern int m64_enable_ctrl_config (uint controller, bool b);
+extern int m64_bind_ctrl_button (uint controller, char* button_name, char* value);
 
+extern int m64_set_ctrl_device (uint controller, int device_id);
 extern void m64_set_emustop_callback (callback_type callback);
 extern int m64_set_fullscreen (bool b = true);
 extern void m64_set_verbose (bool b = true);
@@ -242,7 +244,23 @@ namespace MupenGUI.Services {
             }
         }
 
-        public void bind_controller_button(uint controller, ButtonConfig button, int val) {
+        public void set_controller_device (uint controller, int device_id) {
+            if (!initialized) {
+                show_not_initialized_alert ();
+                return;
+            }
+            int retval = m64_enable_ctrl_config (controller, true);
+            if (retval != 0) {
+                stderr.printf("Error: Failed to enable controller for configuration. Error code: %d\n", retval);
+            }
+
+            retval = m64_set_ctrl_device (controller, device_id);
+            if (retval != 0) {
+                stderr.printf("Error: Failed to set controller device. Error code: %d\n", retval);
+            }
+        }
+
+        public void bind_controller_button (uint controller, ButtonConfig button, int val) {
             if (!initialized) {
                 show_not_initialized_alert ();
                 return;

@@ -446,8 +446,41 @@ m64p_error m64_set_fullscreen(boolean b)
     m64p_error retval = (*g_config_set_parameter)(g_conf_video_handle, "Fullscreen", M64TYPE_BOOL, &v);
 
     if (retval != M64ERR_SUCCESS) {
-        printf("M64API Error: Failed to set parameter Fullscreen.\n");
+        printf("M64API Error: Failed to set parameter \'Fullscreen\'.\n");
+        return retval;
     }
+    printf("M64API Info: Set Fullscreen: %s\n", b ? "true" : "false");
+
+    return retval;
+}
+
+m64p_error m64_set_ctrl_device(unsigned int controller, int device_id)
+{
+    m64p_error retval = (*g_config_set_parameter)(g_conf_inputctrl_handle[controller],
+                                                  "device",
+                                                  M64TYPE_INT,
+                                                  &device_id);
+    if (retval != M64ERR_SUCCESS) {
+        printf("M64API Error: Failed to set parameter \'device\'.\n");
+        return retval;
+    }
+    printf("M64API Info: Set device on controller: %u. %u\n", controller, device_id);
+
+    return retval;
+}
+
+m64p_error m64_enable_ctrl_config(unsigned int controller, boolean b)
+{
+    int value = b ? 0 : 2;
+    m64p_error retval = (*g_config_set_parameter)(g_conf_inputctrl_handle[controller],
+                                                  "mode",
+                                                  M64TYPE_INT,
+                                                  &value);
+    if (retval != M64ERR_SUCCESS) {
+        printf("M64API Error: Failed to set parameter \'mode\'.\n");
+        return retval;
+    }
+    printf("M64API Info: Set enable configuration on controller: %u. %s\n", controller, b ? "true" : "false");
 
     return retval;
 }
@@ -459,7 +492,8 @@ m64p_error m64_bind_ctrl_button(unsigned int controller, const char* button_name
                                                   M64TYPE_STRING, value);
 
     if (retval != M64ERR_SUCCESS) {
-        printf("M64API Error: Failed to set parameter %s.\n", button_name);
+        printf("M64API Error: Failed to set parameter \'%s\'.\n", button_name);
+        return retval;
     }
     printf("M64API Info: Set button on controller: %u. {%s, %s}\n", controller, button_name, value);
 

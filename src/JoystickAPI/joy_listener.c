@@ -27,31 +27,88 @@
 #include "../MupenAPI/common.h"
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include <fcntl.h>
 #include <unistd.h>
 #include <sys/ioctl.h>
 #include <linux/joystick.h>
 
-#define JOY_DEV "/dev/input/js0"
+#define JOY_DEV "/dev/input/js%d"
 
-int g_joy_fd = 0;
-int* g_axis = NULL;
-char* g_button = NULL;
+typedef struct
+{
+    int id;
+    int n_axis, n_buttons;
+    int* axis;
+    char* button;
+    char name[80];
+} joy_def;
+
+void init_joy_def(joy_def* joy)
+{
+    joy->id = 0;
+    joy->n_axis = 0;
+    joy->n_buttons = 0;
+    joy->axis = NULL;
+    joy->button = NULL;
+    memcpy(joy->name, "undefined", 80);
+}
+
+joy_def g_joy[4];
+int g_total_joys = 0;
+int g_current_joy = -1;
 
 struct js_event g_js;
 
 boolean joy_init ()
 {
-    int num_of_axis=0, num_of_buttons=0; //, x;
-	char name_of_joystick[80];
+    char buffer[15];
+    for (int i = 0 ; i < 4 ; ++i)
+    {
+        init_joy_def (&g_joy[i]);
+        sprintf(buffer, JOY_DEV, i);
+        if ((g_joy[i].id = open(buffer, O_RDONLY)) == -1) {
+            continue;
+        }
 
-	if( ( g_joy_fd = open( JOY_DEV , O_RDONLY)) == -1 )
+        ioctl(g_joy[i].id, JSIOCGAXES, &g_joy[i].n_axis);
+        ioctl(g_joy[i].id, JSIOCGBUTTONS, &g_joy[i].n_buttons);
+        ioctl(g_joy[i].id, JSIOCGNAME(80), &g_joy[i].name);
+
+        g_joy[i].axis = (int*) calloc(g_joy[i].n_axis, sizeof(int));
+        g_joy[i].button = (char*) calloc(g_joy[i].n_buttons, sizeof(char));
+
+        for (int j = 0 ; j < g_joy[i].n_axis ; ++j) {
+            g_joy[i].axis[j] = 0;
+        }
+
+        for (int j = 0 ; j < g_joy[i].n_buttons ; ++j) {
+            g_joy[i].button[j] = 0;
+        }
+
+        printf("JoyAPI Info: Joystick detected: %s\n\t%d axis\n\t%d buttons\n\n",
+               g_joy[i].name,
+               g_joy[i].n_axis,
+               g_joy[i].n_buttons);
+
+        fcntl(g_joy[i].id, F_SETFL, O_NONBLOCK); // user non-blocking mode
+        ++g_total_joys;
+    }
+
+    printf("JoyAPI Info: Total joysticks detected: %d\n", g_total_joys);
+
+    if (g_total_joys > 0) {
+        return TRUE;
+    } else {
+        return FALSE;
+    }
+	/*if( ( g_joy_fd[0] = open( JOY_DEV , O_RDONLY)) == -1 )
 	{
 		printf( "Couldn't open joystick\n" );
 		return FALSE;
-	}
+	}*/
 
-	ioctl( g_joy_fd, JSIOCGAXES, &num_of_axis );
+	/*ioctl( g_joy_fd, JSIOCGAXES, &num_of_axis );
 	ioctl( g_joy_fd, JSIOCGBUTTONS, &num_of_buttons );
 	ioctl( g_joy_fd, JSIOCGNAME(80), &name_of_joystick );
 
@@ -71,35 +128,73 @@ boolean joy_init ()
 		, num_of_axis
 		, num_of_buttons );
 
-	fcntl( g_joy_fd, F_SETFL, O_NONBLOCK );	/* use non-blocking mode */
-    return TRUE;
+	fcntl( g_joy_fd, F_SETFL, O_NONBLOCK );	use non-blocking mode */
+}
+
+void joy_shutdown()
+{
+    for (int i = 0 ; i < g_total_joys ; ++i) {
+        close(g_joy[i].id);
+    }
+    g_total_joys = 0;
+    g_current_joy = -1;
+}
+
+void joy_set_current(unsigned int id)
+{
+    if (id > g_total_joys - 1) {
+        printf("JoyAPI Error: Device %d wasn't initialized.\n", id);
+        return;
+    }
+
+    g_current_joy = id;
+}
+
+unsigned joy_get_total()
+{
+    return g_total_joys;
+}
+
+char* joy_get_name(unsigned int id)
+{
+    if (id > g_total_joys -1) {
+        printf("JoyAPI Error: Device %d wasn't initialized.\n", id);
+        return NULL;
+    }
+
+    return g_joy[id].name;
 }
 
 int joy_event_loop()
 {
-	// read the joystick state
-	read(g_joy_fd, &g_js, sizeof(struct js_event));
+    if (g_current_joy == -1) {
+        printf("JoyAPI Error: Current device wasn't set!\n"
+               "Do you want me to explode??\n");
+        return -1;
+    }
+    // read the joystick state
+    read(g_joy[g_current_joy].id, &g_js, sizeof(struct js_event));
 
-			// see what to do with the event
-	switch (g_js.type & ~JS_EVENT_INIT)
-	{
-		case JS_EVENT_AXIS:
-			if (g_axis[g_js.number] != 0 && g_js.value == 0) {
-                g_axis[g_js.number] = 0;
+		    // see what to do with the event
+    switch (g_js.type & ~JS_EVENT_INIT)
+    {
+	    case JS_EVENT_AXIS:
+		    if (g_joy[g_current_joy].axis[g_js.number] != 0 && g_js.value == 0) {
+                g_joy[g_current_joy].axis[g_js.number] = 0;
                 return g_js.number + 100;
             }
-            g_axis[g_js.number] = g_js.value;
+            g_joy[g_current_joy].axis[g_js.number] = g_js.value;
             break;
-		case JS_EVENT_BUTTON:
-			if (g_button[g_js.number] != 0 && g_js.value == 0) {
-                g_button[g_js.number] = 0;
+	    case JS_EVENT_BUTTON:
+		    if (g_joy[g_current_joy].button[g_js.number] != 0 && g_js.value == 0) {
+                g_joy[g_current_joy].button[g_js.number] = 0;
                 return g_js.number;
             }
-            g_button[g_js.number] = g_js.value;
+            g_joy[g_current_joy].button[g_js.number] = g_js.value;
             break;
         default:
             break;
-	}
+    }
 
 			// print the results
 		//printf( "X: %6d  Y: %6d  ", g_axis[0], g_axis[1] );

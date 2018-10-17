@@ -107,7 +107,8 @@ code_files = files(
     'src/Services/FileSystem.vala',
     'src/Services/ActionManager.vala',
     'src/Services/Globals.vala',
-    'src/Configuration/ButtonConfig.vala'
+    'src/Configuration/ButtonConfig.vala',
+    'src/Configuration/DeviceConfig.vala'
 )
 
 message ('Defines executable')
