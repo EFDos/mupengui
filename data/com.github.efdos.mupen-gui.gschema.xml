@@ -1,27 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schemalist>
-  <schema id="com.github.efdos.mupen-gui.display" path="/com/github/efdos/mupen-gui/display/"
-    gettext-domain="mupen-gui">
-
-    <key name="fullscreen" type="b">
-      <default>false</default>
-      <summary>Run Mupen64 in Fullscreen.</summary>
-      <description>Run Mupen64 in Fullscreen.</description>
-    </key>
-
-  </schema>
-
-  <schema id="com.github.efdos.mupen-gui.input" path="/com/github/efdos/mupen-gui/input/"
-    gettext-domain="mupen-gui">
-
-    <key name="input-device" type="s">
-      <default>"Keyboard"</default>
-      <summary>Primary device for input.</summary>
-      <description>Defines the input device (keyboard, joypad etc...).</description>
-    </key>
-
-  </schema>
-
   <schema id="com.github.efdos.mupen-gui.ui" path="/com/github/efdos/mupen-gui/ui/" gettext-domain="mupen-gui">
     <key name="rom-dir" type="s">
       <default>""</default>
@@ -30,4 +8,11 @@
     </key>
   </schema>
 
+  <schema id="com.github.efdos.mupen-gui.general" path="/com/github/efdos/mupen-gui/general/" gettext-domain="mupen-gui">
+    <key name="mupen64pluslib-dir" type="s">
+      <default>"/usr/lib/x86_64-linux-gnu/libmupen64plus.so.2"</default>
+      <summary>Directory for Mupen64Plus shared library</summary>
+      <description>Defines the directory of Mupen64Plus core library needed by the frontend to run.</description>
+    </key>
+  </schema>
 </schemalist>

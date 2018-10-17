@@ -31,7 +31,7 @@ namespace MupenGUI.Views.Settings {
             Object (
                 //activable: true,
                 description: "Configure Mupen64 Display Settings.",
-                header: "General",
+                header: "Emulator",
                 icon_name: "video-display",
                 title: "Display Settings"
             );

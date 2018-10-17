@@ -44,4 +44,22 @@ namespace MupenGUI.Services {
             }
         }
     }
+
+    public class GeneralSettings : Granite.Services.Settings {
+        public string mupen64pluslib_dir {get; set;}
+
+        public GeneralSettings () {
+            base ("com.github.efdos.mupen-gui.general");
+        }
+
+        protected override void verify (string key) {
+            switch (key) {
+                case "mupen64pluslib-dir":
+                    if (mupen64pluslib_dir == null) {
+                        mupen64pluslib_dir = "";
+                    }
+                break;
+            }
+        }
+    }
 }

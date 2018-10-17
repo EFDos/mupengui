@@ -54,6 +54,9 @@ namespace MupenGUI {
             window.set_default_size (900, 640);
             window.add (this.main_view);
             window.show_all ();
+
+            Mupen64API.instance.init (new GeneralSettings ().mupen64pluslib_dir);
+            JoystickListener.instance.init ();
         }
 
         public void grant_a_toast (string toast_msg) {
@@ -62,12 +65,6 @@ namespace MupenGUI {
         }
 
         public static int main (string[] args) {
-
-            if (!Mupen64API.instance.init ()) {
-                return 1;
-            }
-
-            JoystickListener.instance.init ();
 
             foreach (string arg in args) {
                 if (arg == "--verbose" || arg == "-v") {

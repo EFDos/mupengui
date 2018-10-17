@@ -129,16 +129,18 @@ namespace MupenGUI.Services {
             shutdown ();
         }
 
-        public bool init () {
-            var result = m64_load_corelib ("/usr/lib/x86_64-linux-gnu/libmupen64plus.so.2");
+        public bool init (string library_path) {
+            var result = m64_load_corelib (library_path);
             if (result != 0) {
                 stderr.printf ("Error: Failed to load Mupen64Plus Dynamic Library. Error code: %d\n", result);
+                show_not_initialized_alert ();
                 return false;
             }
 
             result = m64_start_corelib (null, null);
             if (result != 0) {
                 stderr.printf ("Error: Failed to initialize Mupen64Plus Core. Error code: %d\n", result);
+                show_not_initialized_alert ();
                 return false;
             }
 
@@ -148,6 +150,11 @@ namespace MupenGUI.Services {
         }
 
         public void shutdown () {
+            if (!initialized) {
+                show_not_initialized_alert ();
+                return;
+            }
+
             m64_unload_plugin (m64PluginType.RSP);
             m64_unload_plugin (m64PluginType.Video);
             m64_unload_plugin (m64PluginType.Audio);
@@ -167,6 +174,10 @@ namespace MupenGUI.Services {
         }
 
         public bool run_command (m64Command command, int param_int = 0, void* param_ptr = null) {
+            if (!initialized) {
+                show_not_initialized_alert ();
+                return false;
+            }
             var result = m64_command (command, param_int, param_ptr);
             if (result != 0) {
                 stderr.printf ("Error: Failed to run command: %d (%d, %p)\n", command, param_int, param_ptr);
@@ -204,6 +215,10 @@ namespace MupenGUI.Services {
         }
 
         public async void start_emulation () {
+            if (!initialized) {
+                show_not_initialized_alert ();
+                return;
+            }
             if (!initialized || !rom_loaded) {
                 stderr.printf ("Error: Mupen64 needs to be initialized and a ROM needs to be loaded " +
                                "before starting emulation.\n");
@@ -217,6 +232,10 @@ namespace MupenGUI.Services {
         }
 
         public void set_fullscreen (bool b = true) {
+            if (!initialized) {
+                show_not_initialized_alert ();
+                return;
+            }
             var err = m64_set_fullscreen (b);
             if (err != 0) {
                 stderr.printf ("Error code: %d\n", err);
@@ -224,6 +243,10 @@ namespace MupenGUI.Services {
         }
 
         public void bind_controller_button(uint controller, ButtonConfig button, int val) {
+            if (!initialized) {
+                show_not_initialized_alert ();
+                return;
+            }
             string button_string = null;
             string key_string = "key(" + val.to_string () + ")";
             switch (button.button_id)
@@ -300,6 +323,19 @@ namespace MupenGUI.Services {
             m64_unload_plugin (m64PluginType.Audio);
             m64_unload_plugin (m64PluginType.Input);
             rom_loaded = false;
+        }
+
+        private void show_not_initialized_alert() {
+            var message_dialog = new Granite.MessageDialog.with_image_from_icon_name (
+                    "Mupen64Plus Not Initalized",
+                    "The library libmupen64plus.so.2 could not be loaded. It might not have been found or it could be" +
+                    " either corrupted or incompatible. You can manually set the correct file on the settings page." +
+                    "Most functionalities of this program can not be run on this state.",
+                    "dialog-error",
+                    Gtk.ButtonsType.CLOSE
+            );
+            message_dialog.run ();
+            message_dialog.destroy ();
         }
     }
 }

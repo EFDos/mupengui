@@ -55,6 +55,7 @@ namespace MupenGUI.Views.Settings {
             Object (
                 //activable: true,
                 description: "Configure Mupen64 Input Settings.",
+                header: "Emulator",
                 icon_name: "input-gaming",
                 title: "Input Settings"
             );

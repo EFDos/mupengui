@@ -36,9 +36,9 @@ m64p_error dynlib_open(m64p_dynlib_handle* p_lib_handle, const char* p_lib_path)
 
     *p_lib_handle = dlopen(p_lib_path, RTLD_NOW);
 
-    if (p_lib_path == NULL)
+    if (*p_lib_handle == NULL)
     {
-        printf("Mupen64 Error: dlopen('%s') failed: %s", p_lib_path, dlerror());
+        printf("M64API Error: dlopen('%s')\n failed: %s", p_lib_path, dlerror());
         return M64ERR_INPUT_NOT_FOUND;
     }
 
@@ -59,7 +59,7 @@ m64p_error dynlib_close(m64p_dynlib_handle p_lib_handle)
 
     if (rval != 0)
     {
-        printf("Mupen64 Error: dlclose() failed: %s", dlerror());
+        printf("M64API Error: dlclose()\n failed: %s", dlerror());
         return M64ERR_INTERNAL;
     }
 

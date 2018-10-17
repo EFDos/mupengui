@@ -97,6 +97,7 @@ code_files = files(
     'src/Views/SettingsView.vala',
     'src/Views/WelcomeView.vala',
     'src/Views/Window/HeaderBar.vala',
+    'src/Views/Settings/GeneralSettingsPage.vala',
     'src/Views/Settings/DisplaySettingsPage.vala',
     'src/Views/Settings/InputSettingsPage.vala',
     'src/Views/Widgets/JoystickEventDialog.vala',
