@@ -30,6 +30,7 @@ using MupenGUI.Services;
 namespace MupenGUI.Views {
     public class RomListView : Gtk.Box {
 
+        public bool valid_dir = false;
         private Gtk.ListBox list;
         private Gtk.Label dir_label;
 
@@ -70,8 +71,10 @@ namespace MupenGUI.Views {
                 label.halign = Gtk.Align.CENTER;
                 list.add (label);
                 list.show_all ();
+                return;
             }
 
+            valid_dir = true;
             foreach (string s in rom_list) {
                 var label = new Granite.HeaderLabel (s);
                 label.set_padding(4, 0);
@@ -80,7 +83,12 @@ namespace MupenGUI.Views {
             }
         }
 
+        public bool on_valid_dir () {
+            return valid_dir;
+        }
+
         public void clear_list () {
+            valid_dir = false;
             foreach (var child in list.get_children ()) {
                 list.remove (child);
                 child.destroy ();

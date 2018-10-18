@@ -47,15 +47,20 @@ namespace MupenGUI.Views {
 
             toaster = new Granite.Widgets.Toast ("Info");
 
+            /*rom_view.populate_list.callback.connect (() => {
+               print("test\n");
+            });*/
+
+            stack.add_named (welcome_view, "welcome_view");
+            stack.add_named (rom_view, "rom_view");
+            stack.add_named (settings_view, "settings_view");
+
             if (ui_settings.rom_dir.length == 0 || ui_settings.rom_dir == null) {
-                stack.add_named (welcome_view, "welcome_view");
+                stack.set_visible_child_full ("welcome_view", Gtk.StackTransitionType.NONE);
             } else {
                 Globals.CURRENT_ROM_DIR = ui_settings.rom_dir;
                 update ();
             }
-
-            stack.add_named (rom_view, "rom_view");
-            stack.add_named (settings_view, "settings_view");
 
             this.orientation = Gtk.Orientation.VERTICAL;
             this.add (toaster);
@@ -97,11 +102,17 @@ namespace MupenGUI.Views {
 
         public void update () {
             rom_view.set_directory_name (Globals.CURRENT_ROM_DIR);
-            rom_view.populate_list.begin (Globals.CURRENT_ROM_DIR);
+            rom_view.populate_list.begin (Globals.CURRENT_ROM_DIR, (obj, res) => {
 
-            ui_settings.rom_dir = Globals.CURRENT_ROM_DIR;
-
-            stack.set_visible_child_full ("rom_view", Gtk.StackTransitionType.CROSSFADE);
+                print("on_valid_dir: %s\n", rom_view.on_valid_dir () ? "true" : "false");
+                if (rom_view.on_valid_dir ()) {
+                    ui_settings.rom_dir = Globals.CURRENT_ROM_DIR;
+                    stack.set_visible_child_full ("rom_view", Gtk.StackTransitionType.CROSSFADE);
+                } else {
+                    print("hur dur i think it's not valid hut dur \n");
+                    stack.set_visible_child_full ("welcome_view", Gtk.StackTransitionType.CROSSFADE);
+                }
+            });
         }
     }
 }
