@@ -28,7 +28,7 @@
 namespace MupenGUI.Views.Widgets {
     class JoystickEventDialog : Granite.MessageDialog {
 
-        public signal void joystick_event ();
+        public signal void joystick_event (int joy_value);
 
         public JoystickEventDialog (string p_primary_text, string p_secondary_text, Icon p_icon, Gtk.ButtonsType p_buttons = CLOSE) {
             base (p_primary_text, p_secondary_text, p_icon, p_buttons);

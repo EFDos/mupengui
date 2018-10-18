@@ -103,8 +103,6 @@ namespace MupenGUI.Views {
         public void update () {
             rom_view.set_directory_name (Globals.CURRENT_ROM_DIR);
             rom_view.populate_list.begin (Globals.CURRENT_ROM_DIR, (obj, res) => {
-
-                print("on_valid_dir: %s\n", rom_view.on_valid_dir () ? "true" : "false");
                 if (rom_view.on_valid_dir ()) {
                     ui_settings.rom_dir = Globals.CURRENT_ROM_DIR;
                     stack.set_visible_child_full ("rom_view", Gtk.StackTransitionType.CROSSFADE);

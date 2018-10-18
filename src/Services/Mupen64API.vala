@@ -32,25 +32,25 @@ using MupenGUI.Configuration;
 
 delegate void callback_type(); // For when the C core needs to call Vala functions.
 
-extern int m64_load_corelib (char* libpath);
+extern int m64_load_corelib (string libpath);
 extern int m64_unload_corelib ();
-extern int m64_start_corelib (char* pconfig_path, char* pdata_path);
+extern int m64_start_corelib (string? pconfig_path, string? pdata_path);
 extern int m64_shutdown_corelib ();
 
-extern int m64_load_plugin (int type, char* libpath);
+extern int m64_load_plugin (int type, string libpath);
 extern int m64_unload_plugin (int type);
 
 extern int m64_command (int command, int param_int = 0, void* param_ptr = null);
 
 extern int m64_enable_ctrl_config (uint controller, bool b);
-extern int m64_bind_ctrl_button (uint controller, char* button_name, char* value);
+extern int m64_bind_ctrl_button (uint controller, string button_name, string value);
 
 extern int m64_set_ctrl_device (uint controller, int device_id);
 extern void m64_set_emustop_callback (callback_type callback);
 extern int m64_set_fullscreen (bool b = true);
 extern void m64_set_verbose (bool b = true);
 
-extern char* m64_get_rom_goodname ();
+extern unowned string m64_get_rom_goodname ();
 
 namespace MupenGUI.Services {
     class Mupen64API : Object {
@@ -195,17 +195,8 @@ namespace MupenGUI.Services {
             }
 
             if (command == m64Command.RomOpen) {
-                var builder = new StringBuilder ();
-                char* c_string = m64_get_rom_goodname ();
-                if (c_string != null) {
-                    char c = c_string[0];
-                    int it = 0;
-                    while (c != '\0') {
-                        builder.append_c (c);
-                        c = c_string[it++];
-                    }
-                    builder.erase(0, 1);
-                    goodname = builder.str;
+                goodname = m64_get_rom_goodname ();
+                if (goodname != null) {
                     rom_loaded = true;
                 }
 
@@ -267,13 +258,13 @@ namespace MupenGUI.Services {
             }
         }
 
-        public void bind_controller_button (uint controller, ButtonConfig button, int val) {
+        public void bind_controller_button (uint controller, ButtonConfig button, int val, int? val2) {
             if (!initialized) {
                 show_not_initialized_alert ();
                 return;
             }
-            string button_string = null;
-            string key_string = "key(" + val.to_string () + ")";
+            string button_string = "";
+            string key_string = "";
             switch (button.button_id)
             {
                 case DPadRight:
@@ -325,11 +316,38 @@ namespace MupenGUI.Services {
                     button_string = "Rumblepak switch";
                     break;
                 case AxisX:
+                    if (val2 == null) {
+                        print("Error: Axis needs two binding values.\n");
+                        return;
+                    }
                     button_string = "X Axis";
                     break;
                 case AxisY:
+                    if (val2 == null) {
+                        print("Error: Axis needs two binding values.\n");
+                        return;
+                    }
                     button_string = "Y Axis";
                     break;
+            }
+
+            switch (button.input_type)
+            {
+                case Key:
+                    key_string = "key(";
+                    break;
+                case JoyButton:
+                    key_string = "button(";
+                    break;
+                case JoyAxis:
+                    key_string = "axis(";
+                    break;
+            }
+
+            if (val2 == null) {
+                key_string = key_string.concat (val.to_string () + ")");
+            } else {
+                key_string = key_string.concat (val.to_string () + "," + val2.to_string () + ")");
             }
             int retval = m64_bind_ctrl_button(controller, button_string, key_string);
             if (retval != 0) {

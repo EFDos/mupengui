@@ -48,13 +48,21 @@ namespace MupenGUI.Configuration {
             AxisY
         }
 
+        public enum InputType {
+            Key,
+            JoyButton,
+            JoyAxis
+        }
+
         public string name {construct; get;}
+        public InputType input_type {construct set; get;}
         public ButtonID button_id {construct; get;}
         public int value {set; get;}
 
         public ButtonConfig(string p_name, ButtonID p_button_id) {
             Object(
                 name: p_name,
+                input_type: InputType.Key,
                 button_id: p_button_id
             );
         }

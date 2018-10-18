@@ -30,7 +30,7 @@ using MupenGUI.Views.Widgets;
 extern bool joy_init ();
 extern void joy_shutdown ();
 extern uint joy_get_total ();
-extern char* joy_get_name (uint id);
+extern unowned string joy_get_name (uint id);
 extern void joy_set_current (uint id);
 extern int joy_event_loop ();
 
@@ -96,20 +96,7 @@ namespace MupenGUI.Services {
             var device_list = new GenericArray<string> ();
 
             for (int i = 0 ; i < joy_get_total () ; ++i) {
-                char* c_name = joy_get_name (i);
-                if (c_name != null) {
-                    var builder = new StringBuilder ();
-                    char c = c_name[0];
-                    int it = 0;
-                    while (c != '\0') {
-                        builder.append_c (c);
-                        c = c_name[it++];
-                    }
-                    builder.erase(0, 1);
-                    var str = builder.str;
-                    device_list.add (str);
-                    //device_list.append_val (new DeviceConfig(str, i));
-                }
+                device_list.add (joy_get_name (i));
             }
 
             return device_list;
@@ -138,17 +125,8 @@ namespace MupenGUI.Services {
                 if (should_run) {
                     var result = joy_event_loop ();
                     if (result == -1) continue;
-                    if (result >= 100) {
-                        print("axis moved: %d\n", result - 100);
-                        lock (joy_dialog) {
-                            if (joy_dialog != null) joy_dialog.joystick_event ();
-                        }
-                    }
-                    else {
-                        print("button pressed: %d\n", result);
-                        lock (joy_dialog) {
-                            if (joy_dialog != null) joy_dialog.joystick_event ();
-                        }
+                    lock (joy_dialog) {
+                        if (joy_dialog != null) joy_dialog.joystick_event (result);
                     }
                 } else {
                     return null;

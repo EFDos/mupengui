@@ -49,7 +49,9 @@ namespace MupenGUI.Views.Settings {
             new ButtonConfig("Axis X", ButtonConfig.ButtonID.AxisX),
             new ButtonConfig("Axis Y", ButtonConfig.ButtonID.AxisY)
         };
-        uint button_list_it = 0;
+        private uint button_list_it = 0;
+        private uint selected_controller = 0;
+        private int selected_device = -1;
 
         public InputSettingsPage () {
             Object (
@@ -63,21 +65,21 @@ namespace MupenGUI.Views.Settings {
 
         construct {
 
-            var controller_label = new Granite.HeaderLabel ("Controller");
+            var controller_label = new Granite.HeaderLabel ("Emulator Controller");
             var device_label = new Granite.HeaderLabel ("Device");
             var set_controls_button = new Gtk.Button.with_label ("Set Buttons");
 
-            var list_store = new Gtk.ListStore (1, typeof (int));
+            var list_store = new Gtk.ListStore (2, typeof(string), typeof(uint));
 		    Gtk.TreeIter iter;
 
 		    list_store.append (out iter);
-		    list_store.set (iter, 0, 1);
+		    list_store.set (iter, 0, "Controller 1", 1, 0);
 		    list_store.append (out iter);
-		    list_store.set (iter, 0, 2);
+		    list_store.set (iter, 0, "Controller 2", 1, 1);
 		    list_store.append (out iter);
-		    list_store.set (iter, 0, 3);
+		    list_store.set (iter, 0, "Controller 3", 1, 2);
 		    list_store.append (out iter);
-		    list_store.set (iter, 0, 4);
+		    list_store.set (iter, 0, "Controller 4", 1, 3);
 
             var controller_list_box = new Gtk.ComboBox.with_model (list_store);
             var renderer = new Gtk.CellRendererText ();
@@ -85,16 +87,18 @@ namespace MupenGUI.Views.Settings {
 		    controller_list_box.add_attribute (renderer, "text", 0);
 		    controller_list_box.active = 0;
 
-            var dlist_store = new Gtk.ListStore (1, typeof (string));
+            var dlist_store = new Gtk.ListStore (2, typeof (string), typeof(int));
             Gtk.TreeIter d_iter;
 
             var device_list = JoystickListener.instance.get_device_list ();
             dlist_store.append(out d_iter);
-            dlist_store.set (d_iter, 0, "Keyboard");
+            dlist_store.set (d_iter, 0, "Keyboard", 1, -1);
 
+            var device_number = 0;
             device_list.foreach ((str) => {
                 dlist_store.append(out d_iter);
-                dlist_store.set (d_iter, 0, "Joystick " + str);
+                dlist_store.set (d_iter, 0, "Joystick " + str, 1, device_number);
+                ++device_number;
             });
 
             var device_list_box = new Gtk.ComboBox.with_model (dlist_store);
@@ -103,6 +107,20 @@ namespace MupenGUI.Views.Settings {
             device_list_box.add_attribute (renderer, "text", 0);
             device_list_box.active = 0;
 
+            controller_list_box.changed.connect(() => {
+                Value n;
+                controller_list_box.get_active_iter (out iter);
+                list_store.get_value (iter, 1, out n);
+                selected_controller = (uint)n;
+            });
+
+            device_list_box.changed.connect (() => {
+                Value n;
+                device_list_box.get_active_iter (out d_iter);
+                dlist_store.get_value (d_iter, 1, out n);
+                selected_device = (int)n;
+            });
+
             set_controls_button.clicked.connect (() => {
                 var message_dialog = new Widgets.JoystickEventDialog.with_image_from_icon_name (
                         "Set Button " + button_list[0].name,
@@ -110,20 +128,33 @@ namespace MupenGUI.Views.Settings {
                         "applications-development",
                         Gtk.ButtonsType.CANCEL
                 );
-                Services.JoystickListener.instance.start ();
+                JoystickListener.instance.set_listening_device (selected_device);
+                JoystickListener.instance.start ();
+                Mupen64API.instance.set_controller_device (selected_controller, selected_device);
 
-                message_dialog.key_release_event.connect ((event) => {
+                /*message_dialog.key_release_event.connect ((event) => {
                     print ("keyval for %s: %u\n", button_list[button_list_it].name, event.key.hardware_keycode);
-                    //Services.Mupen64API.instance.bind_controller_button (0, button_list[button_list_it], (int)event.key.keyval);
+                    button_list[button_list_it].input_type = ButtonConfig.InputType.Key;
+                    //Services.Mupen64API.instance.bind_controller_button (selected_controller, button_list[button_list_it], (int)event.key.keyval);
                     if (++button_list_it > button_list.length - 1) {
                         button_list_it = 0;
                         message_dialog.close ();
                     }
                     message_dialog.primary_text = "Set Button " + button_list[button_list_it].name;
-                });
+                });*/
 
-                message_dialog.joystick_event.connect ((event) => {
-                    print ("joystick pressed, omg, I can't even believe it.\n");
+                message_dialog.joystick_event.connect ((joy_value) => {
+                    if (joy_value >= 100) {
+                        button_list[button_list_it].input_type = ButtonConfig.InputType.JoyAxis;
+                        joy_value -= 100;
+                    } else {
+                        button_list[button_list_it].input_type = ButtonConfig.InputType.JoyButton;
+                    }
+                    Mupen64API.instance.bind_controller_button (selected_controller,
+                                                                button_list[button_list_it],
+                                                                (int)joy_value,
+                                                                null);
+
                     if (++button_list_it > button_list.length - 1) {
                         message_dialog.close ();
                     }
