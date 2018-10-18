@@ -163,12 +163,14 @@ namespace MupenGUI.Views.Settings {
 
                 message_dialog.close.connect (() => {
                     button_list_it = 0;
-                    Services.JoystickListener.instance.stop ();
+                    Mupen64API.instance.save_current_settings ();
+                    //Services.JoystickListener.instance.stop ();
                 });
 
                 message_dialog.response.connect ((response_id) => {
                     button_list_it = 0;
-                    Services.JoystickListener.instance.stop ();
+                    Mupen64API.instance.save_current_settings ();
+                    //Services.JoystickListener.instance.stop ();
                 });
 
                 message_dialog.run ();

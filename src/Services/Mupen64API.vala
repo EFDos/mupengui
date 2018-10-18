@@ -45,6 +45,8 @@ extern int m64_command (int command, int param_int = 0, void* param_ptr = null);
 extern int m64_enable_ctrl_config (uint controller, bool b);
 extern int m64_bind_ctrl_button (uint controller, string button_name, string value);
 
+extern int m64_save_settings ();
+
 extern int m64_set_ctrl_device (uint controller, int device_id);
 extern void m64_set_emustop_callback (callback_type callback);
 extern int m64_set_fullscreen (bool b = true);
@@ -355,6 +357,18 @@ namespace MupenGUI.Services {
             }
         }
 
+        public void save_current_settings () {
+            if (!initialized) {
+                show_not_initialized_alert ();
+                return;
+            }
+
+            int retval = m64_save_settings ();
+            if (retval != 0) {
+                stderr.printf("Error: Failed to save settings. Error code: %d\n", retval);
+            }
+        }
+
         public string get_rom_goodname () {
             return goodname;
         }
@@ -366,6 +380,7 @@ namespace MupenGUI.Services {
             m64_unload_plugin (m64PluginType.Audio);
             m64_unload_plugin (m64PluginType.Input);
             rom_loaded = false;
+            save_current_settings ();
         }
 
         private void show_not_initialized_alert() {

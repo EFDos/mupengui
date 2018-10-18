@@ -46,7 +46,7 @@ static ptr_ConfigOpenSection      g_config_open_section;
 //static ptr_ConfigDeleteSection    g_config_delete_section;
 static ptr_ConfigSaveSection      g_config_save_section;
 //static ptr_ConfigListParameters   ConfigListParameters;
-//static ptr_ConfigSaveFile         g_config_save_file;
+static ptr_ConfigSaveFile         g_config_save_file;
 static ptr_ConfigSetParameter     g_config_set_parameter;
 //static ptr_ConfigGetParameter     ConfigGetParameter;
 //static ptr_ConfigGetParameterType ConfigGetParameterType;
@@ -133,6 +133,7 @@ m64p_error m64_load_corelib(const char* path)
     printf("M64API Info: Loading Config functions.\n");
     g_config_open_section = dynlib_getproc(g_core_handle, "ConfigOpenSection");
     g_config_save_section = dynlib_getproc(g_core_handle, "ConfigSaveSection");
+    g_config_save_file = dynlib_getproc(g_core_handle, "ConfigSaveFile");
     g_config_set_parameter = dynlib_getproc(g_core_handle, "ConfigSetParameter");
 
     return M64ERR_SUCCESS;
@@ -481,6 +482,52 @@ m64p_error m64_enable_ctrl_config(unsigned int controller, boolean b)
         return retval;
     }
     printf("M64API Info: Set enable configuration on controller: %u. %s\n", controller, b ? "true" : "false");
+
+    return retval;
+}
+
+m64p_error m64_save_settings()
+{
+    m64p_error retval = (*g_config_save_section)("Video-General");
+
+    if (retval != M64ERR_SUCCESS) {
+        printf("M64API Error: Failed to save section 'Video-General'\n");
+        return retval;
+    }
+
+    retval = (*g_config_save_section)("Input-SDL-Control1");
+
+    if (retval != M64ERR_SUCCESS) {
+        printf("M64API Error: Failed to save section 'Input-SDL-Control1'\n");
+        return retval;
+    }
+
+    retval = (*g_config_save_section)("Input-SDL-Control2");
+
+    if (retval != M64ERR_SUCCESS) {
+        printf("M64API Error: Failed to save section 'Input-SDL-Control1'\n");
+        return retval;
+    }
+
+    retval = (*g_config_save_section)("Input-SDL-Control3");
+
+    if (retval != M64ERR_SUCCESS) {
+        printf("M64API Error: Failed to save section 'Input-SDL-Control1'\n");
+        return retval;
+    }
+
+    retval = (*g_config_save_section)("Input-SDL-Control4");
+
+    if (retval != M64ERR_SUCCESS) {
+        printf("M64API Error: Failed to save section 'Input-SDL-Control1'\n");
+        return retval;
+    }
+
+    retval = (*g_config_save_file)();
+
+    if (retval != M64ERR_SUCCESS) {
+        printf("M64API Error: Failed to save settings to file.\n");
+    }
 
     return retval;
 }
