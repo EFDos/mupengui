@@ -47,6 +47,11 @@ namespace MupenGUI.Services {
 
     public class GeneralSettings : Granite.Services.Settings {
         public string mupen64pluslib_dir {get; set;}
+        public string mupen64plugin_dir {get; set;}
+        public string mupen64plugin_video {get; set;}
+        public string mupen64plugin_audio {get; set;}
+        public string mupen64plugin_input {get; set;}
+        public string mupen64plugin_rsp {get; set;}
 
         public GeneralSettings () {
             base ("com.github.efdos.mupen-gui.general");
@@ -57,6 +62,31 @@ namespace MupenGUI.Services {
                 case "mupen64pluslib-dir":
                     if (mupen64pluslib_dir == null) {
                         mupen64pluslib_dir = "";
+                    }
+                break;
+                case "mupen64plugin-dir":
+                    if (mupen64plugin_dir == null) {
+                        mupen64plugin_dir = "";
+                    }
+                break;
+                case "mupen64plugin-video":
+                    if (mupen64plugin_video == null) {
+                        mupen64plugin_video = "";
+                    }
+                break;
+                case "mupen64plugin-audio":
+                    if (mupen64plugin_audio == null) {
+                        mupen64plugin_audio = "";
+                    }
+                break;
+                case "mupen64plugin-input":
+                    if (mupen64plugin_input == null) {
+                        mupen64plugin_input = "";
+                    }
+                break;
+                case "mupen64plugin-rsp":
+                    if (mupen64plugin_rsp == null) {
+                        mupen64plugin_rsp = "";
                     }
                 break;
             }

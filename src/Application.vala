@@ -57,7 +57,19 @@ namespace MupenGUI {
             window.add (this.main_view);
             window.show_all ();
 
-            Mupen64API.instance.init (new GeneralSettings ().mupen64pluslib_dir);
+            // Set and initialize Mupen64 from GeneralSettings
+
+            var general_settings = new GeneralSettings ();
+
+            var mupen_api_instance = Mupen64API.instance;
+
+            mupen_api_instance.plugins_dir = general_settings.mupen64plugin_dir;
+            mupen_api_instance.video_plugin = general_settings.mupen64plugin_video;
+            mupen_api_instance.audio_plugin = general_settings.mupen64plugin_audio;
+            mupen_api_instance.input_plugin = general_settings.mupen64plugin_input;
+            mupen_api_instance.rsp_plugin = general_settings.mupen64plugin_rsp;
+
+            mupen_api_instance.init (general_settings.mupen64pluslib_dir);
         }
 
         public void grant_a_toast (string toast_msg) {

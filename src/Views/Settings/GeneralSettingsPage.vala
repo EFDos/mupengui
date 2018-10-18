@@ -42,10 +42,37 @@ namespace MupenGUI.Views.Settings {
 
             var general_settings = new GeneralSettings ();
 
-            var lib_dir_label = new Gtk.Label ("Mupen64Plus Library Directory");
+            var lib_dir_label = new Gtk.Label ("Mupen64Plus Core Library Directory:");
             var lib_dir_entry = new Gtk.Entry ();
 
+            var plugins_dir_label = new Gtk.Label ("Plugins Base Directory:");
+            var plugins_dir_entry = new Gtk.Entry ();
+
+            var video_plugin_label = new Gtk.Label ("Video Plugin:");
+            var video_plugin_entry = new Gtk.Entry ();
+
+            var audio_plugin_label = new Gtk.Label ("Audio Plugin:");
+            var audio_plugin_entry = new Gtk.Entry ();
+
+            var input_plugin_label = new Gtk.Label ("Input Plugin:");
+            var input_plugin_entry = new Gtk.Entry ();
+
+            var rsp_plugin_label = new Gtk.Label ("RSP Plugin:");
+            var rsp_plugin_entry = new Gtk.Entry ();
+
+            lib_dir_label.halign = Gtk.Align.END;
+            plugins_dir_label.halign = Gtk.Align.END;
+            video_plugin_label.halign = Gtk.Align.END;
+            audio_plugin_label.halign = Gtk.Align.END;
+            input_plugin_label.halign = Gtk.Align.END;
+            rsp_plugin_label.halign = Gtk.Align.END;
+
             lib_dir_entry.set_text (general_settings.mupen64pluslib_dir);
+            plugins_dir_entry.set_text (general_settings.mupen64plugin_dir);
+            video_plugin_entry.set_text (general_settings.mupen64plugin_video);
+            audio_plugin_entry.set_text (general_settings.mupen64plugin_audio);
+            input_plugin_entry.set_text (general_settings.mupen64plugin_input);
+            rsp_plugin_entry.set_text (general_settings.mupen64plugin_rsp);
 
             lib_dir_entry.activate.connect (() => {
                 general_settings.mupen64pluslib_dir = lib_dir_entry.get_text ();
@@ -64,8 +91,42 @@ namespace MupenGUI.Views.Settings {
                 }
             });
 
+            plugins_dir_entry.activate.connect (() => {
+               Mupen64API.instance.plugins_dir = general_settings.mupen64plugin_dir = plugins_dir_entry.get_text ();
+            });
+
+            video_plugin_entry.activate.connect (() => {
+                Mupen64API.instance.video_plugin = general_settings.mupen64plugin_video =
+                        video_plugin_entry.get_text ();
+            });
+
+            audio_plugin_entry.activate.connect (() => {
+                Mupen64API.instance.audio_plugin = general_settings.mupen64plugin_audio =
+                        audio_plugin_entry.get_text ();
+            });
+
+            input_plugin_entry.activate.connect (() => {
+                Mupen64API.instance.input_plugin = general_settings.mupen64plugin_input =
+                        input_plugin_entry.get_text ();
+            });
+
+            rsp_plugin_entry.activate.connect (() => {
+                Mupen64API.instance.rsp_plugin = general_settings.mupen64plugin_rsp =
+                        rsp_plugin_entry.get_text ();
+            });
+
             content_area.attach (lib_dir_label, 0, 0, 1, 1);
             content_area.attach (lib_dir_entry, 1, 0, 1, 1);
+            content_area.attach (plugins_dir_label, 0, 1, 1, 1);
+            content_area.attach (plugins_dir_entry, 1, 1, 1, 1);
+            content_area.attach (video_plugin_label, 0, 2, 1, 1);
+            content_area.attach (video_plugin_entry, 1, 2, 1, 1);
+            content_area.attach (audio_plugin_label, 0, 3, 1, 1);
+            content_area.attach (audio_plugin_entry, 1, 3, 1, 1);
+            content_area.attach (input_plugin_label, 0, 4, 1, 1);
+            content_area.attach (input_plugin_entry, 1, 4, 1, 1);
+            content_area.attach (rsp_plugin_label, 0, 5, 1, 1);
+            content_area.attach (rsp_plugin_entry, 1, 5, 1, 1);
         }
     }
 }

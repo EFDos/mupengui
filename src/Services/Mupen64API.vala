@@ -103,9 +103,16 @@ namespace MupenGUI.Services {
         }
 
         private static Mupen64API _instance = null;
+
+        public string plugins_dir {set; get;}
+        public string video_plugin {set; get;}
+        public string audio_plugin {set; get;}
+        public string input_plugin {set; get;}
+        public string rsp_plugin {set; get;}
+
+        private string goodname = "";
         private bool initialized = false;
         private bool rom_loaded = false;
-        private string goodname = "";
 
         public static Mupen64API instance {
             get {
@@ -203,13 +210,13 @@ namespace MupenGUI.Services {
                 }
 
                 var err = 0;
-                err = m64_load_plugin (m64PluginType.Video, "/usr/lib/x86_64-linux-gnu/mupen64plus/mupen64plus-video-z64.so");
+                err = m64_load_plugin (m64PluginType.Video, plugins_dir + video_plugin);
                 if (err != 0) { stderr.printf ("Error code: %d\n", err); }
-                err = m64_load_plugin (m64PluginType.Audio, "/usr/lib/x86_64-linux-gnu/mupen64plus/mupen64plus-audio-sdl.so");
+                err = m64_load_plugin (m64PluginType.Audio, plugins_dir + audio_plugin);
                 if (err != 0) { stderr.printf ("Error code: %d\n", err); }
-                err = m64_load_plugin (m64PluginType.Input, "/usr/lib/x86_64-linux-gnu/mupen64plus/mupen64plus-input-sdl.so");
+                err = m64_load_plugin (m64PluginType.Input, plugins_dir + input_plugin);
                 if (err != 0) { stderr.printf ("Error code: %d\n", err); }
-                err = m64_load_plugin (m64PluginType.RSP, "/usr/lib/x86_64-linux-gnu/mupen64plus/mupen64plus-rsp-z64.so");
+                err = m64_load_plugin (m64PluginType.RSP, plugins_dir + rsp_plugin);
                 if (err != 0) { stderr.printf ("Error code: %d\n", err); }
             }
 
