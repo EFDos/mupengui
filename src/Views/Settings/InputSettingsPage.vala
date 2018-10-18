@@ -46,8 +46,8 @@ namespace MupenGUI.Views.Settings {
             new ButtonConfig("C Up", ButtonConfig.ButtonID.CButtonUp),
             new ButtonConfig("Trigger R", ButtonConfig.ButtonID.ShoulderR),
             new ButtonConfig("Trigger L", ButtonConfig.ButtonID.ShoulderL),
-            new ButtonConfig("Axis X", ButtonConfig.ButtonID.AxisX),
-            new ButtonConfig("Axis Y", ButtonConfig.ButtonID.AxisY)
+            new ButtonConfig("Axis Left", ButtonConfig.ButtonID.AxisX),
+            new ButtonConfig("Axis Up", ButtonConfig.ButtonID.AxisY)
         };
         private uint button_list_it = 0;
         private uint selected_controller = 0;
@@ -143,17 +143,20 @@ namespace MupenGUI.Views.Settings {
                     message_dialog.primary_text = "Set Button " + button_list[button_list_it].name;
                 });*/
 
-                message_dialog.joystick_event.connect ((joy_value) => {
-                    if (joy_value >= 100) {
+                message_dialog.joystick_event.connect ((event) => {
+                    if (event.type == Widgets.JoystickEventDialog.JoyEventType.Axis) {
                         button_list[button_list_it].input_type = ButtonConfig.InputType.JoyAxis;
-                        joy_value -= 100;
-                    } else {
+                        Mupen64API.instance.bind_controller_button (selected_controller,
+                                                                    button_list[button_list_it],
+                                                                    (int)event.id,
+                                                                    (int)event.val);
+                    } else if (event.type == Widgets.JoystickEventDialog.JoyEventType.Button) {
                         button_list[button_list_it].input_type = ButtonConfig.InputType.JoyButton;
+                        Mupen64API.instance.bind_controller_button (selected_controller,
+                                                                    button_list[button_list_it],
+                                                                    (int)event.id,
+                                                                    null);
                     }
-                    Mupen64API.instance.bind_controller_button (selected_controller,
-                                                                button_list[button_list_it],
-                                                                (int)joy_value,
-                                                                null);
 
                     if (++button_list_it > button_list.length - 1) {
                         message_dialog.close ();

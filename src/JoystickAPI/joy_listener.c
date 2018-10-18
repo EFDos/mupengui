@@ -165,12 +165,14 @@ char* joy_get_name(unsigned int id)
     return g_joy[id].name;
 }
 
-int joy_event_loop()
+int retval[3];
+int* joy_event_loop()
 {
     if (g_current_joy == -1) {
         printf("JoyAPI Error: Current device wasn't set!\n"
                "Do you want me to explode??\n");
-        return -1;
+        retval[0] = -1;
+        return retval;
     }
     // read the joystick state
     read(g_joy[g_current_joy].id, &g_js, sizeof(struct js_event));
@@ -180,15 +182,21 @@ int joy_event_loop()
     {
 	    case JS_EVENT_AXIS:
 		    if (g_joy[g_current_joy].axis[g_js.number] != 0 && g_js.value == 0) {
+                retval[0] = 1;
+                retval[1] = g_js.number;
+                retval[2] = g_joy[g_current_joy].axis[g_js.number];
                 g_joy[g_current_joy].axis[g_js.number] = 0;
-                return g_js.number + 100;
+                return retval;
             }
             g_joy[g_current_joy].axis[g_js.number] = g_js.value;
             break;
 	    case JS_EVENT_BUTTON:
 		    if (g_joy[g_current_joy].button[g_js.number] != 0 && g_js.value == 0) {
+                retval[0] = 0;
+                retval[1] = g_js.number;
+                retval[2] = g_joy[g_current_joy].button[g_js.number];
                 g_joy[g_current_joy].button[g_js.number] = 0;
-                return g_js.number;
+                return retval;
             }
             g_joy[g_current_joy].button[g_js.number] = g_js.value;
             break;
@@ -212,5 +220,6 @@ int joy_event_loop()
 		fflush(stdout);*/
 
 	//close( joy_fd );	// too bad we never get here
-	return -1;
+    retval[0] = -1;
+	return retval;
 }

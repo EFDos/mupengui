@@ -32,7 +32,7 @@ extern void joy_shutdown ();
 extern uint joy_get_total ();
 extern unowned string joy_get_name (uint id);
 extern void joy_set_current (uint id);
-extern int joy_event_loop ();
+extern int* joy_event_loop ();
 
 namespace MupenGUI.Services {
 
@@ -124,9 +124,14 @@ namespace MupenGUI.Services {
                 }
                 if (should_run) {
                     var result = joy_event_loop ();
-                    if (result == -1) continue;
+                    if (result[0] == -1) continue;
                     lock (joy_dialog) {
-                        if (joy_dialog != null) joy_dialog.joystick_event (result);
+                        JoystickEventDialog.JoyEvent e = {0,0,0};
+                        e.type = result[0] == 0 ? JoystickEventDialog.JoyEventType.Button :
+                                                  JoystickEventDialog.JoyEventType.Axis;
+                        e.id = result[1];
+                        e.val = result[2];
+                        if (joy_dialog != null) joy_dialog.joystick_event (e);
                     }
                 } else {
                     return null;

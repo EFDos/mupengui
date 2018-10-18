@@ -260,7 +260,7 @@ namespace MupenGUI.Services {
             }
         }
 
-        public void bind_controller_button (uint controller, ButtonConfig button, int val, int? val2) {
+        public void bind_controller_button (uint controller, ButtonConfig button, int val, int? axis_mod) {
             if (!initialized) {
                 show_not_initialized_alert ();
                 return;
@@ -318,17 +318,9 @@ namespace MupenGUI.Services {
                     button_string = "Rumblepak switch";
                     break;
                 case AxisX:
-                    if (val2 == null) {
-                        print("Error: Axis needs two binding values.\n");
-                        return;
-                    }
                     button_string = "X Axis";
                     break;
                 case AxisY:
-                    if (val2 == null) {
-                        print("Error: Axis needs two binding values.\n");
-                        return;
-                    }
                     button_string = "Y Axis";
                     break;
             }
@@ -336,21 +328,34 @@ namespace MupenGUI.Services {
             switch (button.input_type)
             {
                 case Key:
-                    key_string = "key(";
+                    key_string = "key(" + val.to_string () + ")";
                     break;
                 case JoyButton:
-                    key_string = "button(";
+                    key_string = "button(" + val.to_string () + ")";
                     break;
                 case JoyAxis:
-                    key_string = "axis(";
+                    if (axis_mod == null) {
+                        print("Error: Unknown axis binding direction.\n");
+                        return;
+                    } else {
+                        if (button.button_id == AxisX || button.button_id == AxisY) {
+                            key_string = "axis(" + val.to_string () + "," + axis_mod.to_string () + ")";
+                            if (axis_mod >= 0) {
+                                key_string = "axis(" + val.to_string () + "+," + val.to_string () + "-)";
+                            } else {
+                                key_string = "axis(" + val.to_string () + "-," + val.to_string () + "+)";
+                            }
+                        } else {
+                            if (axis_mod >= 0) {
+                                key_string = "axis(" + val.to_string () + "+)";
+                            } else {
+                                key_string = "axis(" + val.to_string () + "-)";
+                            }
+                        }
+                    }
                     break;
             }
 
-            if (val2 == null) {
-                key_string = key_string.concat (val.to_string () + ")");
-            } else {
-                key_string = key_string.concat (val.to_string () + "," + val2.to_string () + ")");
-            }
             int retval = m64_bind_ctrl_button(controller, button_string, key_string);
             if (retval != 0) {
                 stderr.printf("Error: Failed to bind button %s. Error code: %d\n", button_string, retval);
