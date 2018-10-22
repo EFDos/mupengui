@@ -27,6 +27,11 @@
 
 namespace MupenGUI.Services.FileSystem {
 
+    public enum FilterType {
+        N64Rom,
+        SharedLib
+    }
+
     public static Gtk.ApplicationWindow window_ref = null;
 
     public class BinaryRomData : Object {
@@ -103,8 +108,10 @@ namespace MupenGUI.Services.FileSystem {
         return return_string;
     }
 
-    public static async string[] list_dir_files (string dir_name, bool recursive = false) {
-
+    public static async string[] list_dir_files (string dir_name,
+                                                 FilterType filter_t = FilterType.N64Rom,
+                                                 bool recursive = false)
+    {
         File dir = File.new_for_path (dir_name);
         string[] files = {};
 
@@ -116,11 +123,11 @@ namespace MupenGUI.Services.FileSystem {
             return files;
         }
 
-        try {
+        try
+        {
             var enumerator = yield dir.enumerate_children_async (FileAttribute.STANDARD_NAME, 0, Priority.DEFAULT);
-
-            while (true) {
-
+            while (true)
+            {
                 var nfiles = yield enumerator.next_files_async (10, Priority.DEFAULT);
 
                 if (nfiles == null) {
@@ -131,25 +138,28 @@ namespace MupenGUI.Services.FileSystem {
 
                     if (file_info.get_file_type () == FileType.DIRECTORY && recursive) {
 
-                    var file_array = yield list_dir_files (dir_name + "/" + file_info.get_name (), true);
+                        var file_array = yield list_dir_files (dir_name + "/" + file_info.get_name (), filter_t, true);
 
-                    foreach (string s in file_array) {
-                        files += s;
-                    }
+                        foreach (string s in file_array) {
+                            files += s;
+                        }
 
                     } else if (file_info.get_file_type () == FileType.REGULAR) {
 
                         var fname = file_info.get_name ().down ();
 
-                        if (fname.has_suffix (".n64") || fname.has_suffix (".z64")) {
-                            files += file_info.get_name ();
+                        if (filter_t == FilterType.N64Rom) {
+                            if (fname.has_suffix (".n64") || fname.has_suffix (".z64")) {
+                                files += file_info.get_name ();
+                            }
                         }
-
+                        if (filter_t == FilterType.SharedLib) {
+                            if (fname.has_suffix (".so")) {
+                                files += file_info.get_name ();
+                            }
+                        }
                     }
-
                 }
-
-
             }
         } catch (Error _error) {
             error ("list_dir_files: " + _error.message);

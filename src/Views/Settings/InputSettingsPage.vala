@@ -69,7 +69,7 @@ namespace MupenGUI.Views.Settings {
             var device_label = new Granite.HeaderLabel ("Device");
             var set_controls_button = new Gtk.Button.with_label ("Set Buttons");
 
-            var list_store = new Gtk.ListStore (2, typeof(string), typeof(uint));
+            var list_store = new Gtk.ListStore (2, typeof (string), typeof (uint));
 		    Gtk.TreeIter iter;
 
 		    list_store.append (out iter);

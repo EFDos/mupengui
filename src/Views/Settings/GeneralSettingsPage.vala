@@ -28,6 +28,12 @@ using MupenGUI.Services;
 
 namespace MupenGUI.Views.Settings {
     public class GeneralSettingsPage : Granite.SimpleSettingsPage {
+
+        private Gtk.ComboBoxText video_plugin_combo;
+        private Gtk.ComboBoxText audio_plugin_combo;
+        private Gtk.ComboBoxText input_plugin_combo;
+        private Gtk.ComboBoxText rsp_plugin_combo;
+
         public GeneralSettingsPage () {
             Object (
                 //activable: true,
@@ -49,16 +55,16 @@ namespace MupenGUI.Views.Settings {
             var plugins_dir_entry = new Gtk.Entry ();
 
             var video_plugin_label = new Gtk.Label ("Video Plugin:");
-            var video_plugin_entry = new Gtk.Entry ();
+            video_plugin_combo = new Gtk.ComboBoxText ();
 
             var audio_plugin_label = new Gtk.Label ("Audio Plugin:");
-            var audio_plugin_entry = new Gtk.Entry ();
+            audio_plugin_combo = new Gtk.ComboBoxText ();
 
             var input_plugin_label = new Gtk.Label ("Input Plugin:");
-            var input_plugin_entry = new Gtk.Entry ();
+            input_plugin_combo = new Gtk.ComboBoxText ();
 
             var rsp_plugin_label = new Gtk.Label ("RSP Plugin:");
-            var rsp_plugin_entry = new Gtk.Entry ();
+            rsp_plugin_combo = new Gtk.ComboBoxText ();
 
             lib_dir_label.halign = Gtk.Align.END;
             plugins_dir_label.halign = Gtk.Align.END;
@@ -69,10 +75,8 @@ namespace MupenGUI.Views.Settings {
 
             lib_dir_entry.set_text (general_settings.mupen64pluslib_dir);
             plugins_dir_entry.set_text (general_settings.mupen64plugin_dir);
-            video_plugin_entry.set_text (general_settings.mupen64plugin_video);
-            audio_plugin_entry.set_text (general_settings.mupen64plugin_audio);
-            input_plugin_entry.set_text (general_settings.mupen64plugin_input);
-            rsp_plugin_entry.set_text (general_settings.mupen64plugin_rsp);
+
+            populate_plugin_combos.begin (general_settings.mupen64plugin_dir);
 
             lib_dir_entry.activate.connect (() => {
                 general_settings.mupen64pluslib_dir = lib_dir_entry.get_text ();
@@ -93,26 +97,39 @@ namespace MupenGUI.Views.Settings {
 
             plugins_dir_entry.activate.connect (() => {
                Mupen64API.instance.plugins_dir = general_settings.mupen64plugin_dir = plugins_dir_entry.get_text ();
+               populate_plugin_combos.begin (plugins_dir_entry.get_text ());
             });
 
-            video_plugin_entry.activate.connect (() => {
+            video_plugin_combo.changed.connect (() => {
+                if (video_plugin_combo.get_active_text () == "") {
+                    return;
+                }
                 Mupen64API.instance.video_plugin = general_settings.mupen64plugin_video =
-                        video_plugin_entry.get_text ();
+                        video_plugin_combo.get_active_text ();
             });
 
-            audio_plugin_entry.activate.connect (() => {
+            audio_plugin_combo.changed.connect (() => {
+                if (audio_plugin_combo.get_active_text () == "") {
+                    return;
+                }
                 Mupen64API.instance.audio_plugin = general_settings.mupen64plugin_audio =
-                        audio_plugin_entry.get_text ();
+                        audio_plugin_combo.get_active_text ();
             });
 
-            input_plugin_entry.activate.connect (() => {
+            input_plugin_combo.changed.connect (() => {
+                if (input_plugin_combo.get_active_text () == "") {
+                    return;
+                }
                 Mupen64API.instance.input_plugin = general_settings.mupen64plugin_input =
-                        input_plugin_entry.get_text ();
+                        input_plugin_combo.get_active_text ();
             });
 
-            rsp_plugin_entry.activate.connect (() => {
+            rsp_plugin_combo.changed.connect (() => {
+                if (rsp_plugin_combo.get_active_text () == "") {
+                    return;
+                }
                 Mupen64API.instance.rsp_plugin = general_settings.mupen64plugin_rsp =
-                        rsp_plugin_entry.get_text ();
+                        rsp_plugin_combo.get_active_text ();
             });
 
             content_area.attach (lib_dir_label, 0, 0, 1, 1);
@@ -120,13 +137,63 @@ namespace MupenGUI.Views.Settings {
             content_area.attach (plugins_dir_label, 0, 1, 1, 1);
             content_area.attach (plugins_dir_entry, 1, 1, 1, 1);
             content_area.attach (video_plugin_label, 0, 2, 1, 1);
-            content_area.attach (video_plugin_entry, 1, 2, 1, 1);
+            content_area.attach (video_plugin_combo, 1, 2, 1, 1);
             content_area.attach (audio_plugin_label, 0, 3, 1, 1);
-            content_area.attach (audio_plugin_entry, 1, 3, 1, 1);
+            content_area.attach (audio_plugin_combo, 1, 3, 1, 1);
             content_area.attach (input_plugin_label, 0, 4, 1, 1);
-            content_area.attach (input_plugin_entry, 1, 4, 1, 1);
+            content_area.attach (input_plugin_combo, 1, 4, 1, 1);
             content_area.attach (rsp_plugin_label, 0, 5, 1, 1);
-            content_area.attach (rsp_plugin_entry, 1, 5, 1, 1);
+            content_area.attach (rsp_plugin_combo, 1, 5, 1, 1);
+        }
+
+        private async void populate_plugin_combos (string plugins_dir) {
+            var files_list = yield FileSystem.list_dir_files (plugins_dir, FileSystem.FilterType.SharedLib);
+            var general_settings = new GeneralSettings ();
+
+            video_plugin_combo.remove_all ();
+            audio_plugin_combo.remove_all ();
+            input_plugin_combo.remove_all ();
+            rsp_plugin_combo.remove_all ();
+
+            int v_active_id = 0, v_it = 0;
+            int a_active_id = 0, a_it = 0;
+            int i_active_id = 0, i_it = 0;
+            int r_active_id = 0, r_it = 0;
+
+            foreach (var file in files_list) {
+                if (file.has_prefix ("mupen64plus-video")) {
+                    if (file == general_settings.mupen64plugin_video) {
+                        v_active_id = v_it;
+                    }
+                    video_plugin_combo.append_text (file);
+                    ++v_it;
+                }
+                if (file.has_prefix ("mupen64plus-rsp")) {
+                    if (file == general_settings.mupen64plugin_rsp) {
+                        r_active_id = r_it;
+                    }
+                    rsp_plugin_combo.append_text (file);
+                    ++r_it;
+                }
+                if (file.has_prefix ("mupen64plus-input")) {
+                    if (file == general_settings.mupen64plugin_input) {
+                        i_active_id = i_it;
+                    }
+                    input_plugin_combo.append_text (file);
+                    ++i_it;
+                }
+                if (file.has_prefix ("mupen64plus-audio")) {
+                    if (file == general_settings.mupen64plugin_audio) {
+                        a_active_id = a_it;
+                    }
+                    audio_plugin_combo.append_text (file);
+                    ++a_it;
+                }
+            }
+            video_plugin_combo.active = v_active_id;
+            audio_plugin_combo.active = a_active_id;
+            input_plugin_combo.active = i_active_id;
+            rsp_plugin_combo.active = r_active_id;
         }
     }
 }
