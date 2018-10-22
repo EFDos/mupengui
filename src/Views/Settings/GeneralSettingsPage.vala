@@ -96,8 +96,12 @@ namespace MupenGUI.Views.Settings {
             });
 
             plugins_dir_entry.activate.connect (() => {
-               Mupen64API.instance.plugins_dir = general_settings.mupen64plugin_dir = plugins_dir_entry.get_text ();
-               populate_plugin_combos.begin (plugins_dir_entry.get_text ());
+                if (!plugins_dir_entry.get_text ().has_suffix ("/")) {
+                    var str = plugins_dir_entry.get_text ().concat ("/");
+                    plugins_dir_entry.set_text (str);
+                }
+                Mupen64API.instance.plugins_dir = general_settings.mupen64plugin_dir = plugins_dir_entry.get_text ();
+                populate_plugin_combos.begin (plugins_dir_entry.get_text ());
             });
 
             video_plugin_combo.changed.connect (() => {
@@ -194,6 +198,15 @@ namespace MupenGUI.Views.Settings {
             audio_plugin_combo.active = a_active_id;
             input_plugin_combo.active = i_active_id;
             rsp_plugin_combo.active = r_active_id;
+
+            /*Mupen64API.instance.video_plugin = general_settings.mupen64plugin_video =
+                        video_plugin_combo.get_active_text ();
+            Mupen64API.instance.audio_plugin = general_settings.mupen64plugin_audio =
+                        audio_plugin_combo.get_active_text ();
+            Mupen64API.instance.input_plugin = general_settings.mupen64plugin_input =
+                        input_plugin_combo.get_active_text ();
+            Mupen64API.instance.rsp_plugin = general_settings.mupen64plugin_rsp =
+                        rsp_plugin_combo.get_active_text ();*/
         }
     }
 }
