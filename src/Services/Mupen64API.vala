@@ -260,7 +260,7 @@ namespace MupenGUI.Services {
             }
         }
 
-        public void bind_controller_button (uint controller, ButtonConfig button, int val, int? axis_mod) {
+        public void bind_controller_button (uint controller, ButtonConfig button, int? axis_mod) {
             if (!initialized) {
                 show_not_initialized_alert ();
                 return;
@@ -328,10 +328,11 @@ namespace MupenGUI.Services {
             switch (button.input_type)
             {
                 case Key:
-                    key_string = "key(" + val.to_string () + ")";
+                    button.sdl_value_remap ();
+                    key_string = "key(" + button.value.to_string () + ")";
                     break;
                 case JoyButton:
-                    key_string = "button(" + val.to_string () + ")";
+                    key_string = "button(" + button.value.to_string () + ")";
                     break;
                 case JoyAxis:
                     if (axis_mod == null) {
@@ -339,17 +340,17 @@ namespace MupenGUI.Services {
                         return;
                     } else {
                         if (button.button_id == AxisX || button.button_id == AxisY) {
-                            key_string = "axis(" + val.to_string () + "," + axis_mod.to_string () + ")";
+                            //key_string = "axis(" + button.value.to_string () + "," + axis_mod.to_string () + ")";
                             if (axis_mod >= 0) {
-                                key_string = "axis(" + val.to_string () + "+," + val.to_string () + "-)";
+                                key_string = "axis(" + button.value.to_string () + "+," + button.value.to_string () + "-)";
                             } else {
-                                key_string = "axis(" + val.to_string () + "-," + val.to_string () + "+)";
+                                key_string = "axis(" + button.value.to_string () + "-," + button.value.to_string () + "+)";
                             }
                         } else {
                             if (axis_mod >= 0) {
-                                key_string = "axis(" + val.to_string () + "+)";
+                                key_string = "axis(" + button.value.to_string () + "+)";
                             } else {
-                                key_string = "axis(" + val.to_string () + "-)";
+                                key_string = "axis(" + button.value.to_string () + "-)";
                             }
                         }
                     }

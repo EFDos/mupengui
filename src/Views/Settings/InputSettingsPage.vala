@@ -122,62 +122,91 @@ namespace MupenGUI.Views.Settings {
             });
 
             set_controls_button.clicked.connect (() => {
-                var message_dialog = new Widgets.JoystickEventDialog.with_image_from_icon_name (
+                // Keyboard Case
+                if (selected_device == -1) {
+                    var message_dialog = new Granite.MessageDialog.with_image_from_icon_name (
                         "Set Button " + button_list[0].name,
-                        "Press a key or joystick button...",
-                        "applications-development",
-                        Gtk.ButtonsType.CANCEL
-                );
-                JoystickListener.instance.set_listening_device (selected_device);
-                JoystickListener.instance.start ();
-                Mupen64API.instance.set_controller_device (selected_controller, selected_device);
+                        "Press a Key",
+                        "input-keyboard-symbolic",
+                        Gtk.ButtonsType.NONE
+                    );
+                    Mupen64API.instance.set_controller_device (selected_controller, selected_device);
 
-                /*message_dialog.key_release_event.connect ((event) => {
-                    print ("keyval for %s: %u\n", button_list[button_list_it].name, event.key.hardware_keycode);
-                    button_list[button_list_it].input_type = ButtonConfig.InputType.Key;
-                    //Services.Mupen64API.instance.bind_controller_button (selected_controller, button_list[button_list_it], (int)event.key.keyval);
-                    if (++button_list_it > button_list.length - 1) {
+                    message_dialog.key_release_event.connect ((event) => {
+                        print ("keyval for %s: %u\n", button_list[button_list_it].name, event.key.hardware_keycode);
+                        button_list[button_list_it].input_type = ButtonConfig.InputType.Key;
+                        button_list[button_list_it].value = (int)event.key.keyval;
+                        Services.Mupen64API.instance.bind_controller_button (selected_controller,
+                                                                             button_list[button_list_it],
+                                                                             null);
+                        if (++button_list_it > button_list.length - 1) {
+                            message_dialog.close ();
+                        }
+                        message_dialog.primary_text = "Set Button " + button_list[button_list_it].name;
+                    });
+
+                    message_dialog.close.connect (() => {
                         button_list_it = 0;
-                        message_dialog.close ();
-                    }
-                    message_dialog.primary_text = "Set Button " + button_list[button_list_it].name;
-                });*/
+                        Mupen64API.instance.save_current_settings ();
+                        //Services.JoystickListener.instance.stop ();
+                    });
 
-                message_dialog.joystick_event.connect ((event) => {
-                    if (event.type == Widgets.JoystickEventDialog.JoyEventType.Axis) {
-                        button_list[button_list_it].input_type = ButtonConfig.InputType.JoyAxis;
-                        Mupen64API.instance.bind_controller_button (selected_controller,
-                                                                    button_list[button_list_it],
-                                                                    (int)event.id,
-                                                                    (int)event.val);
-                    } else if (event.type == Widgets.JoystickEventDialog.JoyEventType.Button) {
-                        button_list[button_list_it].input_type = ButtonConfig.InputType.JoyButton;
-                        Mupen64API.instance.bind_controller_button (selected_controller,
-                                                                    button_list[button_list_it],
-                                                                    (int)event.id,
-                                                                    null);
-                    }
+                    message_dialog.response.connect ((response_id) => {
+                        button_list_it = 0;
+                        Mupen64API.instance.save_current_settings ();
+                        //Services.JoystickListener.instance.stop ();
+                    });
 
-                    if (++button_list_it > button_list.length - 1) {
-                        message_dialog.close ();
-                    }
-                    message_dialog.primary_text = "Set Button " + button_list[button_list_it].name;
-                });
+                    message_dialog.run ();
+                    message_dialog.destroy ();
+                // Joystick Case
+                } else {
+                    var message_dialog = new Widgets.JoystickEventDialog.with_image_from_icon_name (
+                        "Set Button " + button_list[0].name,
+                        "Press a Joystick Button or Axis",
+                        "input-gaming-symbolic",
+                        Gtk.ButtonsType.CANCEL
+                    );
+                    JoystickListener.instance.set_listening_device (selected_device);
+                    JoystickListener.instance.start ();
+                    Mupen64API.instance.set_controller_device (selected_controller, selected_device);
 
-                message_dialog.close.connect (() => {
-                    button_list_it = 0;
-                    Mupen64API.instance.save_current_settings ();
-                    //Services.JoystickListener.instance.stop ();
-                });
+                    message_dialog.joystick_event.connect ((event) => {
+                        if (event.type == Widgets.JoystickEventDialog.JoyEventType.Axis) {
+                            button_list[button_list_it].input_type = ButtonConfig.InputType.JoyAxis;
+                            button_list[button_list_it].value = (int)event.id;
+                            Mupen64API.instance.bind_controller_button (selected_controller,
+                                                                        button_list[button_list_it],
+                                                                        (int)event.val);
+                        } else if (event.type == Widgets.JoystickEventDialog.JoyEventType.Button) {
+                            button_list[button_list_it].input_type = ButtonConfig.InputType.JoyButton;
+                            button_list[button_list_it].value = (int)event.id;
+                            Mupen64API.instance.bind_controller_button (selected_controller,
+                                                                        button_list[button_list_it],
+                                                                        null);
+                        }
 
-                message_dialog.response.connect ((response_id) => {
-                    button_list_it = 0;
-                    Mupen64API.instance.save_current_settings ();
-                    //Services.JoystickListener.instance.stop ();
-                });
+                        if (++button_list_it > button_list.length - 1) {
+                            message_dialog.close ();
+                        }
+                        message_dialog.primary_text = "Set Button " + button_list[button_list_it].name;
+                    });
 
-                message_dialog.run ();
-                message_dialog.destroy ();
+                    message_dialog.close.connect (() => {
+                        button_list_it = 0;
+                        Mupen64API.instance.save_current_settings ();
+                        //Services.JoystickListener.instance.stop ();
+                    });
+
+                    message_dialog.response.connect ((response_id) => {
+                        button_list_it = 0;
+                        Mupen64API.instance.save_current_settings ();
+                        //Services.JoystickListener.instance.stop ();
+                    });
+
+                    message_dialog.run ();
+                    message_dialog.destroy ();
+                }
             });
 
             content_area.attach (controller_label, 0, 0, 1, 1);

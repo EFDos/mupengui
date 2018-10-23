@@ -66,5 +66,41 @@ namespace MupenGUI.Configuration {
                 button_id: p_button_id
             );
         }
+
+        public void sdl_value_remap () {
+            switch (value) {
+                case Gdk.Key.Up:
+                    value = 273;
+                    return;
+                case Gdk.Key.Down:
+                    value = 274;
+                    return;
+                case Gdk.Key.Right:
+                    value = 275;
+                    return;
+                case Gdk.Key.Left:
+                    value = 276;
+                    return;
+                case Gdk.Key.space:
+                    value = 32;
+                    return;
+                case Gdk.Key.Alt_L:
+                    value = 308;
+                    return;
+                case Gdk.Key.Control_L:
+                    value = 306;
+                    return;
+                case Gdk.Key.Shift_L:
+                    value = 304;
+                    return;
+                case Gdk.Key.Return:
+                    value = 13;
+                    return;
+                case Gdk.Key.Tab:
+                    value = 9;
+                    return;
+                default: return;
+            }
+        }
     }
 }

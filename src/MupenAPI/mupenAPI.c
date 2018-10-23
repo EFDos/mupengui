@@ -465,7 +465,7 @@ m64p_error m64_set_ctrl_device(unsigned int controller, int device_id)
         printf("M64API Error: Failed to set parameter \'device\'.\n");
         return retval;
     }
-    printf("M64API Info: Set device on controller: %u. %u\n", controller, device_id);
+    printf("M64API Info: Set device on controller: %u. %u\n", controller + 1, device_id);
 
     return retval;
 }
@@ -481,7 +481,7 @@ m64p_error m64_enable_ctrl_config(unsigned int controller, boolean b)
         printf("M64API Error: Failed to set parameter \'mode\'.\n");
         return retval;
     }
-    printf("M64API Info: Set enable configuration on controller: %u. %s\n", controller, b ? "true" : "false");
+    printf("M64API Info: Set enable configuration on controller: %u. %s\n", controller + 1, b ? "true" : "false");
 
     return retval;
 }
@@ -542,7 +542,7 @@ m64p_error m64_bind_ctrl_button(unsigned int controller, const char* button_name
         printf("M64API Error: Failed to set parameter \'%s\'.\n", button_name);
         return retval;
     }
-    printf("M64API Info: Set button on controller: %u. {%s, %s}\n", controller, button_name, value);
+    printf("M64API Info: Set button on controller: %u. {%s, %s}\n", controller + 1, button_name, value);
 
     return retval;
 }
