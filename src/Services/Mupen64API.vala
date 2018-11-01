@@ -317,12 +317,9 @@ namespace MupenGUI.Services {
                 case RumblepakSwitch:
                     button_string = "Rumblepak switch";
                     break;
-                case AxisX:
-                    button_string = "X Axis";
-                    break;
-                case AxisY:
-                    button_string = "Y Axis";
-                    break;
+                default:
+                    stderr.printf ("Error: Invalid Button Id. Use bind_controller_axis() instead.\n");
+                    return;
             }
 
             switch (button.input_type)
@@ -336,30 +333,85 @@ namespace MupenGUI.Services {
                     break;
                 case JoyAxis:
                     if (axis_mod == null) {
-                        print("Error: Unknown axis binding direction.\n");
+                        stderr.printf ("Error: Unknown axis binding direction.\n");
                         return;
                     } else {
-                        if (button.button_id == AxisX || button.button_id == AxisY) {
-                            //key_string = "axis(" + button.value.to_string () + "," + axis_mod.to_string () + ")";
-                            if (axis_mod >= 0) {
-                                key_string = "axis(" + button.value.to_string () + "+," + button.value.to_string () + "-)";
-                            } else {
-                                key_string = "axis(" + button.value.to_string () + "-," + button.value.to_string () + "+)";
-                            }
+                        if (axis_mod >= 0) {
+                            key_string = "axis(" + button.value.to_string () + "+)";
                         } else {
-                            if (axis_mod >= 0) {
-                                key_string = "axis(" + button.value.to_string () + "+)";
-                            } else {
-                                key_string = "axis(" + button.value.to_string () + "-)";
-                            }
+                            key_string = "axis(" + button.value.to_string () + "-)";
                         }
                     }
                     break;
             }
 
-            int retval = m64_bind_ctrl_button(controller, button_string, key_string);
+            int retval = m64_bind_ctrl_button (controller, button_string, key_string);
             if (retval != 0) {
-                stderr.printf("Error: Failed to bind button %s. Error code: %d\n", button_string, retval);
+                stderr.printf ("Error: Failed to bind button %s. Error code: %d\n", button_string, retval);
+            }
+        }
+
+        public void bind_controller_axis (uint controller,
+                                          ButtonConfig axis1,
+                                          ButtonConfig axis2,
+                                          int? mod1,
+                                          int? mod2)
+        {
+            if (!initialized) {
+                show_not_initialized_alert ();
+                return;
+            }
+            if (axis1.button_id != axis2.button_id || axis1.input_type != axis2.input_type) {
+                stderr.printf ("Error: Both axis values should match value and id\n");
+                return;
+            }
+            string axis_string = "";
+            string key_string = "";
+
+            switch (axis1.button_id) {
+                case AxisX:
+                    axis_string = "Axis X";
+                    break;
+                case AxisY:
+                    axis_string = "Axis Y";
+                    break;
+                default:
+                    stderr.printf("Error: Invalid axis Id. Use bind_controller_button() instead.\n");
+                    return;
+            }
+
+            switch (axis1.input_type) {
+                case Key:
+                    axis1.sdl_value_remap ();
+                    axis2.sdl_value_remap ();
+                    key_string = "key(" + axis1.value.to_string () + "," + axis2.value.to_string () + ")";
+                    break;
+                case JoyButton:
+                    key_string = "button(" + axis1.value.to_string () + "," + axis2.value.to_string () + ")";
+                    break;
+                case JoyAxis:
+                    if (mod1 == null || mod2 == null) {
+                        stderr.printf ("Error: Unknown axis binding direction.\n");
+                        return;
+                    } else {
+                        if (mod1 >= 0) {
+                            key_string = "axis(" + axis1.value.to_string () + "+,";
+                        } else {
+                            key_string = "axis(" + axis1.value.to_string () + "-,";
+                        }
+
+                        if (mod2 >= 0) {
+                            key_string = key_string.concat (axis2.value.to_string () + "+)");
+                        } else {
+                            key_string = key_string.concat (axis2.value.to_string () + "-)");
+                        }
+                    }
+                    break;
+            }
+
+            int retval = m64_bind_ctrl_button (controller, axis_string, key_string);
+            if (retval != 0) {
+                stderr.printf ("Error: Failed to bind axis %s. Error code: %d\n", axis_string, retval);
             }
         }
 
