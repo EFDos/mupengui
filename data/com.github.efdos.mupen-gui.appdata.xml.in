@@ -9,7 +9,7 @@
   <summary>Sexy Mupen64 FrontEnd</summary>
   <description>Mupen64Plus FrontEnd based on Elementary OS guidelines</description>
   <releases>
-    <release version="0.8.0" date="2018-11-06"/>
+    <release version="0.8.1" date="2018-11-06"/>
   </releases>
   <provides>
     <binary>com.github.efdos.mupen-gui</binary>

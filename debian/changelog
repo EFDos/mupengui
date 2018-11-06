@@ -1,6 +1,6 @@
-com.github.efdos.mupen-gui (0.1) bionic; urgency=medium
+com.github.efdos.mupen-gui (0.8.1) xenial; urgency=low
 
   [ Doug Muratore ]
-  * Initial Release.
+  * AppCenter Juno Release
 
  -- Douglas Muratore <douglas.muratore@gmail.com>  Tue, 06 Nov 2018 00:37:21 -0200

@@ -1,5 +1,5 @@
 Format: http://dep.debian.net/deps/dep5
-Upstream-Name: mupen-gui-packaging
+Upstream-Name: com.github.efdos.mupen-gui
 Source: https://github.com/efdos/mupen-gui
 
 Files: src/* data/* debian/* scripts/*
