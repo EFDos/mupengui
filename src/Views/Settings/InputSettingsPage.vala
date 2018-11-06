@@ -47,11 +47,14 @@ namespace MupenGUI.Views.Settings {
             new ButtonConfig("Trigger R", ButtonConfig.ButtonID.ShoulderR),
             new ButtonConfig("Trigger L", ButtonConfig.ButtonID.ShoulderL),
             new ButtonConfig("Axis Left", ButtonConfig.ButtonID.AxisX),
-            new ButtonConfig("Axis Up", ButtonConfig.ButtonID.AxisY)
+            new ButtonConfig("Axis Right", ButtonConfig.ButtonID.AxisX),
+            new ButtonConfig("Axis Up", ButtonConfig.ButtonID.AxisY),
+            new ButtonConfig("Axis Down", ButtonConfig.ButtonID.AxisY)
         };
         private uint button_list_it = 0;
         private uint selected_controller = 0;
         private int selected_device = -1;
+        private int last_ctrl_axis_val = 0;
 
         public InputSettingsPage () {
             Object (
@@ -136,9 +139,22 @@ namespace MupenGUI.Views.Settings {
                         print ("keyval for %s: %u\n", button_list[button_list_it].name, event.key.hardware_keycode);
                         button_list[button_list_it].input_type = ButtonConfig.InputType.Key;
                         button_list[button_list_it].value = (int)event.key.keyval;
-                        Services.Mupen64API.instance.bind_controller_button (selected_controller,
+
+                        var name = button_list[button_list_it].name;
+                        if (name == "Axis Left" || name == "Axis Up") {
+                            // ignore
+                        } else {
+                            if (name == "Axis Right" || name == "Axis Down") {
+                                Services.Mupen64API.instance.bind_controller_axis (selected_controller,
+                                                                                   button_list[button_list_it-1],
+                                                                                   button_list[button_list_it],
+                                                                                   null, null);
+                            } else {
+                                Services.Mupen64API.instance.bind_controller_button (selected_controller,
                                                                              button_list[button_list_it],
                                                                              null);
+                            }
+                        }
                         if (++button_list_it > button_list.length - 1) {
                             message_dialog.close ();
                         }
@@ -172,18 +188,45 @@ namespace MupenGUI.Views.Settings {
                     Mupen64API.instance.set_controller_device (selected_controller, selected_device);
 
                     message_dialog.joystick_event.connect ((event) => {
+                        var name = button_list[button_list_it].name;
                         if (event.type == Widgets.JoystickEventDialog.JoyEventType.Axis) {
                             button_list[button_list_it].input_type = ButtonConfig.InputType.JoyAxis;
                             button_list[button_list_it].value = (int)event.id;
-                            Mupen64API.instance.bind_controller_button (selected_controller,
-                                                                        button_list[button_list_it],
-                                                                        (int)event.val);
+                            if (name == "Axis Left" || name == "Axis Up") {
+                                last_ctrl_axis_val = (int)event.val;
+                            } else {
+                                if (name == "Axis Right" || name == "Axis Down") {
+                                    Services.Mupen64API.instance.bind_controller_axis (selected_controller,
+                                                                                       button_list[button_list_it-1],
+                                                                                       button_list[button_list_it],
+                                                                                       last_ctrl_axis_val,
+                                                                                       (int)event.val);
+                                    last_ctrl_axis_val = 0;
+                                } else {
+                                    Mupen64API.instance.bind_controller_button (selected_controller,
+                                                                                button_list[button_list_it],
+                                                                                (int)event.val);
+                                }
+                            }
                         } else if (event.type == Widgets.JoystickEventDialog.JoyEventType.Button) {
                             button_list[button_list_it].input_type = ButtonConfig.InputType.JoyButton;
                             button_list[button_list_it].value = (int)event.id;
-                            Mupen64API.instance.bind_controller_button (selected_controller,
-                                                                        button_list[button_list_it],
-                                                                        null);
+                            if (name == "Axis Left" || name == "Axis Up") {
+                                last_ctrl_axis_val = (int)event.val;
+                            } else {
+                                if (name == "Axis Right" || name == "Axis Down") {
+                                    Services.Mupen64API.instance.bind_controller_axis (selected_controller,
+                                                                                       button_list[button_list_it-1],
+                                                                                       button_list[button_list_it],
+                                                                                       null,
+                                                                                       null);
+                                    last_ctrl_axis_val = 0;
+                                } else {
+                                    Mupen64API.instance.bind_controller_button (selected_controller,
+                                                                                button_list[button_list_it],
+                                                                                null);
+                                }
+                            }
                         }
 
                         if (++button_list_it > button_list.length - 1) {

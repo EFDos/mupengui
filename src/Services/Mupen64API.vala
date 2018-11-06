@@ -370,10 +370,10 @@ namespace MupenGUI.Services {
 
             switch (axis1.button_id) {
                 case AxisX:
-                    axis_string = "Axis X";
+                    axis_string = "X Axis";
                     break;
                 case AxisY:
-                    axis_string = "Axis Y";
+                    axis_string = "Y Axis";
                     break;
                 default:
                     stderr.printf("Error: Invalid axis Id. Use bind_controller_button() instead.\n");
