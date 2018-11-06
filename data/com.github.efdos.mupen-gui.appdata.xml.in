@@ -9,7 +9,7 @@
   <summary>Sexy Mupen64 FrontEnd</summary>
   <description>Mupen64Plus FrontEnd based on Elementary OS guidelines</description>
   <releases>
-    <release version="0.0.1" date="2018-05-05"/>
+    <release version="0.8.0" date="2018-11-06"/>
   </releases>
   <provides>
     <binary>com.github.efdos.mupen-gui</binary>
@@ -44,7 +44,7 @@
     <content_attribute id="money-gambling">none</content_attribute>
   </content_rating>
   <developer_name>Douglas Muratore</developer_name>
-  <url type="homepage">www.sinz.com.br</url>
+  <url type="homepage">http://github.com/efdos/MupenGUI</url>
   <url type="bugtracker">http://github.com/efdos/MupenGUI/issues</url>
   <url type="help">http://github.com/efdos/MupenGUI/issues</url>
   <update_contact>douglas.muratore_AT_gmail.com</update_contact>

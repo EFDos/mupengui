@@ -1,10 +1,9 @@
 [Desktop Entry]
 Type=Application
 Name=MupenGUI
-Comment=
-GenericName=
+Comment=A Pantheon based frontend for Mupen64Plus
 Exec=@EXEC_NAME@ %U
 Icon=com.github.efdos.mupen-gui
 Terminal=false
-Categories=Utility;Game;
-Keywords=Develop
+Categories=Games
+Keywords=Nintendo;Emulator;64;N64;Gaming;
