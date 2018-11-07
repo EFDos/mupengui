@@ -5,5 +5,5 @@ Comment=A Pantheon based frontend for Mupen64Plus
 Exec=@EXEC_NAME@ %U
 Icon=com.github.efdos.mupengui
 Terminal=false
-Categories=Games;
+Categories=Game;
 Keywords=Nintendo;Emulator;64;N64;Gaming;
