@@ -1,13 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Copyright 2018 Douglas Muratore <{{email}}> -->
 <component type="desktop">
-  <id>com.github.efdos.mupengui.desktop</id>
+  <id>com.github.efdos.mupengui</id>
   <metadata_license>CC0-1.0</metadata_license>
   <project_group>Douglas Muratore</project_group>
   <project_license>GPL-3.0+</project_license>
   <name>MupenGUI</name>
-  <summary>Sexy Mupen64 FrontEnd</summary>
-  <description>Mupen64Plus FrontEnd based on Elementary OS guidelines</description>
+  <summary>Sexy Mupen64Plus FrontEnd</summary>
+  <description>
+    <p>Mupen64Plus FrontEnd that allows for an easy configuration of Keyboard and Joystick bindings, to play your favourite N64 games.</p>
+    <p>Note: This is the first public release, it may still contain bugs and incomplete features.</p>
+    <p>Features:</p>
+    <ul>
+      <li>Mupen64Plus Plugins Selection</li>
+      <li>Keyboard/Joystick Input Binding</li>
+      <li>Rom Directory Listing</li>
+      <li>Fullscreen Mode</li>
+    </ul>
+  </description>
   <releases>
     <release version="0.8.1" date="2018-11-06"/>
   </releases>
