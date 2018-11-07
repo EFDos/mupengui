@@ -3,16 +3,22 @@ Section: x11
 Priority: extra
 Maintainer: Douglas Muratore <douglas.muratore@gmail.com>
 Build-Depends: meson,
-               debhelper (>= 9),
+               debhelper (>= 10.5.1),
                gettext,
                libglib2.0-dev (>= 2.20.0),
                libgranite-dev,
                libgtk-3-dev,
-               valac (>= 0.26),
+               valac
 Standards-Version: 4.1.1
 
 Package: com.github.efdos.mupengui
 Architecture: any
-Depends: ${misc:Depends}, ${shlibs:Depends}
+Depends: ${misc:Depends},
+         ${shlibs:Depends},
+         libmupen64plus2,
+         mupen64plus-audio-all,
+         mupen64plus-input-all,
+         mupen64plus-rsp-all,
+         mupen64plus-video-all
 Description: Mupen64Plus GUI
  This tool makes it easy to play Nintendo64 games on Elementary OS through Mupen64Plus.
