@@ -36,7 +36,7 @@ namespace MupenGUI {
 
         public Application () {
             Object(
-                application_id: "com.github.efdos.mupen-gui",
+                application_id: "com.github.efdos.mupengui",
                 flags: ApplicationFlags.FLAGS_NONE
             );
         }

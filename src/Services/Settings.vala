@@ -31,7 +31,7 @@ namespace MupenGUI.Services {
         public string rom_dir {get; set;}
 
         public UISettings () {
-            base ("com.github.efdos.mupen-gui.ui");
+            base ("com.github.efdos.mupengui.ui");
         }
 
         protected override void verify (string key) {
@@ -54,7 +54,7 @@ namespace MupenGUI.Services {
         public string mupen64plugin_rsp {get; set;}
 
         public GeneralSettings () {
-            base ("com.github.efdos.mupen-gui.general");
+            base ("com.github.efdos.mupengui.general");
         }
 
         protected override void verify (string key) {

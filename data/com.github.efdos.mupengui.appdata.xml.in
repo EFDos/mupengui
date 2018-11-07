@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Copyright 2018 Douglas Muratore <{{email}}> -->
 <component type="desktop">
-  <id>com.github.efdos.mupen-gui.desktop</id>
+  <id>com.github.efdos.mupengui.desktop</id>
   <metadata_license>CC0-1.0</metadata_license>
   <project_group>Douglas Muratore</project_group>
   <project_license>GPL-3.0+</project_license>
@@ -12,7 +12,7 @@
     <release version="0.8.1" date="2018-11-06"/>
   </releases>
   <provides>
-    <binary>com.github.efdos.mupen-gui</binary>
+    <binary>com.github.efdos.mupengui</binary>
   </provides>
   <content_rating type="oars-1.1">
     <content_attribute id="violence-cartoon">none</content_attribute>
@@ -50,10 +50,10 @@
   <update_contact>douglas.muratore_AT_gmail.com</update_contact>
   <screenshots>
     <screenshot type="default">
-      <image>https://raw.githubusercontent.com/efdos/mupen-gui/master/data/screenshots/Welcome.png</image>
+      <image>https://raw.githubusercontent.com/efdos/mupengui/master/data/screenshots/Welcome.png</image>
     </screenshot>
     <screenshot>
-      <image>https://raw.githubusercontent.com/efdos/mupen-gui/master/data/screenshots/Pantheon_Running.png</image>
+      <image>https://raw.githubusercontent.com/efdos/mupengui/master/data/screenshots/Pantheon_Running.png</image>
     </screenshot>
   </screenshots>
 </component>

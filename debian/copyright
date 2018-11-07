@@ -1,6 +1,6 @@
 Format: http://dep.debian.net/deps/dep5
-Upstream-Name: com.github.efdos.mupen-gui
-Source: https://github.com/efdos/mupen-gui
+Upstream-Name: com.github.efdos.mupengui
+Source: https://github.com/efdos/mupengui
 
 Files: src/* data/* debian/* scripts/*
 Copyright: 2018 Douglas Muratore <douglas.muratore@gmail.com>

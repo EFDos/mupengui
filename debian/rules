@@ -26,4 +26,4 @@
 	    cd debian/build && ninja test
 
     override_dh_auto_install:
-	    cd debian/build && DESTDIR=${CURDIR}/debian/com.github.efdos.mupen-gui ninja install
+	    cd debian/build && DESTDIR=${CURDIR}/debian/com.github.efdos.mupengui ninja install
