@@ -37,7 +37,6 @@ namespace MupenGUI.Views.Window {
             var button_rom_dir = new Gtk.Button.from_icon_name ("folder-open-symbolic", Gtk.IconSize.MENU);
             var button_play_rom = new Gtk.Button.from_icon_name ("media-playback-start-symbolic", Gtk.IconSize.MENU);
 
-
             this.get_style_context ().add_class ("default-decoration");
             //css_context.add_class (Gtk.STYLE_CLASS_FLAT);
             this.show_close_button = true;

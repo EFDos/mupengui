@@ -46,6 +46,7 @@ namespace MupenGUI.Views.Settings {
 
         construct {
 
+            var ui_settings = new UISettings ();
             var general_settings = new GeneralSettings ();
 
             var lib_dir_label = new Gtk.Label ("Mupen64Plus Core Library Directory:");
@@ -136,18 +137,35 @@ namespace MupenGUI.Views.Settings {
                         rsp_plugin_combo.get_active_text ();
             });
 
-            content_area.attach (lib_dir_label, 0, 0, 1, 1);
-            content_area.attach (lib_dir_entry, 1, 0, 1, 1);
-            content_area.attach (plugins_dir_label, 0, 1, 1, 1);
-            content_area.attach (plugins_dir_entry, 1, 1, 1, 1);
-            content_area.attach (video_plugin_label, 0, 2, 1, 1);
-            content_area.attach (video_plugin_combo, 1, 2, 1, 1);
-            content_area.attach (audio_plugin_label, 0, 3, 1, 1);
-            content_area.attach (audio_plugin_combo, 1, 3, 1, 1);
-            content_area.attach (input_plugin_label, 0, 4, 1, 1);
-            content_area.attach (input_plugin_combo, 1, 4, 1, 1);
-            content_area.attach (rsp_plugin_label, 0, 5, 1, 1);
-            content_area.attach (rsp_plugin_combo, 1, 5, 1, 1);
+            var mode_switch = new Granite.ModeSwitch.from_icon_name ("display-brightness-symbolic",
+                    "weather-clear-night-symbolic");
+
+            var gtk_settings = Gtk.Settings.get_default ();
+
+            mode_switch.primary_icon_tooltip_text = "Light Mode";
+            mode_switch.secondary_icon_tooltip_text = "Dark Mode";
+            mode_switch.valign = Gtk.Align.CENTER;
+            mode_switch.bind_property ("active", gtk_settings, "gtk_application_prefer_dark_theme");
+
+            mode_switch.active = ui_settings.dark_mode;
+
+            mode_switch.button_release_event.connect (() => {
+                ui_settings.dark_mode = mode_switch.active;
+            });
+
+            content_area.attach (mode_switch, 0, 0, 1, 1);
+            content_area.attach (lib_dir_label, 0, 1, 1, 1);
+            content_area.attach (lib_dir_entry, 1, 1, 1, 1);
+            content_area.attach (plugins_dir_label, 0, 2, 1, 1);
+            content_area.attach (plugins_dir_entry, 1, 2, 1, 1);
+            content_area.attach (video_plugin_label, 0, 3, 1, 1);
+            content_area.attach (video_plugin_combo, 1, 3, 1, 1);
+            content_area.attach (audio_plugin_label, 0, 4, 1, 1);
+            content_area.attach (audio_plugin_combo, 1, 4, 1, 1);
+            content_area.attach (input_plugin_label, 0, 5, 1, 1);
+            content_area.attach (input_plugin_combo, 1, 5, 1, 1);
+            content_area.attach (rsp_plugin_label, 0, 6, 1, 1);
+            content_area.attach (rsp_plugin_combo, 1, 6, 1, 1);
         }
 
         private async void populate_plugin_combos (string plugins_dir) {
@@ -198,15 +216,6 @@ namespace MupenGUI.Views.Settings {
             audio_plugin_combo.active = a_active_id;
             input_plugin_combo.active = i_active_id;
             rsp_plugin_combo.active = r_active_id;
-
-            /*Mupen64API.instance.video_plugin = general_settings.mupen64plugin_video =
-                        video_plugin_combo.get_active_text ();
-            Mupen64API.instance.audio_plugin = general_settings.mupen64plugin_audio =
-                        audio_plugin_combo.get_active_text ();
-            Mupen64API.instance.input_plugin = general_settings.mupen64plugin_input =
-                        input_plugin_combo.get_active_text ();
-            Mupen64API.instance.rsp_plugin = general_settings.mupen64plugin_rsp =
-                        rsp_plugin_combo.get_active_text ();*/
         }
     }
 }

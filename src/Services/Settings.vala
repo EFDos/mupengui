@@ -29,6 +29,7 @@ namespace MupenGUI.Services {
 
     public class UISettings : Granite.Services.Settings {
         public string rom_dir {get; set;}
+        public bool dark_mode {get; set;}
 
         public UISettings () {
             base ("com.github.efdos.mupengui.ui");
@@ -40,7 +41,9 @@ namespace MupenGUI.Services {
                     if (rom_dir == null) {
                         rom_dir = "";
                     }
-                break;
+                    break;
+                case "dark_mode":
+                    break;
             }
         }
     }

@@ -33,6 +33,10 @@ namespace MupenGUI {
     public class Application : Granite.Application {
 
         private Views.MainView main_view;
+        private const string CUSTOM_STYLESHEET = """
+            @define-color colorPrimary @BLACK_300;
+            @define-color colorAccent @BLUEBERRY_500;
+        """;
 
         public Application () {
             Object(
@@ -70,6 +74,17 @@ namespace MupenGUI {
             mupen_api_instance.rsp_plugin = general_settings.mupen64plugin_rsp;
 
             mupen_api_instance.init (general_settings.mupen64pluslib_dir);
+
+            /*var provider = new Gtk.CssProvider ();
+
+            try {
+                provider.load_from_data (CUSTOM_STYLESHEET, -1);
+                Gtk.StyleContext.add_provider_for_screen (window.get_screen (), provider,
+                        Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION);
+            } catch (Error e) {
+                print("Warning: Could not create CSS Provider: %s", e.message);
+            }*/
+            //Gtk.Settings.get_default ().gtk_application_prefer_dark_theme = true;
         }
 
         public void grant_a_toast (string toast_msg) {

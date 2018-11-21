@@ -6,6 +6,11 @@
       <summary>Saved rom directory</summary>
       <description>Saved rom directory to be automatically opened.</description>
     </key>
+    <key name="dark-mode" type="b">
+      <default>false</default>
+      <summary>Use dark theme</summary>
+      <description>Enable/disable prefer-dark-theme gtk setting</description>
+    </key>
   </schema>
 
   <schema id="com.github.efdos.mupengui.general" path="/com/github/efdos/mupengui/general/" gettext-domain="mupengui">
