@@ -1,4 +1,4 @@
-# MupenGUI
+# MupenGUI 
 ### Summary
 Mupen64plus Frontend Application written in Vala and C, still in development.
 
@@ -26,7 +26,7 @@ directly with the emulator by interfacing with its shared library instead of sen
 commands to the Mupen64plus CLI frontend. This allows for a greater control over
 the emulation and its configuration options.
 
-### Building and Installing
+### Building and Installing [![Build Status](https://travis-ci.com/EFDos/mupengui.svg?branch=master)](https://travis-ci.com/EFDos/mupengui)
 
 Your system must be at least compatible with a Gnome Environment and libgranite must be installed.
 
