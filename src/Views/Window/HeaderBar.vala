@@ -46,6 +46,7 @@ namespace MupenGUI.Views.Window {
 
             var manager = ActionManager.instance;
 
+            button_settings.tooltip_text = "Settings";
             button_settings.clicked.connect (() => {
                 if (!settings_open) {
                     manager.dispatch (Actions.General.SETTINGS_OPEN);
@@ -56,6 +57,7 @@ namespace MupenGUI.Views.Window {
                 }
             });
 
+            button_rom_dir.tooltip_text = "Select Rom Directory";
             button_rom_dir.clicked.connect (() => {
                 var res = FileSystem.choose_dir ("Select Roms Directory");
                 if (res != null) {
@@ -64,6 +66,7 @@ namespace MupenGUI.Views.Window {
                 }
             });
 
+            button_play_rom.tooltip_text = "Play Selected Rom";
             button_play_rom.clicked.connect (() => {
                 if (Globals.CURRENT_ROM_PATH != null) {
                     manager.dispatch (Actions.Rom.EXECUTION_REQUESTED);
