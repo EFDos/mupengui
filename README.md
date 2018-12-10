@@ -26,9 +26,24 @@ directly with the emulator by interfacing with its shared library instead of sen
 commands to the Mupen64plus CLI frontend. This allows for a greater control over
 the emulation and its configuration options.
 
-### Building and Installing [![Build Status](https://travis-ci.com/EFDos/mupengui.svg?branch=master)](https://travis-ci.com/EFDos/mupengui)
+## Building and Installing [![Build Status](https://travis-ci.com/EFDos/mupengui.svg?branch=master)](https://travis-ci.com/EFDos/mupengui)
+
+### Elementary OS
+
+You can look for it on the AppCenter, or install it through apt-get in the command line:
+
+`$ apt install com.github.efdos.mupengui`
+
+### Arch Linux
+
+Arch Linux users can find MupenGui under the name mupengui-git in the AUR:
+
+`$ aurman -S mupengui-git`
+
+### Other
 
 Your system must be at least compatible with a Gnome Environment and libgranite must be installed.
+The project used the Meson build system.
 
 **Configure and create a build directory**
 
@@ -49,4 +64,5 @@ Your system must be at least compatible with a Gnome Environment and libgranite 
 *must be sudo if you're installing on your system*
 
 ### Credits
+Arch Linux distribution support by btd1337
 Base N64 Controller used to design the icon by David Swanson from the Noun Project.
