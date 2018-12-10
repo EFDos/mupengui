@@ -64,5 +64,6 @@ The project used the Meson build system.
 *must be sudo if you're installing on your system*
 
 ### Credits
-Arch Linux distribution support by btd1337
+Arch Linux distribution support by btd1337 
+
 Base N64 Controller used to design the icon by David Swanson from the Noun Project.
