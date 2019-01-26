@@ -1,3 +1,12 @@
+com.github.efdos.mupengui (0.8.6) xenial; urgency=low
+
+  [ Doug Muratore ]
+  * Adds translatable strings
+  * Adds Dark Mode
+  * Fixes a few bugs
+
+ -- Douglas Muratore <douglas.muratore@gmail.com>  Sat, 26 Jan 2019 18:51:01 -0200
+
 com.github.efdos.mupengui (0.8.1) xenial; urgency=low
 
   [ Doug Muratore ]

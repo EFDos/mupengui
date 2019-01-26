@@ -6,7 +6,7 @@
   <project_group>Douglas Muratore</project_group>
   <project_license>GPL-3.0+</project_license>
   <name>MupenGUI</name>
-  <summary>Sexy Mupen64Plus FrontEnd</summary>
+  <summary>Easy Mupen64Plus FrontEnd</summary>
   <description>
     <p>Mupen64Plus FrontEnd that allows for an easy configuration of Keyboard and Joystick bindings, to play your favourite N64 games.</p>
     <p>Note: This is the first public release, it may still contain bugs and incomplete features.</p>
@@ -61,6 +61,9 @@
   <screenshots>
     <screenshot type="default">
       <image>https://raw.githubusercontent.com/efdos/mupengui/master/data/screenshots/Welcome.png</image>
+    </screenshot>
+    <screenshot>
+      <image>https://raw.githubusercontent.com/efdos/mupengui/master/data/screenshots/Welcome_Dark.png</image>
     </screenshot>
     <screenshot>
       <image>https://raw.githubusercontent.com/efdos/mupengui/master/data/screenshots/Pantheon_Settings.png</image>
