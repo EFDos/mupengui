@@ -85,10 +85,10 @@ namespace MupenGUI.Views.Settings {
 
                 if (Mupen64API.instance.init (general_settings.mupen64pluslib_dir)) {
                     var message_dialog = new Granite.MessageDialog.with_image_from_icon_name (
-                        _("Mupen64Plus Initalized!",
-                        "The Mupen64Plus core library has been found and loaded succesfully! ",
-                        "This program is happy now.",
-                        "face-smile-symbolic"),
+                        _("Mupen64Plus Initalized!"),
+                        _("The Mupen64Plus core library has been found and loaded succesfully! " +
+                        "This program is happy now."),
+                        "face-smile-symbolic",
                         Gtk.ButtonsType.CLOSE
                     );
                     message_dialog.run ();
