@@ -83,10 +83,10 @@ namespace MupenGUI.Views {
                                                       (int) rom_data.get_size (),
                                                       rom_data.get_buffer ()))
                 {
-                    manager.application_ref.grant_a_toast ("Executing Rom: " + Mupen64API.instance.get_rom_goodname ());
+                    manager.application_ref.grant_a_toast (_("Executing Rom: ") + Mupen64API.instance.get_rom_goodname ());
                     Mupen64API.instance.start_emulation.begin ();
                 } else {
-                    manager.application_ref.grant_a_toast ("Error loading Rom File: " + Globals.CURRENT_ROM_PATH);
+                    manager.application_ref.grant_a_toast (_("Error loading Rom File: ") + Globals.CURRENT_ROM_PATH);
                 }
             });
 
@@ -107,7 +107,6 @@ namespace MupenGUI.Views {
                     ui_settings.rom_dir = Globals.CURRENT_ROM_DIR;
                     stack.set_visible_child_full ("rom_view", Gtk.StackTransitionType.CROSSFADE);
                 } else {
-                    print("hur dur i think it's not valid hut dur \n");
                     stack.set_visible_child_full ("welcome_view", Gtk.StackTransitionType.CROSSFADE);
                 }
             });

@@ -59,30 +59,30 @@ namespace MupenGUI.Views.Settings {
         public InputSettingsPage () {
             Object (
                 //activable: true,
-                description: "Configure Mupen64 Input Settings.",
-                header: "Emulator",
+                description: _("Configure Mupen64 Input Settings."),
+                header: _("Emulator"),
                 icon_name: "input-gaming",
-                title: "Input Settings"
+                title: _("Input Settings")
             );
         }
 
         construct {
 
-            var controller_label = new Granite.HeaderLabel ("Emulator Controller");
-            var device_label = new Granite.HeaderLabel ("Device");
-            var set_controls_button = new Gtk.Button.with_label ("Set Buttons");
+            var controller_label = new Granite.HeaderLabel (_("Emulator Controller"));
+            var device_label = new Granite.HeaderLabel (_("Device"));
+            var set_controls_button = new Gtk.Button.with_label (_("Set Buttons"));
 
             var list_store = new Gtk.ListStore (2, typeof (string), typeof (uint));
 		    Gtk.TreeIter iter;
 
 		    list_store.append (out iter);
-		    list_store.set (iter, 0, "Controller 1", 1, 0);
+		    list_store.set (iter, 0, _("Controller 1"), 1, 0);
 		    list_store.append (out iter);
-		    list_store.set (iter, 0, "Controller 2", 1, 1);
+		    list_store.set (iter, 0, _("Controller 2"), 1, 1);
 		    list_store.append (out iter);
-		    list_store.set (iter, 0, "Controller 3", 1, 2);
+		    list_store.set (iter, 0, _("Controller 3"), 1, 2);
 		    list_store.append (out iter);
-		    list_store.set (iter, 0, "Controller 4", 1, 3);
+		    list_store.set (iter, 0, _("Controller 4"), 1, 3);
 
             var controller_list_box = new Gtk.ComboBox.with_model (list_store);
             var renderer = new Gtk.CellRendererText ();
@@ -95,12 +95,12 @@ namespace MupenGUI.Views.Settings {
 
             var device_list = JoystickListener.instance.get_device_list ();
             dlist_store.append(out d_iter);
-            dlist_store.set (d_iter, 0, "Keyboard", 1, -1);
+            dlist_store.set (d_iter, 0, _("Keyboard"), 1, -1);
 
             var device_number = 0;
             device_list.foreach ((str) => {
                 dlist_store.append(out d_iter);
-                dlist_store.set (d_iter, 0, "Joystick " + str, 1, device_number);
+                dlist_store.set (d_iter, 0, _("Joystick ") + str, 1, device_number);
                 ++device_number;
             });
 
@@ -128,8 +128,8 @@ namespace MupenGUI.Views.Settings {
                 // Keyboard Case
                 if (selected_device == -1) {
                     var message_dialog = new Granite.MessageDialog.with_image_from_icon_name (
-                        "Set Button " + button_list[0].name,
-                        "Press a Key",
+                        _("Set Button ") + button_list[0].name,
+                        _("Press a Key"),
                         "input-keyboard-symbolic",
                         Gtk.ButtonsType.NONE
                     );
@@ -158,7 +158,7 @@ namespace MupenGUI.Views.Settings {
                         if (++button_list_it > button_list.length - 1) {
                             message_dialog.close ();
                         }
-                        message_dialog.primary_text = "Set Button " + button_list[button_list_it].name;
+                        message_dialog.primary_text = _("Set Button ") + button_list[button_list_it].name;
                     });
 
                     message_dialog.close.connect (() => {
@@ -178,8 +178,8 @@ namespace MupenGUI.Views.Settings {
                 // Joystick Case
                 } else {
                     var message_dialog = new Widgets.JoystickEventDialog.with_image_from_icon_name (
-                        "Set Button " + button_list[0].name,
-                        "Press a Joystick Button or Axis",
+                        _("Set Button ") + button_list[0].name,
+                        _("Press a Joystick Button or Axis"),
                         "input-gaming-symbolic",
                         Gtk.ButtonsType.CANCEL
                     );
@@ -232,7 +232,7 @@ namespace MupenGUI.Views.Settings {
                         if (++button_list_it > button_list.length - 1) {
                             message_dialog.close ();
                         }
-                        message_dialog.primary_text = "Set Button " + button_list[button_list_it].name;
+                        message_dialog.primary_text = _("Set Button ") + button_list[button_list_it].name;
                     });
 
                     message_dialog.close.connect (() => {

@@ -30,16 +30,16 @@ namespace MupenGUI.Views.Settings {
         public DisplaySettingsPage () {
             Object (
                 //activable: true,
-                description: "Configure Mupen64 Display Settings.",
-                header: "Emulator",
+                description: _("Configure Mupen64 Display Settings."),
+                header: _("Emulator"),
                 icon_name: "video-display",
-                title: "Display Settings"
+                title: _("Display Settings")
             );
         }
 
         construct {
 
-            var fullscreen_label = new Gtk.Label ("Fullscreen");
+            var fullscreen_label = new Gtk.Label (_("Fullscreen"));
             var fullscreen_switch = new Gtk.Switch ();
 
             //TODO: Read State from Mupen64API

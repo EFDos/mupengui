@@ -1,0 +1,7 @@
+data/com.github.efdos.mupengui.appdata.xml.in
+data/com.github.efdos.mupengui.desktop.in.in
+src/Views/MainView.vala
+src/Views/Window/HeaderBar.vala
+src/Views/Settings/DisplaySettingsPage.vala
+src/Views/Settings/GeneralSettingsPage.vala
+src/Views/Settings/InputSettingsPage.vala

@@ -37,10 +37,10 @@ namespace MupenGUI.Views.Settings {
         public GeneralSettingsPage () {
             Object (
                 //activable: true,
-                description: "Configure MupenGUI General Settings.",
-                header: "Frontend",
+                description: _("Configure MupenGUI General Settings."),
+                header: _("Frontend"),
                 icon_name: "preferences-system",
-                title: "General Settings"
+                title: _("General Settings")
             );
         }
 
@@ -49,22 +49,22 @@ namespace MupenGUI.Views.Settings {
             var ui_settings = new UISettings ();
             var general_settings = new GeneralSettings ();
 
-            var lib_dir_label = new Gtk.Label ("Mupen64Plus Core Library Directory:");
+            var lib_dir_label = new Gtk.Label (_("Mupen64Plus Core Library Directory:"));
             var lib_dir_entry = new Gtk.Entry ();
 
-            var plugins_dir_label = new Gtk.Label ("Plugins Base Directory:");
+            var plugins_dir_label = new Gtk.Label (_("Plugins Base Directory:"));
             var plugins_dir_entry = new Gtk.Entry ();
 
-            var video_plugin_label = new Gtk.Label ("Video Plugin:");
+            var video_plugin_label = new Gtk.Label (_("Video Plugin:"));
             video_plugin_combo = new Gtk.ComboBoxText ();
 
-            var audio_plugin_label = new Gtk.Label ("Audio Plugin:");
+            var audio_plugin_label = new Gtk.Label (_("Audio Plugin:"));
             audio_plugin_combo = new Gtk.ComboBoxText ();
 
-            var input_plugin_label = new Gtk.Label ("Input Plugin:");
+            var input_plugin_label = new Gtk.Label (_("Input Plugin:"));
             input_plugin_combo = new Gtk.ComboBoxText ();
 
-            var rsp_plugin_label = new Gtk.Label ("RSP Plugin:");
+            var rsp_plugin_label = new Gtk.Label (_("RSP Plugin:"));
             rsp_plugin_combo = new Gtk.ComboBoxText ();
 
             lib_dir_label.halign = Gtk.Align.END;
@@ -85,10 +85,10 @@ namespace MupenGUI.Views.Settings {
 
                 if (Mupen64API.instance.init (general_settings.mupen64pluslib_dir)) {
                     var message_dialog = new Granite.MessageDialog.with_image_from_icon_name (
-                        "Mupen64Plus Initalized!",
-                        "The Mupen64Plus core library has been found and loaded succesfully! " +
+                        _("Mupen64Plus Initalized!",
+                        "The Mupen64Plus core library has been found and loaded succesfully! ",
                         "This program is happy now.",
-                        "face-smile-symbolic",
+                        "face-smile-symbolic"),
                         Gtk.ButtonsType.CLOSE
                     );
                     message_dialog.run ();
@@ -142,8 +142,8 @@ namespace MupenGUI.Views.Settings {
 
             var gtk_settings = Gtk.Settings.get_default ();
 
-            mode_switch.primary_icon_tooltip_text = "Light Mode";
-            mode_switch.secondary_icon_tooltip_text = "Dark Mode";
+            mode_switch.primary_icon_tooltip_text = _("Light Mode");
+            mode_switch.secondary_icon_tooltip_text = _("Dark Mode");
             mode_switch.valign = Gtk.Align.CENTER;
             mode_switch.bind_property ("active", gtk_settings, "gtk_application_prefer_dark_theme");
 
