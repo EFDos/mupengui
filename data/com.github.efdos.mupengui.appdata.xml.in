@@ -9,7 +9,6 @@
   <summary>Easy Mupen64Plus FrontEnd</summary>
   <description>
     <p>Mupen64Plus FrontEnd that allows for an easy configuration of Keyboard and Joystick bindings, to play your favourite N64 games.</p>
-    <p>Note: This is the first public release, it may still contain bugs and incomplete features.</p>
     <p>Features:</p>
     <ul>
       <li>Mupen64Plus Plugins Selection</li>
@@ -19,7 +18,7 @@
     </ul>
   </description>
   <releases>
-    <release version="0.8.1" date="2018-11-06"/>
+    <release version="0.8.7" date="2018-02-21"/>
   </releases>
   <provides>
     <binary>com.github.efdos.mupengui</binary>
