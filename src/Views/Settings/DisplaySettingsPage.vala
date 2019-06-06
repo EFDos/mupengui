@@ -24,6 +24,7 @@
 /*                                                                      */
 /* Authored by: Douglas Muratore <www.sinz.com.br>                      */
 /************************************************************************/
+using MupenGUI.Services;
 
 namespace MupenGUI.Views.Settings {
     public class DisplaySettingsPage : Granite.SimpleSettingsPage {
@@ -42,11 +43,12 @@ namespace MupenGUI.Views.Settings {
             var fullscreen_label = new Gtk.Label (_("Fullscreen"));
             var fullscreen_switch = new Gtk.Switch ();
 
-            //TODO: Read State from Mupen64API
-            fullscreen_switch.state_set (false);
+            bool fullscreen_state = Mupen64API.instance.get_parameter_bool ("Video-General", "Fullscreen");
+            fullscreen_switch.state_set (fullscreen_state);
 
             fullscreen_switch.state_set.connect ((state) => {
-                Services.Mupen64API.instance.set_fullscreen (state);
+                //Services.Mupen64API.instance.set_fullscreen (state);
+                Mupen64API.instance.set_parameter_bool ("Video-General", "Fullscreen", state);
             });
 
             content_area.attach (fullscreen_label, 0, 0, 1, 1);

@@ -57,11 +57,15 @@ namespace MupenGUI.Services {
         }
 
         ~JoystickListener () {
-            joy_shutdown ();
+            shutdown ();
         }
 
         public bool init () {
             return joy_init ();
+        }
+
+        public void shutdown () {
+            joy_shutdown ();
         }
 
         public void start () {

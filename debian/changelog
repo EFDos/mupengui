@@ -1,3 +1,12 @@
+com.github.efdos.mupengui (0.9.0) xenial; urgency=low
+
+  [ Doug Muratore ]
+  * Mupen64 Settings are saved on closing application
+  * Mupen64API Service exposes generic Settings Set/Get functions
+  * Mupen64API specific Settings Set functions removed in favor of generic functions
+
+    -- Douglas Muratore <douglas.muratore@gmail.com>  Wed, 05 Jun 2019 22:44:45 -0200
+
 com.github.efdos.mupengui (0.8.7) xenial; urgency=low
 
   [ Doug Muratore ]

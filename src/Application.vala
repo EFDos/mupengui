@@ -45,7 +45,26 @@ namespace MupenGUI {
             );
         }
 
+        ~Application () {
+            Mupen64API.instance.shutdown ();
+            JoystickListener.instance.shutdown ();
+        }
+
         protected override void activate () {
+            // Set and initialize Mupen64 from GeneralSettings
+            var general_settings = new GeneralSettings ();
+
+            var mupen_api_instance = Mupen64API.instance;
+
+            mupen_api_instance.plugins_dir = general_settings.mupen64plugin_dir;
+            mupen_api_instance.video_plugin = general_settings.mupen64plugin_video;
+            mupen_api_instance.audio_plugin = general_settings.mupen64plugin_audio;
+            mupen_api_instance.input_plugin = general_settings.mupen64plugin_input;
+            mupen_api_instance.rsp_plugin = general_settings.mupen64plugin_rsp;
+
+            mupen_api_instance.init (general_settings.mupen64pluslib_dir);
+
+            // Initialize JoystickListener
             JoystickListener.instance.init ();
 
             var window = new Gtk.ApplicationWindow (this);
@@ -60,20 +79,6 @@ namespace MupenGUI {
             window.set_default_size (900, 640);
             window.add (this.main_view);
             window.show_all ();
-
-            // Set and initialize Mupen64 from GeneralSettings
-
-            var general_settings = new GeneralSettings ();
-
-            var mupen_api_instance = Mupen64API.instance;
-
-            mupen_api_instance.plugins_dir = general_settings.mupen64plugin_dir;
-            mupen_api_instance.video_plugin = general_settings.mupen64plugin_video;
-            mupen_api_instance.audio_plugin = general_settings.mupen64plugin_audio;
-            mupen_api_instance.input_plugin = general_settings.mupen64plugin_input;
-            mupen_api_instance.rsp_plugin = general_settings.mupen64plugin_rsp;
-
-            mupen_api_instance.init (general_settings.mupen64pluslib_dir);
 
             /*var provider = new Gtk.CssProvider ();
 

@@ -45,10 +45,10 @@ static ptr_CoreDetachPlugin g_core_detach_plugin = NULL;
 static ptr_ConfigOpenSection      g_config_open_section;
 //static ptr_ConfigDeleteSection    g_config_delete_section;
 static ptr_ConfigSaveSection      g_config_save_section;
-//static ptr_ConfigListParameters   ConfigListParameters;
+//static ptr_ConfigListParameters   g_config_list_parameters;
 static ptr_ConfigSaveFile         g_config_save_file;
 static ptr_ConfigSetParameter     g_config_set_parameter;
-//static ptr_ConfigGetParameter     ConfigGetParameter;
+static ptr_ConfigGetParameter     g_config_get_parameter;
 //static ptr_ConfigGetParameterType ConfigGetParameterType;
 //static ptr_ConfigGetParameterHelp ConfigGetParameterHelp;
 //static ptr_ConfigSetDefaultInt    ConfigSetDefaultInt;
@@ -135,6 +135,8 @@ m64p_error m64_load_corelib(const char* path)
     g_config_save_section = dynlib_getproc(g_core_handle, "ConfigSaveSection");
     g_config_save_file = dynlib_getproc(g_core_handle, "ConfigSaveFile");
     g_config_set_parameter = dynlib_getproc(g_core_handle, "ConfigSetParameter");
+    g_config_get_parameter = dynlib_getproc(g_core_handle, "ConfigGetParameter");
+    //g_config_list_parameters = dynlib_getproc(g_core_handle, "ConfigListParameters");
 
     return M64ERR_SUCCESS;
 }
@@ -435,24 +437,43 @@ m64p_error m64_command(m64p_command command, int param_int, void* param_ptr)
     return retval;
 }
 
-
 void m64_set_verbose(boolean b)
 {
     g_verbose = b;
 }
 
-m64p_error m64_set_fullscreen(boolean b)
+m64p_error m64_get_parameter(const char* section_name, const char* param_name, m64p_type type, void* param, int size)
 {
-    int v = b ? 1 : 0;
-    m64p_error retval = (*g_config_set_parameter)(g_conf_video_handle, "Fullscreen", M64TYPE_BOOL, &v);
+    m64p_handle handle = NULL;
+    (*g_config_open_section)(section_name, &handle);
 
-    if (retval != M64ERR_SUCCESS) {
-        printf("M64API Error: Failed to set parameter \'Fullscreen\'.\n");
+    if (handle != NULL) {
+        m64p_error retval = (*g_config_get_parameter)(handle, param_name, type, param, size);
+        if (retval != M64ERR_SUCCESS) {
+            printf("M64API Error: Failed to get parameter %s/%s\n", section_name, param_name);
+        }
         return retval;
     }
-    printf("M64API Info: Set Fullscreen: %s\n", b ? "true" : "false");
 
-    return retval;
+    return M64ERR_INVALID_STATE;
+}
+
+m64p_error m64_set_parameter(const char* section_name, const char* param_name, m64p_type type, const void* param)
+{
+    m64p_handle handle = NULL;
+    (*g_config_open_section)(section_name, &handle);
+
+    if (handle != NULL) {
+        m64p_error retval = (*g_config_set_parameter)(handle, param_name, type, param);
+        if (retval != M64ERR_SUCCESS) {
+            printf("M64API Error: Failed to set parameter %s/%s\n", section_name, param_name);
+        } else {
+            printf("M64API Info: Set parameter %s/%s\n", section_name, param_name);
+        }
+        return retval;
+    }
+
+    return M64ERR_INVALID_STATE;
 }
 
 m64p_error m64_set_ctrl_device(unsigned int controller, int device_id)

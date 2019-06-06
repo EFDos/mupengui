@@ -46,10 +46,11 @@ extern int m64_enable_ctrl_config (uint controller, bool b);
 extern int m64_bind_ctrl_button (uint controller, string button_name, string value);
 
 extern int m64_save_settings ();
+extern int m64_get_parameter (string? section_name, string? param_name, int type, void* param_out, int size);
+extern int m64_set_parameter(string? section_name, string? param_name, int type, void* param_in);
 
 extern int m64_set_ctrl_device (uint controller, int device_id);
 extern void m64_set_emustop_callback (callback_type callback);
-extern int m64_set_fullscreen (bool b = true);
 extern void m64_set_verbose (bool b = true);
 
 extern unowned string m64_get_rom_goodname ();
@@ -88,6 +89,13 @@ namespace MupenGUI.Services {
             Audio,
             Input,
             Core
+        }
+
+        public enum m64ParamType {
+          Integer = 1,
+          Float,
+          Bool,
+          String
         }
 
         public enum m64CoreParam {
@@ -166,6 +174,8 @@ namespace MupenGUI.Services {
                 return;
             }
 
+            save_current_settings ();
+
             m64_unload_plugin (m64PluginType.RSP);
             m64_unload_plugin (m64PluginType.Video);
             m64_unload_plugin (m64PluginType.Audio);
@@ -181,6 +191,7 @@ namespace MupenGUI.Services {
                 stderr.printf ("Error: Failed to unload Mupen64Plus Dynamic Library. Error code: %d\n", result);
             }
 
+            print("Mupen64 Service Shutdown.\n");
             initialized = false;
         }
 
@@ -233,17 +244,6 @@ namespace MupenGUI.Services {
             m64_set_verbose (b);
         }
 
-        public void set_fullscreen (bool b = true) {
-            if (!initialized) {
-                show_not_initialized_alert ();
-                return;
-            }
-            var err = m64_set_fullscreen (b);
-            if (err != 0) {
-                stderr.printf ("Error code: %d\n", err);
-            }
-        }
-
         public void set_controller_device (uint controller, int device_id) {
             if (!initialized) {
                 show_not_initialized_alert ();
@@ -259,6 +259,83 @@ namespace MupenGUI.Services {
                 stderr.printf("Error: Failed to set controller device. Error code: %d\n", retval);
             }
         }
+
+        public void set_parameter_bool (string section_name, string param_name, bool param) {
+            if (!initialized) {
+                show_not_initialized_alert ();
+                return;
+            }
+
+            int retval = m64_set_parameter(section_name, param_name, m64ParamType.Bool, &param);
+
+            if (retval != 0) {
+                stderr.printf("Error: Failed to set parameter. Error code: %d\n", retval);
+            }
+        }
+
+        public bool get_parameter_bool (string section_name, string param_name) {
+            if (!initialized) {
+                show_not_initialized_alert ();
+                return false;
+            }
+
+            bool param = false;
+            int retval = m64_get_parameter(section_name, param_name, m64ParamType.Bool, &param, (int)sizeof(bool));
+
+            if (retval != 0) {
+                stderr.printf("Error: Failed to get parameter. Error code: %d\n", retval);
+            }
+
+            return param;
+        }
+
+        /*public int get_parameter_int (string section_name, string param_name) {
+            if (!initialized) {
+                show_not_initialized_alert ();
+                return -1;
+            }
+
+            int param = -1;
+            int retval = m64_get_parameter(section_name, param_name, m64ParamType.Integer, &param, (int)sizeof(int));
+
+            if (retval != 0) {
+                stderr.printf("Error: Failed to get parameter. Error code: %d\n", retval);
+            }
+
+            return param;
+        }
+
+        public float get_parameter_float (string section_name, string param_name) {
+            if (!initialized) {
+                show_not_initialized_alert ();
+                return 0.0f;
+            }
+
+            float param = 0.0f;
+            int retval = m64_get_parameter(section_name, param_name, m64ParamType.Float, &param, (int)sizeof(float));
+
+            if (retval != 0) {
+                stderr.printf("Error: Failed to get parameter. Error code: %d\n", retval);
+            }
+
+            return param;
+        }
+
+        public string get_parameter_string (string section_name, string param_name) {
+            if (!initialized) {
+                show_not_initialized_alert ();
+                return "";
+            }
+
+            unowned string param = null;
+            int retval = m64_get_parameter(section_name, param_name, m64ParamType.String, &param, (int)sizeof(param));
+
+            if (retval != 0) {
+                stderr.printf("Error: Failed to get parameter. Error code: %d\n", retval);
+            }
+
+            return param == null ? "" : param;
+        }*/
 
         public void bind_controller_button (uint controller, ButtonConfig button, int? axis_mod) {
             if (!initialized) {
@@ -425,6 +502,8 @@ namespace MupenGUI.Services {
             if (retval != 0) {
                 stderr.printf("Error: Failed to save settings. Error code: %d\n", retval);
             }
+
+            print("Mupen64API: Saved Settings\n");
         }
 
         public string get_rom_goodname () {
