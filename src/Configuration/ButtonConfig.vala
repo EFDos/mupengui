@@ -68,7 +68,7 @@ namespace MupenGUI.Configuration {
         }
 
         public void sdl_value_remap () {
-            switch (value) {
+            switch ((uint)value) {
                 case Gdk.Key.Up:
                     value = 273;
                     return;
