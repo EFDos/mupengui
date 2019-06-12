@@ -40,19 +40,70 @@ namespace MupenGUI.Views.Settings {
 
         construct {
 
-            var fullscreen_label = new Gtk.Label (_("Fullscreen"));
+            var fullscreen_label = new Gtk.Label (_("Fullscreen:"));
             var fullscreen_switch = new Gtk.Switch ();
 
+            var vsync_label = new Gtk.Label(_("VSync:"));
+            var vsync_switch = new Gtk.Switch ();
+
+            var resolution_label = new Gtk.Label(_("Resolution:"));
+            var resolution_x_entry = new Gtk.Entry ();
+            var resolution_y_entry = new Gtk.Entry ();
+
             bool fullscreen_state = Mupen64API.instance.get_parameter_bool ("Video-General", "Fullscreen");
+            bool vsync_state = Mupen64API.instance.get_parameter_bool ("Video-General", "VerticalSync");
+
+            int res_x = Mupen64API.instance.get_parameter_int ("Video-General", "ScreenWidth");
+            int res_y = Mupen64API.instance.get_parameter_int ("Video-General", "ScreenHeight");
+
+            fullscreen_label.halign = Gtk.Align.END;
+            vsync_label.halign = Gtk.Align.END;
+            resolution_label.halign = Gtk.Align.END;
+
             fullscreen_switch.state_set (fullscreen_state);
+            vsync_switch.state_set (vsync_state);
 
             fullscreen_switch.state_set.connect ((state) => {
-                //Services.Mupen64API.instance.set_fullscreen (state);
                 Mupen64API.instance.set_parameter_bool ("Video-General", "Fullscreen", state);
             });
 
+            vsync_switch.state_set.connect ((state) => {
+                Mupen64API.instance.set_parameter_bool ("Video-General", "VerticalSync", state);
+            });
+
+            resolution_x_entry.max_length = 4;
+            resolution_y_entry.max_length = 4;
+            resolution_x_entry.set_size_request (0, 0);
+            resolution_y_entry.set_size_request (0, 0);
+            resolution_x_entry.text = res_x.to_string ();
+            resolution_y_entry.text = res_y.to_string ();
+
+            resolution_x_entry.activate.connect (() => {
+                Mupen64API.instance.set_parameter_int(
+                    "Video-General",
+                    "ScreenWidth",
+                    int.parse (resolution_x_entry.text)
+                );
+            });
+
+            resolution_y_entry.activate.connect (() => {
+                Mupen64API.instance.set_parameter_int(
+                    "Video-General",
+                    "ScreenHeight",
+                    int.parse (resolution_y_entry.text)
+                );
+            });
+
+            content_area.column_homogeneous = false;
             content_area.attach (fullscreen_label, 0, 0, 1, 1);
             content_area.attach (fullscreen_switch, 1, 0, 1, 1);
+
+            content_area.attach (vsync_label, 0, 1, 1, 1);
+            content_area.attach (vsync_switch, 1, 1, 1, 1);
+
+            content_area.attach (resolution_label, 0, 2, 1, 1);
+            content_area.attach (resolution_x_entry, 2, 2, 1, 1);
+            content_area.attach (resolution_y_entry, 3, 2, 1, 1);
         }
     }
 }

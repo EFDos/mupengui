@@ -32,19 +32,22 @@ namespace MupenGUI.Views {
 
         public bool valid_dir = false;
         private Gtk.ListBox list;
-        private Gtk.Label dir_label;
+        private Gtk.Statusbar status_bar;
+        //private Gtk.Label dir_label;
 
         construct {
             list = new Gtk.ListBox ();
-            dir_label = new Gtk.Label ("Directory:");
+            //dir_label = new Gtk.Label ("Directory:");
+            status_bar = new Gtk.Statusbar ();
 
-            dir_label.set_padding (4, 0);
-            dir_label.set_halign (Gtk.Align.CENTER);
-            dir_label.get_style_context ().add_class (Granite.STYLE_CLASS_H3_LABEL);
+            //status_bar.set_padding (4, 0);
+            //dir_label.set_halign (Gtk.Align.CENTER);
+            //dir_label.get_style_context ().add_class (Granite.STYLE_CLASS_H3_LABEL);
+            //status_bar.get_style_context ().add_class (Granite.STYLE_CLASS_H3_LABEL);
 
             this.orientation = Gtk.Orientation.VERTICAL;
-            this.pack_start (dir_label, false, false, 2);
             this.pack_start (list, true, true, 0);
+            this.pack_start (status_bar, false, true, 0);
 
             list.row_selected.connect ((row) => {
                 if (row != null) {
@@ -96,7 +99,7 @@ namespace MupenGUI.Views {
         }
 
         public void set_directory_name (string dir_name) {
-            dir_label.label = "Directory: " + dir_name;
+            status_bar.push (0, "Directory: " + dir_name);
         }
     }
 }

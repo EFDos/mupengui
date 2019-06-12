@@ -273,6 +273,19 @@ namespace MupenGUI.Services {
             }
         }
 
+        public void set_parameter_int (string section_name, string param_name, int param) {
+            if (!initialized) {
+                show_not_initialized_alert ();
+                return;
+            }
+
+            int retval = m64_set_parameter(section_name, param_name, m64ParamType.Integer, &param);
+
+            if (retval != 0) {
+                stderr.printf("Error: Failed to set parameter. Error code: %d\n", retval);
+            }
+        }
+
         public bool get_parameter_bool (string section_name, string param_name) {
             if (!initialized) {
                 show_not_initialized_alert ();
@@ -289,7 +302,7 @@ namespace MupenGUI.Services {
             return param;
         }
 
-        /*public int get_parameter_int (string section_name, string param_name) {
+        public int get_parameter_int (string section_name, string param_name) {
             if (!initialized) {
                 show_not_initialized_alert ();
                 return -1;
@@ -305,7 +318,7 @@ namespace MupenGUI.Services {
             return param;
         }
 
-        public float get_parameter_float (string section_name, string param_name) {
+        /*public float get_parameter_float (string section_name, string param_name) {
             if (!initialized) {
                 show_not_initialized_alert ();
                 return 0.0f;
