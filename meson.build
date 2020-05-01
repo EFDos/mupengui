@@ -103,6 +103,7 @@ code_files = files(
     'src/Views/Settings/DisplaySettingsPage.vala',
     'src/Views/Settings/InputSettingsPage.vala',
     'src/Views/Widgets/JoystickEventDialog.vala',
+    'src/Views/Widgets/RomListItem.vala',
     'src/Services/Mupen64API.vala',
     'src/Services/JoystickListener.vala',
     'src/Services/Settings.vala',

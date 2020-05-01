@@ -79,9 +79,8 @@ namespace MupenGUI.Views {
 
             valid_dir = true;
             foreach (string s in rom_list) {
-                var label = new Granite.HeaderLabel (s);
-                label.set_padding(4, 0);
-                list.add (label);
+                list.add (new Views.Widgets.RomListItem (s));
+                list.add (new Gtk.Separator (Gtk.Orientation.HORIZONTAL));
                 list.show_all ();
             }
         }
