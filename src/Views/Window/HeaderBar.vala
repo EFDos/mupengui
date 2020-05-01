@@ -37,8 +37,6 @@ namespace MupenGUI.Views.Window {
             var button_rom_dir = new Gtk.Button.from_icon_name ("folder-open-symbolic", Gtk.IconSize.MENU);
             var button_play_rom = new Gtk.Button.from_icon_name ("media-playback-start-symbolic", Gtk.IconSize.MENU);
 
-            this.get_style_context ().add_class ("default-decoration");
-            //css_context.add_class (Gtk.STYLE_CLASS_FLAT);
             this.show_close_button = true;
             this.pack_start (button_play_rom);
             this.pack_start (button_rom_dir);
@@ -50,9 +48,13 @@ namespace MupenGUI.Views.Window {
             button_settings.clicked.connect (() => {
                 if (!settings_open) {
                     manager.dispatch (Actions.General.SETTINGS_OPEN);
+                    button_settings.image = new Gtk.Image.from_icon_name("view-continuous-symbolic", Gtk.IconSize.MENU);
+                    button_settings.tooltip_text = _("Rom List");
                     settings_open = true;
                 } else {
                     manager.dispatch (Actions.General.SETTINGS_CLOSE);
+                    button_settings.image = new Gtk.Image.from_icon_name("open-menu-symbolic", Gtk.IconSize.MENU);
+                    button_settings.tooltip_text = _("Settings");
                     settings_open = false;
                 }
             });
