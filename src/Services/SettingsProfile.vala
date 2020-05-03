@@ -1,5 +1,5 @@
 /************************************************************************/
-/*  RomListItem.vala                                                    */
+/*  SettingsProfile.vala                                                */
 /************************************************************************/
 /*                       This file is part of:                          */
 /*                           MupenGUI                                   */
@@ -24,24 +24,18 @@
 /*                                                                      */
 /* Authored by: Douglas Muratore <www.sinz.com.br>                      */
 /************************************************************************/
+namespace MupenGUI.Services {
+    public class SettingsProfile {
+        public string mupen_conf_filename {get; set;}
+        public string mupen64pluslib_dir {get; set;}
+        public string mupen64plugin_dir {get; set;}
+        public string mupen64plugin_video {get; set;}
+        public string mupen64plugin_audio {get; set;}
+        public string mupen64plugin_input {get; set;}
+        public string mupen64plugin_rsp {get; set;}
 
-namespace MupenGUI.Views.Widgets {
-    class RomListItem : Gtk.Box {
-
-        public RomListItem (string str) {
-            //base (Gtk.Orientation.HORIZONTAL, 0);
-            orientation = Gtk.Orientation.HORIZONTAL;
-            homogeneous = true;
-            halign = Gtk.Align.FILL;
-            set_size_request (0, 48);
-
-            var label = new Granite.HeaderLabel(str);
-            label.set_padding(4, 0);
-            pack_start (label);
-            var config_image = new Gtk.Image.from_icon_name("document-properties", Gtk.IconSize.LARGE_TOOLBAR);
-            config_image.tooltip_text = "Create Settings Profile for this ROM";
-            pack_end (config_image);
+        public SettingsProfile(string name) {
+            mupen_conf_filename = name + ".cfg";
         }
-
     }
 }

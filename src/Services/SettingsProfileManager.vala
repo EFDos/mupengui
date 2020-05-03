@@ -1,5 +1,5 @@
 /************************************************************************/
-/*  RomListItem.vala                                                    */
+/*  SettingsProfileManager.vala                                         */
 /************************************************************************/
 /*                       This file is part of:                          */
 /*                           MupenGUI                                   */
@@ -24,24 +24,51 @@
 /*                                                                      */
 /* Authored by: Douglas Muratore <www.sinz.com.br>                      */
 /************************************************************************/
+using MupenGUI.Services;
 
-namespace MupenGUI.Views.Widgets {
-    class RomListItem : Gtk.Box {
+namespace MupenGUI.Services {
+    public class SettingsProfileManager {
+        private static SettingsProfileManager _instance = null;
 
-        public RomListItem (string str) {
-            //base (Gtk.Orientation.HORIZONTAL, 0);
-            orientation = Gtk.Orientation.HORIZONTAL;
-            homogeneous = true;
-            halign = Gtk.Align.FILL;
-            set_size_request (0, 48);
-
-            var label = new Granite.HeaderLabel(str);
-            label.set_padding(4, 0);
-            pack_start (label);
-            var config_image = new Gtk.Image.from_icon_name("document-properties", Gtk.IconSize.LARGE_TOOLBAR);
-            config_image.tooltip_text = "Create Settings Profile for this ROM";
-            pack_end (config_image);
+        public static SettingsProfileManager instance {
+            get {
+                if (_instance == null) {
+                    _instance = new SettingsProfileManager();
+                }
+                return _instance;
+            }
         }
 
+        HashTable<string, SettingsProfile> profiles;
+
+        SettingsProfileManager () {
+            profiles = new HashTable<string, SettingsProfile> (str_hash, direct_equal);
+            profiles.insert ("global", new SettingsProfile("mupen64plus"));
+
+            try {
+                var config_dir = Path.build_path (Environment.get_user_config_dir (),
+                    Environment.get_application_name ());
+                // Create directory if it does't exist
+                DirUtils.create_with_parents (config_dir, 0664);
+
+                // Create configuration file if it doesn't exist
+                File config_file = File.new_for_path (Path.build_path (config_dir, "profiles.conf"));
+
+                if (!config_file.query_exists ()) {
+                    config_file.create (FileCreateFlags.NONE);
+                }
+
+                KeyFile key_file = new KeyFile ();
+                key_file.load_from_file (Path.build_path (config_dir, "profiles.conf"), KeyFileFlags.NONE);
+
+                if (!key_file.has_group ("global")) {
+                    key_file.set_string ("global", "mupen-conf-file", "mupen64plus.cfg");
+                }
+            } catch (Error e) {
+                stderr.printf ("Config File Error: %s\n", e.message);
+            }
+        }
+
+        public void do_something() {}
     }
 }

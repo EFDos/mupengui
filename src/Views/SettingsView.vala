@@ -27,6 +27,10 @@
 namespace MupenGUI.Views {
     public class SettingsView : Gtk.Paned {
         construct {
+            Services.SettingsProfileManager.instance.do_something ();
+
+            var box = new Gtk.Box (Gtk.Orientation.VERTICAL, 0);
+
             var stack = new Gtk.Stack ();
 
             stack.add_named (new Views.Settings.GeneralSettingsPage (), "general_page");
@@ -35,8 +39,16 @@ namespace MupenGUI.Views {
 
             var settings_sidebar = new Granite.SettingsSidebar (stack);
 
+            var profile_label = new Granite.HeaderLabel ("Profile: Global");
+            profile_label.set_halign (Gtk.Align.CENTER);
+            profile_label.get_style_context ().add_class (Granite.STYLE_CLASS_H4_LABEL);
+
+            box.pack_start (profile_label, false, true, 0);
+            box.pack_start (stack);
+            box.homogeneous = false;
+
             add (settings_sidebar);
-            add (stack);
+            add (box);
         }
     }
 }

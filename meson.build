@@ -107,6 +107,8 @@ code_files = files(
     'src/Services/Mupen64API.vala',
     'src/Services/JoystickListener.vala',
     'src/Services/Settings.vala',
+    'src/Services/SettingsProfile.vala',
+    'src/Services/SettingsProfileManager.vala',
     'src/Services/FileSystem.vala',
     'src/Services/ActionManager.vala',
     'src/Services/Globals.vala',
