@@ -34,9 +34,6 @@ namespace MupenGUI.Views.Settings {
         private Gtk.ComboBoxText input_plugin_combo;
         private Gtk.ComboBoxText rsp_plugin_combo;
 
-        string video_plugin = SettingsProfileManager.instance.get_video_plugin();
-        //printf("Video plugin: %s", video_plugin);
-
         public GeneralSettingsPage () {
             Object (
                 //activable: true,
@@ -49,11 +46,12 @@ namespace MupenGUI.Views.Settings {
 
         construct {
 
-            var ui_settings = new UISettings ();
-            var general_settings = new GeneralSettings ();
+            var settings_profile_manager = SettingsProfileManager.instance;
 
-            var lib_dir_label = new Gtk.Label (_("Mupen64Plus Core Library Directory:"));
-            var lib_dir_entry = new Gtk.Entry ();
+            var ui_settings = new UISettings ();
+
+            var lib_path_label = new Gtk.Label (_("Mupen64Plus Core Library Path:"));
+            var lib_path_entry = new Gtk.Entry ();
 
             var plugins_dir_label = new Gtk.Label (_("Plugins Base Directory:"));
             var plugins_dir_entry = new Gtk.Entry ();
@@ -70,23 +68,24 @@ namespace MupenGUI.Views.Settings {
             var rsp_plugin_label = new Gtk.Label (_("RSP Plugin:"));
             rsp_plugin_combo = new Gtk.ComboBoxText ();
 
-            lib_dir_label.halign = Gtk.Align.END;
+            lib_path_label.halign = Gtk.Align.END;
             plugins_dir_label.halign = Gtk.Align.END;
             video_plugin_label.halign = Gtk.Align.END;
             audio_plugin_label.halign = Gtk.Align.END;
             input_plugin_label.halign = Gtk.Align.END;
             rsp_plugin_label.halign = Gtk.Align.END;
 
-            lib_dir_entry.set_text (general_settings.mupen64pluslib_dir);
-            plugins_dir_entry.set_text (general_settings.mupen64plugin_dir);
+            lib_path_entry.set_text(settings_profile_manager.get_mupen64lib_path());
+            //plugins_dir_entry.set_text(general_settings.mupen64plugin_dir);
 
-            populate_plugin_combos.begin (general_settings.mupen64plugin_dir);
+            //populate_plugin_combos.begin(general_settings.mupen64plugin_dir);
 
-            lib_dir_entry.activate.connect (() => {
-                general_settings.mupen64pluslib_dir = lib_dir_entry.get_text ();
-                Mupen64API.instance.shutdown ();
+            lib_path_entry.activate.connect (() => {
+                string mupen64pluslib_path = lib_path_entry.get_text();
+                SettingsProfileManager.instance.set_mupen64lib_path(mupen64pluslib_path);
+                Mupen64API.instance.shutdown();
 
-                if (Mupen64API.instance.init (general_settings.mupen64pluslib_dir)) {
+                if (Mupen64API.instance.init(mupen64pluslib_path)) {
                     var message_dialog = new Granite.MessageDialog.with_image_from_icon_name (
                         _("Mupen64Plus Initalized!"),
                         _("The Mupen64Plus core library has been found and loaded succesfully! " +
@@ -104,61 +103,58 @@ namespace MupenGUI.Views.Settings {
                     var str = plugins_dir_entry.get_text ().concat ("/");
                     plugins_dir_entry.set_text (str);
                 }
-                Mupen64API.instance.plugins_dir = general_settings.mupen64plugin_dir = plugins_dir_entry.get_text ();
-                populate_plugin_combos.begin (plugins_dir_entry.get_text ());
+                Mupen64API.instance.plugins_dir = plugins_dir_entry.get_text();
+                populate_plugin_combos.begin(plugins_dir_entry.get_text ());
             });
 
             video_plugin_combo.changed.connect (() => {
-                if (video_plugin_combo.get_active_text () == "") {
+                if (video_plugin_combo.get_active_text() == "") {
                     return;
                 }
-                Mupen64API.instance.video_plugin = general_settings.mupen64plugin_video =
-                        video_plugin_combo.get_active_text ();
+                Mupen64API.instance.video_plugin = video_plugin_combo.get_active_text();
+                SettingsProfileManager.instance.set_video_plugin(video_plugin_combo.get_active_text());
             });
 
             audio_plugin_combo.changed.connect (() => {
                 if (audio_plugin_combo.get_active_text () == "") {
                     return;
                 }
-                Mupen64API.instance.audio_plugin = general_settings.mupen64plugin_audio =
-                        audio_plugin_combo.get_active_text ();
+                Mupen64API.instance.audio_plugin = audio_plugin_combo.get_active_text ();
             });
 
             input_plugin_combo.changed.connect (() => {
                 if (input_plugin_combo.get_active_text () == "") {
                     return;
                 }
-                Mupen64API.instance.input_plugin = general_settings.mupen64plugin_input =
-                        input_plugin_combo.get_active_text ();
+                Mupen64API.instance.input_plugin = input_plugin_combo.get_active_text ();
             });
 
             rsp_plugin_combo.changed.connect (() => {
                 if (rsp_plugin_combo.get_active_text () == "") {
                     return;
                 }
-                Mupen64API.instance.rsp_plugin = general_settings.mupen64plugin_rsp =
-                        rsp_plugin_combo.get_active_text ();
+                Mupen64API.instance.rsp_plugin = rsp_plugin_combo.get_active_text ();
             });
 
-            var mode_switch = new Granite.ModeSwitch.from_icon_name ("display-brightness-symbolic",
+            var mode_switch = new Granite.ModeSwitch.from_icon_name("display-brightness-symbolic",
                     "weather-clear-night-symbolic");
 
-            var gtk_settings = Gtk.Settings.get_default ();
+            var gtk_settings = Gtk.Settings.get_default();
 
             mode_switch.primary_icon_tooltip_text = _("Light Mode");
             mode_switch.secondary_icon_tooltip_text = _("Dark Mode");
             mode_switch.valign = Gtk.Align.CENTER;
-            mode_switch.bind_property ("active", gtk_settings, "gtk_application_prefer_dark_theme");
+            mode_switch.bind_property("active", gtk_settings, "gtk_application_prefer_dark_theme");
 
             mode_switch.active = ui_settings.dark_mode;
 
-            mode_switch.button_release_event.connect (() => {
+            mode_switch.button_release_event.connect(() => {
                 ui_settings.dark_mode = mode_switch.active;
             });
 
             content_area.attach (mode_switch, 0, 0, 1, 1);
-            content_area.attach (lib_dir_label, 0, 1, 1, 1);
-            content_area.attach (lib_dir_entry, 1, 1, 1, 1);
+            content_area.attach (lib_path_label, 0, 1, 1, 1);
+            content_area.attach (lib_path_entry, 1, 1, 1, 1);
             content_area.attach (plugins_dir_label, 0, 2, 1, 1);
             content_area.attach (plugins_dir_entry, 1, 2, 1, 1);
             content_area.attach (video_plugin_label, 0, 3, 1, 1);
@@ -171,14 +167,13 @@ namespace MupenGUI.Views.Settings {
             content_area.attach (rsp_plugin_combo, 1, 6, 1, 1);
         }
 
-        private async void populate_plugin_combos (string plugins_dir) {
+        private async void populate_plugin_combos(string plugins_dir) {
             var files_list = yield FileSystem.list_dir_files (plugins_dir, FileSystem.FilterType.SharedLib);
-            var general_settings = new GeneralSettings ();
 
-            video_plugin_combo.remove_all ();
-            audio_plugin_combo.remove_all ();
-            input_plugin_combo.remove_all ();
-            rsp_plugin_combo.remove_all ();
+            video_plugin_combo.remove_all();
+            audio_plugin_combo.remove_all();
+            input_plugin_combo.remove_all();
+            rsp_plugin_combo.remove_all();
 
             int v_active_id = 0, v_it = 0;
             int a_active_id = 0, a_it = 0;
@@ -187,30 +182,30 @@ namespace MupenGUI.Views.Settings {
 
             foreach (var file in files_list) {
                 if (file.has_prefix ("mupen64plus-video")) {
-                    if (file == general_settings.mupen64plugin_video) {
-                        v_active_id = v_it;
-                    }
+                    // if (file == general_settings.mupen64plugin_video) {
+                    //     v_active_id = v_it;
+                    // }
                     video_plugin_combo.append_text (file);
                     ++v_it;
                 }
                 if (file.has_prefix ("mupen64plus-rsp")) {
-                    if (file == general_settings.mupen64plugin_rsp) {
-                        r_active_id = r_it;
-                    }
+                    // if (file == general_settings.mupen64plugin_rsp) {
+                    //     r_active_id = r_it;
+                    // }
                     rsp_plugin_combo.append_text (file);
                     ++r_it;
                 }
                 if (file.has_prefix ("mupen64plus-input")) {
-                    if (file == general_settings.mupen64plugin_input) {
-                        i_active_id = i_it;
-                    }
+                    // if (file == general_settings.mupen64plugin_input) {
+                    //     i_active_id = i_it;
+                    // }
                     input_plugin_combo.append_text (file);
                     ++i_it;
                 }
                 if (file.has_prefix ("mupen64plus-audio")) {
-                    if (file == general_settings.mupen64plugin_audio) {
-                        a_active_id = a_it;
-                    }
+                    // if (file == general_settings.mupen64plugin_audio) {
+                    //     a_active_id = a_it;
+                    // }
                     audio_plugin_combo.append_text (file);
                     ++a_it;
                 }

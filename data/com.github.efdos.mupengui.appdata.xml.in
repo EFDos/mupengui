@@ -8,17 +8,17 @@
   <name>MupenGUI</name>
   <summary>Easy Mupen64Plus FrontEnd</summary>
   <description>
-    <p>Mupen64Plus FrontEnd that allows for an easy configuration of Keyboard and Joystick bindings, to play your favourite N64 games.</p>
+    <p>Easy to use Mupen64Plus front-end to play your favourite N64 games.</p>
     <p>Features:</p>
     <ul>
       <li>Mupen64Plus Plugins Selection</li>
       <li>Keyboard/Joystick Input Binding</li>
+      <li>Settings Profiles</li>
       <li>Rom Directory Listing</li>
-      <li>Fullscreen Mode</li>
     </ul>
   </description>
   <releases>
-    <release version="0.8.7" date="2018-02-21"/>
+    <release version="1.0.0" date="2020-07-01"/>
   </releases>
   <provides>
     <binary>com.github.efdos.mupengui</binary>

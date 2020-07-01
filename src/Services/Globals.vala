@@ -26,23 +26,6 @@
 /************************************************************************/
 
 namespace MupenGUI.Services.Globals {
-    /*class Globals : Object {
-
-        private Globals _instance = null;
-
-        public Globals instance {get {
-            if (_instance == null) {
-                _instance = new Globals ();
-            }
-
-            return _instance;
-        }}
-
-        public string CURRENT_ROM_DIR {set; get;}
-        public string CURRENT_ROM_PATH {set; get;}
-
-        private Globals ();
-    }*/
     public static string CURRENT_ROM_DIR;
     public static string CURRENT_ROM_PATH;
 

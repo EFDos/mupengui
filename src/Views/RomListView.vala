@@ -32,31 +32,27 @@ namespace MupenGUI.Views {
 
         public bool valid_dir = false;
         private Gtk.ListBox list;
-        //private Gtk.Statusbar status_bar;
         private Gtk.Label dir_label;
 
         construct {
-            list = new Gtk.ListBox ();
-            dir_label = new Gtk.Label ("Directory:");
-            //status_bar = new Gtk.Statusbar ();
+            list = new Gtk.ListBox();
+            dir_label = new Gtk.Label("Directory:");
 
-            //status_bar.set_padding (4, 0);
-            dir_label.set_halign (Gtk.Align.CENTER);
-            dir_label.get_style_context ().add_class (Granite.STYLE_CLASS_H4_LABEL);
-            //status_bar.get_style_context ().add_class (Granite.STYLE_CLASS_H3_LABEL);
+            dir_label.set_halign(Gtk.Align.CENTER);
+            dir_label.get_style_context().add_class (Granite.STYLE_CLASS_H4_LABEL);
 
             this.orientation = Gtk.Orientation.VERTICAL;
             this.pack_start (dir_label, false, true, 0);
             this.pack_start (list, true, true, 0);
 
-            list.row_selected.connect ((row) => {
+            list.row_selected.connect((row) => {
                 if (row != null) {
-                    var label = row.get_child () as Gtk.Label;
-                    Globals.CURRENT_ROM_PATH = Globals.CURRENT_ROM_DIR + "/" + label.label;
+                    var rom_item = row.get_child() as Views.Widgets.RomListItem;
+                    Globals.CURRENT_ROM_PATH = Globals.CURRENT_ROM_DIR + "/" + rom_item.get_name();
                 }
             });
 
-            list.activate_cursor_row.connect ((row) => {
+            list.activate_cursor_row.connect((row) => {
                 ActionManager.instance.dispatch(Actions.Rom.EXECUTION_REQUESTED);
             });
         }
@@ -79,7 +75,7 @@ namespace MupenGUI.Views {
 
             valid_dir = true;
             foreach (string s in rom_list) {
-                list.add (new Views.Widgets.RomListItem (s));
+                list.add (new Views.Widgets.RomListItem(s));
                 list.add (new Gtk.Separator (Gtk.Orientation.HORIZONTAL));
                 list.show_all ();
             }

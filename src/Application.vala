@@ -52,17 +52,18 @@ namespace MupenGUI {
 
         protected override void activate() {
             // Set and initialize Mupen64 from GeneralSettings
-            var general_settings = new GeneralSettings();
-
             var mupen_api_instance = Mupen64API.instance;
+            var settings_profile_manager = SettingsProfileManager.instance;
 
-            mupen_api_instance.plugins_dir = general_settings.mupen64plugin_dir;
+            settings_profile_manager.init();
+
+            /*mupen_api_instance.plugins_dir = general_settings.mupen64plugin_dir;
             mupen_api_instance.video_plugin = general_settings.mupen64plugin_video;
             mupen_api_instance.audio_plugin = general_settings.mupen64plugin_audio;
             mupen_api_instance.input_plugin = general_settings.mupen64plugin_input;
-            mupen_api_instance.rsp_plugin = general_settings.mupen64plugin_rsp;
+            mupen_api_instance.rsp_plugin = general_settings.mupen64plugin_rsp;*/
 
-            mupen_api_instance.init(general_settings.mupen64pluslib_dir);
+            mupen_api_instance.init(settings_profile_manager.get_mupen64lib_path());
 
             // Initialize JoystickListener
             JoystickListener.instance.init();
@@ -79,17 +80,6 @@ namespace MupenGUI {
             window.set_default_size(900, 640);
             window.add(this.main_view);
             window.show_all();
-
-            /*var provider = new Gtk.CssProvider ();
-
-            try {
-                provider.load_from_data (CUSTOM_STYLESHEET, -1);
-                Gtk.StyleContext.add_provider_for_screen (window.get_screen (), provider,
-                        Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION);
-            } catch (Error e) {
-                print("Warning: Could not create CSS Provider: %s", e.message);
-            }*/
-            //Gtk.Settings.get_default ().gtk_application_prefer_dark_theme = true;
         }
 
         public void grant_a_toast(string toast_msg) {

@@ -149,18 +149,27 @@ namespace MupenGUI.Services {
             shutdown ();
         }
 
-        public bool init (string library_path) {
-            var result = m64_load_corelib (library_path);
-            if (result != 0) {
-                stderr.printf ("Error: Failed to load Mupen64Plus Dynamic Library. Error code: %d\n", result);
-                show_not_initialized_alert ();
+        public bool init(string library_path) {
+            if (library_path.size() == 0) {
+                log(null, LogLevelFlags.LEVEL_ERROR, "Error: Invalid library path");
+                show_not_initialized_alert();
                 return false;
             }
 
-            result = m64_start_corelib (null, null);
+            var result = m64_load_corelib(library_path);
+
             if (result != 0) {
-                stderr.printf ("Error: Failed to initialize Mupen64Plus Core. Error code: %d\n", result);
-                show_not_initialized_alert ();
+                log(null, LogLevelFlags.LEVEL_ERROR,
+                    "Error: Failed to load Mupen64Plus Dynamic Library. Error code: %d\n", result);
+                show_not_initialized_alert();
+                return false;
+            }
+
+            result = m64_start_corelib(null, null);
+            if (result != 0) {
+                log(null, LogLevelFlags.LEVEL_ERROR,
+                    "Error: Failed to initialize Mupen64Plus Core. Error code: %d\n", result);
+                show_not_initialized_alert();
                 return false;
             }
 
@@ -169,18 +178,18 @@ namespace MupenGUI.Services {
             return initialized = true;
         }
 
-        public void shutdown () {
+        public void shutdown() {
             if (!initialized) {
                 show_not_initialized_alert ();
                 return;
             }
 
-            save_current_settings ();
+            save_current_settings();
 
-            m64_unload_plugin (m64PluginType.RSP);
-            m64_unload_plugin (m64PluginType.Video);
-            m64_unload_plugin (m64PluginType.Audio);
-            m64_unload_plugin (m64PluginType.Input);
+            m64_unload_plugin(m64PluginType.RSP);
+            m64_unload_plugin(m64PluginType.Video);
+            m64_unload_plugin(m64PluginType.Audio);
+            m64_unload_plugin(m64PluginType.Input);
 
             var result = m64_shutdown_corelib ();
             if (result != 0) {
@@ -228,36 +237,39 @@ namespace MupenGUI.Services {
             return true;
         }
 
-        public async void start_emulation () {
+        public async void start_emulation() {
             if (!initialized) {
                 show_not_initialized_alert ();
                 return;
             }
             if (!initialized || !rom_loaded) {
-                stderr.printf ("Error: Mupen64 needs to be initialized and a ROM needs to be loaded " +
-                               "before starting emulation.\n");
+                log(null, LogLevelFlags.LEVEL_ERROR,
+                    "Error: Mupen64 needs to be initialized and a ROM needs to be loaded " +
+                    "before starting emulation.\n");
             }
 
-            m64_command (m64Command.Execute);
+            m64_command(m64Command.Execute);
         }
 
-        public void set_verbose (bool b = true) {
-            m64_set_verbose (b);
+        public void set_verbose(bool b = true) {
+            m64_set_verbose(b);
         }
 
-        public void set_controller_device (uint controller, int device_id) {
+        public void set_controller_device(uint controller, int device_id) {
             if (!initialized) {
-                show_not_initialized_alert ();
+                show_not_initialized_alert();
                 return;
             }
-            int retval = m64_enable_ctrl_config (controller, true);
+            int retval = m64_enable_ctrl_config(controller, true);
             if (retval != 0) {
-                log(null, LogLevelFlags.LEVEL_ERROR, "Error: Failed to enable controller for configuration. Error code: %d\n", retval);
+                log(null, LogLevelFlags.LEVEL_ERROR,
+                    "Error: Failed to enable controller for configuration. Error code: %d\n", retval);
             }
 
             retval = m64_set_ctrl_device (controller, device_id);
             if (retval != 0) {
-                log(null, LogLevelFlags.LEVEL_ERROR, "Error: Failed to set controller device. Error code: %d\n", retval);
+                log(null, LogLevelFlags.LEVEL_ERROR,
+                    "Error: Failed to set controller device. Error code: %d\n", retval);
             }
         }
 

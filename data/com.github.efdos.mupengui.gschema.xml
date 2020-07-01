@@ -12,37 +12,4 @@
       <description>Enable/disable prefer-dark-theme gtk setting</description>
     </key>
   </schema>
-
-  <schema id="com.github.efdos.mupengui.general" path="/com/github/efdos/mupengui/general/" gettext-domain="mupengui">
-    <key name="mupen64pluslib-dir" type="s">
-      <default>"/usr/lib/x86_64-linux-gnu/libmupen64plus.so.2"</default>
-      <summary>Directory for Mupen64Plus shared library</summary>
-      <description>Defines the directory of Mupen64Plus core library needed by the frontend to run.</description>
-    </key>
-    <key name="mupen64plugin-dir" type="s">
-      <default>"/usr/lib/x86_64-linux-gnu/mupen64plus/"</default>
-      <summary>Default directory for plugins</summary>
-      <description>The plugins directory is system dependent. This setting allows the user to define it.</description>
-    </key>
-    <key name="mupen64plugin-video" type="s">
-      <default>"mupen64plus-video-rice.so"</default>
-      <summary>Video Plugin file</summary>
-      <description>The video plugin to be used.</description>
-    </key>
-    <key name="mupen64plugin-audio" type="s">
-      <default>"mupen64plus-audio-sdl.so"</default>
-      <summary>Audio Plugin file</summary>
-      <description>The audio plugin to be used.</description>
-    </key>
-    <key name="mupen64plugin-input" type="s">
-      <default>"mupen64plus-input-sdl.so"</default>
-      <summary>Input Plugin file</summary>
-      <description>The input plugin to be used.</description>
-    </key>
-    <key name="mupen64plugin-rsp" type="s">
-      <default>"mupen64plus-rsp-z64-hlevideo.so"</default>
-      <summary>RSP Plugin file</summary>
-      <description>The RSP plugin to be used.</description>
-    </key>
-  </schema>
 </schemalist>

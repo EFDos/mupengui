@@ -69,12 +69,30 @@ namespace MupenGUI.Services {
                 current_profile = "global";
 
                 if (!key_file.has_group("global")) {
+                    // /usr/lib/x86_64-linux-gnu/libmupen64plus.so.2
                     key_file.set_string("global", "mupen-conf-file", "mupen64plus.cfg");
                     key_file.set_string("global", "video-plugin", "some_plugin");
+                    key_file.set_string("global", "mupen64lib-path", "");
                 }
             } catch (Error e) {
                 log(null, LogLevelFlags.LEVEL_ERROR, "Config File Error: " + e.message);
             }
+        }
+
+        public void set_mupen64lib_path(string path) {
+            if (key_file == null) {
+                log(null, LogLevelFlags.LEVEL_ERROR, "SettingsProfileManager was not correctly initialized.");
+                return;
+            }
+            key_file.set_string(current_profile, "mupen64lib-path", path);
+        }
+
+        public void set_video_plugin(string plugin_name) {
+            if (key_file == null) {
+                log(null, LogLevelFlags.LEVEL_ERROR, "SettingsProfileManager was not correctly initialized.");
+                return;
+            }
+            key_file.set_string(current_profile, "video-plugin", plugin_name);
         }
 
         public string get_video_plugin() {
@@ -84,6 +102,19 @@ namespace MupenGUI.Services {
             }
             try {
                 return key_file.get_string(current_profile, "video-plugin");
+            } catch (Error e) {
+                log(null, LogLevelFlags.LEVEL_ERROR, "Error: " + e.message);
+                return "";
+            }
+        }
+
+        public string get_mupen64lib_path() {
+            if (key_file == null) {
+                log(null, LogLevelFlags.LEVEL_ERROR, "SettingsProfileManager was not correctly initialized.");
+                return "";
+            }
+            try {
+                return key_file.get_string(current_profile, "mupen64lib-path");
             } catch (Error e) {
                 log(null, LogLevelFlags.LEVEL_ERROR, "Error: " + e.message);
                 return "";

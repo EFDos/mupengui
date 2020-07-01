@@ -28,19 +28,25 @@
 namespace MupenGUI.Views.Widgets {
     class RomListItem : Gtk.Box {
 
+        private Granite.HeaderLabel label;
+
         public RomListItem (string str) {
             //base (Gtk.Orientation.HORIZONTAL, 0);
             orientation = Gtk.Orientation.HORIZONTAL;
             homogeneous = true;
             halign = Gtk.Align.FILL;
-            set_size_request (0, 48);
+            set_size_request(0, 48);
 
-            var label = new Granite.HeaderLabel(str);
+            label = new Granite.HeaderLabel(str);
             label.set_padding(4, 0);
-            pack_start (label);
+            pack_start(label);
             var config_image = new Gtk.Image.from_icon_name("document-properties", Gtk.IconSize.LARGE_TOOLBAR);
             config_image.tooltip_text = "Create Settings Profile for this ROM";
             pack_end (config_image);
+        }
+
+        public string get_name() {
+            return label.label;
         }
 
     }
