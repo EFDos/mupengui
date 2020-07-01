@@ -29,6 +29,8 @@ using MupenGUI.Services;
 namespace MupenGUI.Services {
     public class SettingsProfileManager {
         private static SettingsProfileManager _instance = null;
+        private string current_profile {get; set;}
+        private KeyFile key_file;
 
         public static SettingsProfileManager instance {
             get {
@@ -39,36 +41,53 @@ namespace MupenGUI.Services {
             }
         }
 
-        HashTable<string, SettingsProfile> profiles;
+        //HashTable<string, SettingsProfile> profiles;
 
-        SettingsProfileManager () {
-            profiles = new HashTable<string, SettingsProfile> (str_hash, direct_equal);
-            profiles.insert ("global", new SettingsProfile("mupen64plus"));
+        SettingsProfileManager() {
+            //profiles = new HashTable<string, SettingsProfile> (str_hash, direct_equal);
+            //profiles.insert ("global", new SettingsProfile("mupen64plus"));
+        }
 
+        public void init() {
             try {
-                var config_dir = Path.build_path (Environment.get_user_config_dir (),
-                    Environment.get_application_name ());
+                var config_dir = Path.build_filename(Environment.get_user_config_dir(),
+                    Environment.get_application_name());
+
                 // Create directory if it does't exist
-                DirUtils.create_with_parents (config_dir, 0664);
+                //char[] permission = {0,7,7,4};
+                DirUtils.create_with_parents(config_dir, 0774);
 
                 // Create configuration file if it doesn't exist
-                File config_file = File.new_for_path (Path.build_path (config_dir, "profiles.conf"));
-
-                if (!config_file.query_exists ()) {
-                    config_file.create (FileCreateFlags.NONE);
+                if (!FileUtils.test(Path.build_filename(config_dir, "/profiles.cfg"), FileUtils.EXISTS)) {
+                    File config_file = File.new_build_filename(config_dir, "/profiles.cfg");
+                    config_file.create(FileCreateFlags.PRIVATE);
                 }
 
-                KeyFile key_file = new KeyFile ();
-                key_file.load_from_file (Path.build_path (config_dir, "profiles.conf"), KeyFileFlags.NONE);
+                key_file = new KeyFile ();
+                key_file.load_from_file(Path.build_filename(config_dir, "/profiles.cfg"), KeyFileFlags.NONE);
 
-                if (!key_file.has_group ("global")) {
-                    key_file.set_string ("global", "mupen-conf-file", "mupen64plus.cfg");
+                current_profile = "global";
+
+                if (!key_file.has_group("global")) {
+                    key_file.set_string("global", "mupen-conf-file", "mupen64plus.cfg");
+                    key_file.set_string("global", "video-plugin", "some_plugin");
                 }
             } catch (Error e) {
-                stderr.printf ("Config File Error: %s\n", e.message);
+                log(null, LogLevelFlags.LEVEL_ERROR, "Config File Error: " + e.message);
             }
         }
 
-        public void do_something() {}
+        public string get_video_plugin() {
+            if (key_file == null) {
+                log(null, LogLevelFlags.LEVEL_ERROR, "SettingsProfileManager was not correctly initialized.");
+                return "";
+            }
+            try {
+                return key_file.get_string(current_profile, "video-plugin");
+            } catch (Error e) {
+                log(null, LogLevelFlags.LEVEL_ERROR, "Error: " + e.message);
+                return "";
+            }
+        }
     }
 }

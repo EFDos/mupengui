@@ -1,6 +1,6 @@
 # MupenGUI 
 ### Summary
-Mupen64plus Frontend Application written in Vala and C, still in development.
+Mupen64plus Frontend Application written in Vala and C.
 
 ![Alt text](data/screenshots/Welcome.png?raw=true "Welcome Screen")
 
@@ -12,21 +12,15 @@ Mupen64plus Frontend Application written in Vala and C, still in development.
 
 ![Alt text](data/screenshots/KDE_Input.png?raw=true "The whole reason why I'm making this")
 
-This frontend's goal for the first release is to feature:
+Some of the features are:
 
 * Basic graphics configuration (Fullscreen, resolution ...)
-* Mupen64plus plugins configuration
-* Complete input configuration (including keyboard, mouse and joysticks)
-* Rom directory listing and remembering state from last use.
-*note: The first Alpha release is already available with some of these features.*
+* Selecting emulation plugins
+* Rom Directory listing and remembering state from last use.
+* Rom Profiles allowing for different configurations for each Rom.
 
 Although primarily targeted for the Elementary OS Desktop and AppStore, it may work under any Desktop Environment
 given that libgranite is available - including KDE.
-
-Differently from some of the frontends available for Mupen64plus, this frontend interfaces
-directly with the emulator by interfacing with its shared library instead of sending
-commands to the Mupen64plus CLI frontend. This allows for a greater control over
-the emulation and its configuration options.
 
 ## Building and Installing [![Build Status](https://travis-ci.com/EFDos/mupengui.svg?branch=master)](https://travis-ci.com/EFDos/mupengui)
 
@@ -45,7 +39,7 @@ Arch Linux users can find MupenGui under the name mupengui-git in the AUR:
 ### Other
 
 Your system must be at least compatible with a Gnome Environment and libgranite must be installed.
-The project used the Meson build system.
+The project uses the Meson build system.
 
 **Configure and create a build directory**
 

@@ -33,7 +33,7 @@ namespace MupenGUI.Services {
         public static ActionManager instance {
             get {
                 if (_instance == null) {
-                    _instance = new ActionManager ();
+                    _instance = new ActionManager();
                 }
 
                 return _instance;
@@ -43,33 +43,33 @@ namespace MupenGUI.Services {
         public SimpleActionGroup action_group {get; construct;}
         public unowned MupenGUI.Application application_ref {set; get;}
 
-        private ActionManager () {
-            Object (
-                action_group: new SimpleActionGroup (),
+        private ActionManager() {
+            Object(
+                action_group: new SimpleActionGroup(),
                 application_ref: null
             );
         }
 
-        public SimpleAction add_action (string action_name) {
-            var action = new SimpleAction (action_name, null);
-            action_group.add_action (action);
+        public SimpleAction add_action(string action_name) {
+            var action = new SimpleAction(action_name, null);
+            action_group.add_action(action);
             return action;
         }
 
-        public SimpleAction get_action (string name) {
-            if (!this.action_group.has_action (name)) {
-                return this.add_action (name);
+        public SimpleAction get_action(string name) {
+            if (!this.action_group.has_action(name)) {
+                return this.add_action(name);
             }
 
-            return this.action_group.lookup_action (name) as SimpleAction;
+            return this.action_group.lookup_action(name) as SimpleAction;
         }
 
-        public void dispatch (string name) {
-            this.action_group.activate_action (name, null);
+        public void dispatch(string name) {
+            this.action_group.activate_action(name, null);
         }
 
-        public void remove (string name) {
-            this.action_group.remove_action (name);
+        public void remove(string name) {
+            this.action_group.remove_action(name);
         }
     }
 }

@@ -34,6 +34,9 @@ namespace MupenGUI.Views.Settings {
         private Gtk.ComboBoxText input_plugin_combo;
         private Gtk.ComboBoxText rsp_plugin_combo;
 
+        string video_plugin = SettingsProfileManager.instance.get_video_plugin();
+        //printf("Video plugin: %s", video_plugin);
+
         public GeneralSettingsPage () {
             Object (
                 //activable: true,

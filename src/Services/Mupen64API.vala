@@ -123,6 +123,7 @@ namespace MupenGUI.Services {
         private string goodname = "";
         private bool initialized = false;
         private bool rom_loaded = false;
+        private bool already_alerted = false;
 
         public static Mupen64API instance {
             get {
@@ -251,12 +252,12 @@ namespace MupenGUI.Services {
             }
             int retval = m64_enable_ctrl_config (controller, true);
             if (retval != 0) {
-                stderr.printf("Error: Failed to enable controller for configuration. Error code: %d\n", retval);
+                log(null, LogLevelFlags.LEVEL_ERROR, "Error: Failed to enable controller for configuration. Error code: %d\n", retval);
             }
 
             retval = m64_set_ctrl_device (controller, device_id);
             if (retval != 0) {
-                stderr.printf("Error: Failed to set controller device. Error code: %d\n", retval);
+                log(null, LogLevelFlags.LEVEL_ERROR, "Error: Failed to set controller device. Error code: %d\n", retval);
             }
         }
 
@@ -269,7 +270,7 @@ namespace MupenGUI.Services {
             int retval = m64_set_parameter(section_name, param_name, m64ParamType.Bool, &param);
 
             if (retval != 0) {
-                stderr.printf("Error: Failed to set parameter. Error code: %d\n", retval);
+                log(null, LogLevelFlags.LEVEL_ERROR, "Error: Failed to set parameter. Error code: %d\n", retval);
             }
         }
 
@@ -282,7 +283,7 @@ namespace MupenGUI.Services {
             int retval = m64_set_parameter(section_name, param_name, m64ParamType.Integer, &param);
 
             if (retval != 0) {
-                stderr.printf("Error: Failed to set parameter. Error code: %d\n", retval);
+                log(null, LogLevelFlags.LEVEL_ERROR, "Error: Failed to set parameter. Error code: %d\n", retval);
             }
         }
 
@@ -296,7 +297,11 @@ namespace MupenGUI.Services {
             int retval = m64_get_parameter(section_name, param_name, m64ParamType.Bool, &param, (int)sizeof(bool));
 
             if (retval != 0) {
-                stderr.printf("Error: Failed to get parameter. Error code: %d\n", retval);
+                log(null, LogLevelFlags.LEVEL_WARNING, "Error: Failed to get parameter: [%s]:%s. Error code: %d\n",
+                    section_name, param_name, retval);
+                log(null, LogLevelFlags.LEVEL_WARNING, "Trying to fix by resetting it");
+
+                set_parameter_bool(section_name, param_name, false);
             }
 
             return param;
@@ -308,11 +313,15 @@ namespace MupenGUI.Services {
                 return -1;
             }
 
-            int param = -1;
+            int param = 0;
             int retval = m64_get_parameter(section_name, param_name, m64ParamType.Integer, &param, (int)sizeof(int));
 
             if (retval != 0) {
-                stderr.printf("Error: Failed to get parameter. Error code: %d\n", retval);
+                log(null, LogLevelFlags.LEVEL_WARNING, "Error: Failed to get parameter: [%s]:%s. Error code: %d\n",
+                    section_name, param_name, retval);
+                log(null, LogLevelFlags.LEVEL_WARNING, "Trying to fix by resetting it");
+
+                set_parameter_int(section_name, param_name, 0);
             }
 
             return param;
@@ -328,7 +337,7 @@ namespace MupenGUI.Services {
             int retval = m64_get_parameter(section_name, param_name, m64ParamType.Float, &param, (int)sizeof(float));
 
             if (retval != 0) {
-                stderr.printf("Error: Failed to get parameter. Error code: %d\n", retval);
+                log(null, LogLevelFlags.LEVEL_ERROR, "Error: Failed to get parameter. Error code: %d\n", retval);
             }
 
             return param;
@@ -344,7 +353,7 @@ namespace MupenGUI.Services {
             int retval = m64_get_parameter(section_name, param_name, m64ParamType.String, &param, (int)sizeof(param));
 
             if (retval != 0) {
-                stderr.printf("Error: Failed to get parameter. Error code: %d\n", retval);
+                log(null, LogLevelFlags.LEVEL_ERROR, "Error: Failed to get parameter. Error code: %d\n", retval);
             }
 
             return param == null ? "" : param;
@@ -466,7 +475,7 @@ namespace MupenGUI.Services {
                     axis_string = "Y Axis";
                     break;
                 default:
-                    stderr.printf("Error: Invalid axis Id. Use bind_controller_button() instead.\n");
+                    log(null, LogLevelFlags.LEVEL_ERROR, "Error: Invalid axis Id. Use bind_controller_button() instead.\n");
                     return;
             }
 
@@ -513,7 +522,7 @@ namespace MupenGUI.Services {
 
             int retval = m64_save_settings ();
             if (retval != 0) {
-                stderr.printf("Error: Failed to save settings. Error code: %d\n", retval);
+                log(null, LogLevelFlags.LEVEL_ERROR, "Error: Failed to save settings. Error code: %d\n", retval);
             }
 
             print("Mupen64API: Saved Settings\n");
@@ -534,6 +543,10 @@ namespace MupenGUI.Services {
         }
 
         private void show_not_initialized_alert() {
+            if (already_alerted) {
+                return;
+            }
+
             var message_dialog = new Granite.MessageDialog.with_image_from_icon_name (
                     "Mupen64Plus Not Initalized",
                     "The library libmupen64plus.so.2 could not be loaded. It might not have been found or it could be" +
@@ -544,6 +557,7 @@ namespace MupenGUI.Services {
             );
             message_dialog.run ();
             message_dialog.destroy ();
+            already_alerted = true;
         }
     }
 }

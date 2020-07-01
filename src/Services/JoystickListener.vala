@@ -27,12 +27,12 @@
 using MupenGUI.Configuration;
 using MupenGUI.Views.Widgets;
 
-extern bool joy_init ();
-extern void joy_shutdown ();
-extern uint joy_get_total ();
-extern unowned string joy_get_name (uint id);
-extern void joy_set_current (uint id);
-extern int* joy_event_loop ();
+extern bool joy_init();
+extern void joy_shutdown();
+extern uint joy_get_total();
+extern unowned string joy_get_name(uint id);
+extern void joy_set_current(uint id);
+extern int* joy_event_loop();
 
 namespace MupenGUI.Services {
 
@@ -46,39 +46,39 @@ namespace MupenGUI.Services {
         public static JoystickListener instance {
             get {
                 if (_instance == null) {
-                    _instance = new JoystickListener ();
+                    _instance = new JoystickListener();
                 }
 
                 return _instance;
             }
         }
 
-        private JoystickListener () {
+        private JoystickListener() {
         }
 
-        ~JoystickListener () {
-            shutdown ();
+        ~JoystickListener() {
+            shutdown();
         }
 
-        public bool init () {
-            return joy_init ();
+        public bool init() {
+            return joy_init();
         }
 
-        public void shutdown () {
-            joy_shutdown ();
+        public void shutdown() {
+            joy_shutdown();
         }
 
-        public void start () {
+        public void start() {
             print("start called\n");
             if (event_thread != null) {
                 return;
             }
             thread_run = true;
-            event_thread = new Thread<void*> ("joy_event_thread", _joystick_event_func);
+            event_thread = new Thread<void*>("joy_event_thread", _joystick_event_func);
             print("started thread.\n");
         }
 
-        public void stop () {
+        public void stop() {
             print("stop called\n");
             if (event_thread == null) {
                 return;
@@ -87,32 +87,32 @@ namespace MupenGUI.Services {
                 thread_run = false;
             }
             print("waiting to join thread...\n");
-            event_thread.join ();
+            event_thread.join();
             print("joined thread\n");
             event_thread = null;
         }
 
-        public void set_listening_device (uint device_id) {
-            joy_set_current (device_id);
+        public void set_listening_device(uint device_id) {
+            joy_set_current(device_id);
         }
 
-        public GenericArray<string> get_device_list () {
-            var device_list = new GenericArray<string> ();
+        public GenericArray<string> get_device_list() {
+            var device_list = new GenericArray<string>();
 
-            for (int i = 0 ; i < joy_get_total () ; ++i) {
-                device_list.add (joy_get_name (i));
+            for (int i = 0 ; i < joy_get_total() ; ++i) {
+                device_list.add (joy_get_name(i));
             }
 
             return device_list;
         }
 
-        public void register_dialog (JoystickEventDialog dialog) {
+        public void register_dialog(JoystickEventDialog dialog) {
             lock (joy_dialog) {
                 joy_dialog = dialog;
             }
         }
 
-        public void unregister_dialog (JoystickEventDialog dialog) {
+        public void unregister_dialog(JoystickEventDialog dialog) {
             lock (joy_dialog) {
                 if (joy_dialog == dialog) {
                     joy_dialog = null;
@@ -120,22 +120,26 @@ namespace MupenGUI.Services {
             }
         }
 
-        private void* _joystick_event_func () {
+        private void* _joystick_event_func() {
             while (true) {
                 var should_run = false;
                 lock (thread_run) {
                     should_run = thread_run;
                 }
-                if (should_run) {
-                    var result = joy_event_loop ();
+                if (should_run)
+                {
+                    var result = joy_event_loop();
                     if (result[0] == -1) continue;
-                    lock (joy_dialog) {
+                    lock (joy_dialog)
+                    {
                         JoystickEventDialog.JoyEvent e = {0,0,0};
                         e.type = result[0] == 0 ? JoystickEventDialog.JoyEventType.Button :
                                                   JoystickEventDialog.JoyEventType.Axis;
                         e.id = result[1];
                         e.val = result[2];
-                        if (joy_dialog != null) joy_dialog.joystick_event (e);
+                        if (joy_dialog != null) {
+                            joy_dialog.joystick_event(e);
+                        }
                     }
                 } else {
                     return null;

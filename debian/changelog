@@ -1,3 +1,11 @@
+com.github.efdos.mupengui (1.0.0) xenial; urgency=low
+
+  [ Doug Muratore ]
+  * 'Mupen64 Core not found' alert only shows once
+  * Updated visual elements
+
+    -- Douglas Muratore <douglas.muratore@gmail.com>  Tue, 30 Jun 2020 23:15:00 -0200
+
 com.github.efdos.mupengui (0.9.1) xenial; urgency=low
 
   [ Doug Muratore ]

@@ -27,7 +27,7 @@
 namespace MupenGUI.Views {
     public class SettingsView : Gtk.Paned {
         construct {
-            Services.SettingsProfileManager.instance.do_something ();
+            Services.SettingsProfileManager.instance.init ();
 
             var box = new Gtk.Box (Gtk.Orientation.VERTICAL, 0);
 
