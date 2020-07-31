@@ -72,7 +72,8 @@ namespace MupenGUI.Services {
                     // /usr/lib/x86_64-linux-gnu/libmupen64plus.so.2
                     key_file.set_string("global", "mupen-conf-file", "mupen64plus.cfg");
                     key_file.set_string("global", "video-plugin", "some_plugin");
-                    key_file.set_string("global", "mupen64lib-path", "");
+                    key_file.set_string("global", "mupen64lib-path", "/usr/lib/x86_64-linux-gnu/libmupen64plus.so.2");
+                    key_file.set_string("global", "plugins-dir", "/usr/lib/x86_64-linux-gnu/mupen64plus");
                 }
             } catch (Error e) {
                 log(null, LogLevelFlags.LEVEL_ERROR, "Config File Error: " + e.message);
@@ -85,6 +86,14 @@ namespace MupenGUI.Services {
                 return;
             }
             key_file.set_string(current_profile, "mupen64lib-path", path);
+        }
+
+        public void set_plugins_dir(string dir) {
+            if (key_file == null) {
+                log(null, LogLevelFlags.LEVEL_ERROR, "SettingsProfileManager was not correctly initialized.");
+                return;
+            }
+            key_file.set_string(current_profile, "plugins-dir", dir);
         }
 
         public void set_video_plugin(string plugin_name) {
@@ -115,6 +124,19 @@ namespace MupenGUI.Services {
             }
             try {
                 return key_file.get_string(current_profile, "mupen64lib-path");
+            } catch (Error e) {
+                log(null, LogLevelFlags.LEVEL_ERROR, "Error: " + e.message);
+                return "";
+            }
+        }
+
+        public string get_plugins_dir() {
+            if (key_file == null) {
+                log(null, LogLevelFlags.LEVEL_ERROR, "SettingsProfileManager was not correctly initialized.");
+                return "";
+            }
+            try {
+                return key_file.get_string(current_profile, "plugins-dir");
             } catch (Error e) {
                 log(null, LogLevelFlags.LEVEL_ERROR, "Error: " + e.message);
                 return "";

@@ -76,13 +76,13 @@ namespace MupenGUI.Views.Settings {
             rsp_plugin_label.halign = Gtk.Align.END;
 
             lib_path_entry.set_text(settings_profile_manager.get_mupen64lib_path());
-            //plugins_dir_entry.set_text(general_settings.mupen64plugin_dir);
+            plugins_dir_entry.set_text(settings_profile_manager.get_plugins_dir());
 
-            //populate_plugin_combos.begin(general_settings.mupen64plugin_dir);
+            populate_plugin_combos.begin(settings_profile_manager.get_plugins_dir());
 
             lib_path_entry.activate.connect (() => {
                 string mupen64pluslib_path = lib_path_entry.get_text();
-                SettingsProfileManager.instance.set_mupen64lib_path(mupen64pluslib_path);
+                settings_profile_manager.set_mupen64lib_path(mupen64pluslib_path);
                 Mupen64API.instance.shutdown();
 
                 if (Mupen64API.instance.init(mupen64pluslib_path)) {
@@ -112,7 +112,7 @@ namespace MupenGUI.Views.Settings {
                     return;
                 }
                 Mupen64API.instance.video_plugin = video_plugin_combo.get_active_text();
-                SettingsProfileManager.instance.set_video_plugin(video_plugin_combo.get_active_text());
+                settings_profile_manager.set_video_plugin(video_plugin_combo.get_active_text());
             });
 
             audio_plugin_combo.changed.connect (() => {
@@ -181,32 +181,32 @@ namespace MupenGUI.Views.Settings {
             int r_active_id = 0, r_it = 0;
 
             foreach (var file in files_list) {
-                if (file.has_prefix ("mupen64plus-video")) {
+                if (file.has_prefix("mupen64plus-video")) {
                     // if (file == general_settings.mupen64plugin_video) {
                     //     v_active_id = v_it;
                     // }
-                    video_plugin_combo.append_text (file);
+                    video_plugin_combo.append_text(file);
                     ++v_it;
                 }
-                if (file.has_prefix ("mupen64plus-rsp")) {
+                if (file.has_prefix("mupen64plus-rsp")) {
                     // if (file == general_settings.mupen64plugin_rsp) {
                     //     r_active_id = r_it;
                     // }
-                    rsp_plugin_combo.append_text (file);
+                    rsp_plugin_combo.append_text(file);
                     ++r_it;
                 }
-                if (file.has_prefix ("mupen64plus-input")) {
+                if (file.has_prefix("mupen64plus-input")) {
                     // if (file == general_settings.mupen64plugin_input) {
                     //     i_active_id = i_it;
                     // }
-                    input_plugin_combo.append_text (file);
+                    input_plugin_combo.append_text(file);
                     ++i_it;
                 }
-                if (file.has_prefix ("mupen64plus-audio")) {
+                if (file.has_prefix("mupen64plus-audio")) {
                     // if (file == general_settings.mupen64plugin_audio) {
                     //     a_active_id = a_it;
                     // }
-                    audio_plugin_combo.append_text (file);
+                    audio_plugin_combo.append_text(file);
                     ++a_it;
                 }
             }
