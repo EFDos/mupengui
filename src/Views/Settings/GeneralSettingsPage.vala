@@ -182,9 +182,9 @@ namespace MupenGUI.Views.Settings {
 
             foreach (var file in files_list) {
                 if (file.has_prefix("mupen64plus-video")) {
-                    // if (file == general_settings.mupen64plugin_video) {
-                    //     v_active_id = v_it;
-                    // }
+                    if (file == SettingsProfileManager.instance.get_video_plugin()) {
+                        v_active_id = v_it;
+                    }
                     video_plugin_combo.append_text(file);
                     ++v_it;
                 }
