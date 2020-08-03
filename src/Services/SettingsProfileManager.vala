@@ -57,7 +57,7 @@ namespace MupenGUI.Services {
                 cached_path = Path.build_filename(config_dir, "/profiles.cfg");
 
                 // Create configuration file if it doesn't exist
-                if (!FileUtils.test(cached_path, FileUtils.EXISTS)) {
+                if (!FileUtils.test(cached_path, FileTest.EXISTS)) {
                     File config_file = File.new_build_filename(config_dir, "/profiles.cfg");
                     config_file.create(FileCreateFlags.PRIVATE);
                 }

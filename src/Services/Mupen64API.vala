@@ -141,7 +141,7 @@ namespace MupenGUI.Services {
         }
 
         public bool init(string library_path) {
-            if (library_path.size() == 0) {
+            if (library_path.length == 0) {
                 //log(null, LogLevelFlags.LEVEL_ERROR, "Error: Invalid library path");
                 show_not_initialized_alert();
                 return false;
