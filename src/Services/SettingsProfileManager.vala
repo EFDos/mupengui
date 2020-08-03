@@ -30,6 +30,7 @@ namespace MupenGUI.Services {
     public class SettingsProfileManager {
         private static SettingsProfileManager _instance = null;
         private string current_profile {get; set;}
+        private string cached_path;
         private KeyFile key_file;
 
         public static SettingsProfileManager instance {
@@ -41,11 +42,7 @@ namespace MupenGUI.Services {
             }
         }
 
-        //HashTable<string, SettingsProfile> profiles;
-
         SettingsProfileManager() {
-            //profiles = new HashTable<string, SettingsProfile> (str_hash, direct_equal);
-            //profiles.insert ("global", new SettingsProfile("mupen64plus"));
         }
 
         public void init() {
@@ -57,14 +54,16 @@ namespace MupenGUI.Services {
                 //char[] permission = {0,7,7,4};
                 DirUtils.create_with_parents(config_dir, 0774);
 
+                cached_path = Path.build_filename(config_dir, "/profiles.cfg");
+
                 // Create configuration file if it doesn't exist
-                if (!FileUtils.test(Path.build_filename(config_dir, "/profiles.cfg"), FileUtils.EXISTS)) {
+                if (!FileUtils.test(cached_path, FileUtils.EXISTS)) {
                     File config_file = File.new_build_filename(config_dir, "/profiles.cfg");
                     config_file.create(FileCreateFlags.PRIVATE);
                 }
 
                 key_file = new KeyFile ();
-                key_file.load_from_file(Path.build_filename(config_dir, "/profiles.cfg"), KeyFileFlags.NONE);
+                key_file.load_from_file(cached_path, KeyFileFlags.NONE);
 
                 current_profile = "global";
 
@@ -77,6 +76,15 @@ namespace MupenGUI.Services {
                 }
             } catch (Error e) {
                 log(null, LogLevelFlags.LEVEL_ERROR, "Config File Error: " + e.message);
+            }
+        }
+
+        public void shutdown() {
+            log(null, LogLevelFlags.LEVEL_INFO, "Saving profiles");
+            try {
+                key_file.save_to_file(cached_path);
+            } catch (Error e) {
+                log(null, LogLevelFlags.LEVEL_ERROR, "Error saving profiles.cfg: " + e.message);
             }
         }
 

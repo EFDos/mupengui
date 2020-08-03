@@ -140,15 +140,6 @@ namespace MupenGUI.Services {
             Mupen64API.instance.on_emulation_stop();
         }
 
-        private Mupen64API () {
-            // do nothing for now
-        }
-
-        ~Mupen64API ()
-        {
-            shutdown ();
-        }
-
         public bool init(string library_path) {
             if (library_path.size() == 0) {
                 //log(null, LogLevelFlags.LEVEL_ERROR, "Error: Invalid library path");
@@ -193,15 +184,16 @@ namespace MupenGUI.Services {
 
             var result = m64_shutdown_corelib ();
             if (result != 0) {
-                stderr.printf ("Error: Failed to shut down Mupen64Plus Core. Error code: %d\n", result);
+                log(null, LogLevelFlags.LEVEL_ERROR, "Failed to shut down Mupen64Plus Core. Error code: %d\n", result);
             }
 
             result = m64_unload_corelib ();
             if (result != 0) {
-                stderr.printf ("Error: Failed to unload Mupen64Plus Dynamic Library. Error code: %d\n", result);
+                log(null, LogLevelFlags.LEVEL_ERROR,
+                    "Failed to unload Mupen64Plus Dynamic Library. Error code: %d\n", result);
             }
 
-            print("Mupen64 Service Shutdown.\n");
+            log(null, LogLevelFlags.LEVEL_INFO, "Mupen64 Service Shutdown.\n");
             initialized = false;
         }
 
@@ -212,8 +204,9 @@ namespace MupenGUI.Services {
             }
             var result = m64_command (command, param_int, param_ptr);
             if (result != 0) {
-                stderr.printf ("Error: Failed to run command: %d (%d, %p)\n", command, param_int, param_ptr);
-                stderr.printf ("Error code: %d", result);
+                log(null, LogLevelFlags.LEVEL_ERROR, "Failed to run command: %d (%d, %p)\n",
+                    command, param_int, param_ptr);
+                log(null, LogLevelFlags.LEVEL_ERROR, "Error code: %d", result);
                 return false;
             }
 

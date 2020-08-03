@@ -53,13 +53,6 @@ namespace MupenGUI.Services {
             }
         }
 
-        private JoystickListener() {
-        }
-
-        ~JoystickListener() {
-            shutdown();
-        }
-
         public bool init() {
             return joy_init();
         }

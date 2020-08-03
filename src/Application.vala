@@ -48,6 +48,7 @@ namespace MupenGUI {
         ~Application() {
             Mupen64API.instance.shutdown();
             JoystickListener.instance.shutdown();
+            SettingsProfileManager.instance.shutdown();
         }
 
         protected override void activate() {
