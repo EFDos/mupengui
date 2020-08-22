@@ -1,0 +1,232 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the com.github.efdos.mupengui package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: com.github.efdos.mupengui\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-01-26 17:08-0200\n"
+"PO-Revision-Date: 2020-08-22 19:35+0200\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.4.1\n"
+"Last-Translator: Heimen Stoffels <vistausss@outlook.com>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Language: nl\n"
+
+#: data/com.github.efdos.mupengui.appdata.xml.in:8
+#: data/com.github.efdos.mupengui.desktop.in.in:4
+msgid "MupenGUI"
+msgstr "MupenGUI"
+
+#: data/com.github.efdos.mupengui.appdata.xml.in:9
+msgid "Sexy Mupen64Plus FrontEnd"
+msgstr "Sexy Mupen64Plus-frontend"
+
+#: data/com.github.efdos.mupengui.appdata.xml.in:11
+msgid ""
+"Mupen64Plus FrontEnd that allows for an easy configuration of Keyboard and "
+"Joystick bindings, to play your favourite N64 games."
+msgstr ""
+"Mupen64Plus-frontend dat je helpt op eenvoudige wijze je toetsenbord en "
+"joystick in te stellen zodat je je favoriete N64-spellen kunt spelen."
+
+#: data/com.github.efdos.mupengui.appdata.xml.in:12
+msgid ""
+"Note: This is the first public release, it may still contain bugs and "
+"incomplete features."
+msgstr ""
+"Let op: dit is de eerste publieke uitgave. Deze kan bugs bevatten en is "
+"mogelijk onvolledig."
+
+#: data/com.github.efdos.mupengui.appdata.xml.in:13
+msgid "Features:"
+msgstr "Kenmerken:"
+
+#: data/com.github.efdos.mupengui.appdata.xml.in:15
+msgid "Mupen64Plus Plugins Selection"
+msgstr "Mupen64Plus-plug-inselectie"
+
+#: data/com.github.efdos.mupengui.appdata.xml.in:16
+msgid "Keyboard/Joystick Input Binding"
+msgstr "Toetsenbord-/Joysticktoewijzingen instellen"
+
+#: data/com.github.efdos.mupengui.appdata.xml.in:17
+msgid "Rom Directory Listing"
+msgstr "ROM-mappenlijst"
+
+#: data/com.github.efdos.mupengui.appdata.xml.in:18
+msgid "Fullscreen Mode"
+msgstr "Beeldvullende modus"
+
+#: data/com.github.efdos.mupengui.appdata.xml.in:56
+msgid "Douglas Muratore"
+msgstr "Douglas Muratore"
+
+#: data/com.github.efdos.mupengui.desktop.in.in:5
+msgid "Easy to use Mupen64Plus FrontEnd"
+msgstr "Eenvoudig Mupen64Plus-frontend"
+
+#: data/com.github.efdos.mupengui.desktop.in.in:7
+msgid "com.github.efdos.mupengui"
+msgstr "com.github.efdos.mupengui"
+
+#: data/com.github.efdos.mupengui.desktop.in.in:10
+msgid "Nintendo;Emulator;64;N64;Gaming;"
+msgstr "Nintendo;Emulator;64;N64;Gaming;Spellen;"
+
+#: src/Views/MainView.vala:86
+msgid "Executing Rom: "
+msgstr "Bezig met opstarten van rom: "
+
+#: src/Views/MainView.vala:89
+msgid "Error loading Rom File: "
+msgstr "Fout tijdens laden van rombestand: "
+
+#: src/Views/Window/HeaderBar.vala:49
+msgid "Settings"
+msgstr "Instellingen"
+
+#: src/Views/Window/HeaderBar.vala:60
+msgid "Select Rom Directory"
+msgstr "ROM-map kiezen"
+
+#: src/Views/Window/HeaderBar.vala:62
+msgid "Select Roms Directory"
+msgstr "ROM-map kiezen"
+
+#: src/Views/Window/HeaderBar.vala:69
+msgid "Play Selected Rom"
+msgstr "Geselecteerde rom spelen"
+
+#: src/Views/Window/HeaderBar.vala:74
+msgid "No ROM is selected."
+msgstr "Geen rom geselecteerd."
+
+#: src/Views/Settings/DisplaySettingsPage.vala:33
+msgid "Configure Mupen64 Display Settings."
+msgstr "Stel de Mupen64-weergave-instellingen in."
+
+#: src/Views/Settings/DisplaySettingsPage.vala:34
+#: src/Views/Settings/InputSettingsPage.vala:63
+msgid "Emulator"
+msgstr "Emulator"
+
+#: src/Views/Settings/DisplaySettingsPage.vala:36
+msgid "Display Settings"
+msgstr "Weergave-instellingen"
+
+#: src/Views/Settings/DisplaySettingsPage.vala:42
+msgid "Fullscreen"
+msgstr "Beeldvullend"
+
+#: src/Views/Settings/GeneralSettingsPage.vala:40
+msgid "Configure MupenGUI General Settings."
+msgstr "Stel de algemene MupenGUI-instellingen in."
+
+#: src/Views/Settings/GeneralSettingsPage.vala:41
+msgid "Frontend"
+msgstr "Frontend"
+
+#: src/Views/Settings/GeneralSettingsPage.vala:43
+msgid "General Settings"
+msgstr "Algemene instellingen"
+
+#: src/Views/Settings/GeneralSettingsPage.vala:52
+msgid "Mupen64Plus Core Library Directory:"
+msgstr "Mupen64Plus-kernbibliotheekmap:"
+
+#: src/Views/Settings/GeneralSettingsPage.vala:55
+msgid "Plugins Base Directory:"
+msgstr "Basismap met plug-ins:"
+
+#: src/Views/Settings/GeneralSettingsPage.vala:58
+msgid "Video Plugin:"
+msgstr "Videoplug-in:"
+
+#: src/Views/Settings/GeneralSettingsPage.vala:61
+msgid "Audio Plugin:"
+msgstr "Audioplug-in:"
+
+#: src/Views/Settings/GeneralSettingsPage.vala:64
+msgid "Input Plugin:"
+msgstr "Invoerplug-in:"
+
+#: src/Views/Settings/GeneralSettingsPage.vala:67
+msgid "RSP Plugin:"
+msgstr "RSP-plug-in:"
+
+#: src/Views/Settings/GeneralSettingsPage.vala:88
+msgid "Mupen64Plus Initalized!"
+msgstr "Mupen64Plus is geïnitialiseerd!"
+
+#: src/Views/Settings/GeneralSettingsPage.vala:145
+msgid "Light Mode"
+msgstr "Licht thema"
+
+#: src/Views/Settings/GeneralSettingsPage.vala:146
+msgid "Dark Mode"
+msgstr "Donker thema"
+
+#: src/Views/Settings/InputSettingsPage.vala:62
+msgid "Configure Mupen64 Input Settings."
+msgstr "Stel de Mupen64-invoerinstellingen in."
+
+#: src/Views/Settings/InputSettingsPage.vala:65
+msgid "Input Settings"
+msgstr "Invoerinstellingen"
+
+#: src/Views/Settings/InputSettingsPage.vala:71
+msgid "Emulator Controller"
+msgstr "Emulatorcontroller"
+
+#: src/Views/Settings/InputSettingsPage.vala:72
+msgid "Device"
+msgstr "Apparaat"
+
+#: src/Views/Settings/InputSettingsPage.vala:73
+msgid "Set Buttons"
+msgstr "Knoppen instellen"
+
+#: src/Views/Settings/InputSettingsPage.vala:79
+msgid "Controller 1"
+msgstr "Controller 1"
+
+#: src/Views/Settings/InputSettingsPage.vala:81
+msgid "Controller 2"
+msgstr "Controller 2"
+
+#: src/Views/Settings/InputSettingsPage.vala:83
+msgid "Controller 3"
+msgstr "Controller 3"
+
+#: src/Views/Settings/InputSettingsPage.vala:85
+msgid "Controller 4"
+msgstr "Controller 4"
+
+#: src/Views/Settings/InputSettingsPage.vala:98
+msgid "Keyboard"
+msgstr "Toetsenbord"
+
+#: src/Views/Settings/InputSettingsPage.vala:103
+msgid "Joystick "
+msgstr "Joystick "
+
+#: src/Views/Settings/InputSettingsPage.vala:131
+#: src/Views/Settings/InputSettingsPage.vala:161
+#: src/Views/Settings/InputSettingsPage.vala:181
+#: src/Views/Settings/InputSettingsPage.vala:235
+msgid "Set Button "
+msgstr "Knop instellen: "
+
+#: src/Views/Settings/InputSettingsPage.vala:132
+msgid "Press a Key"
+msgstr "Druk op een toets"
+
+#: src/Views/Settings/InputSettingsPage.vala:182
+msgid "Press a Joystick Button or Axis"
+msgstr "Druk op een joystickknop of -as"
