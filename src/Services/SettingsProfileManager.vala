@@ -70,13 +70,7 @@ namespace MupenGUI.Services {
 
                 if (!key_file.has_group("Global")) {
                     // /usr/lib/x86_64-linux-gnu/libmupen64plus.so.2
-                    key_file.set_string("Global", "mupen-conf-file", "mupen64plus.cfg");
-                    key_file.set_string("Global", "video-plugin", "");
-                    key_file.set_string("Global", "audio-plugin", "");
-                    key_file.set_string("Global", "input-plugin", "");
-                    key_file.set_string("Global", "rsp-plugin", "");
-                    key_file.set_string("Global", "mupen64lib-path", "/usr/lib/x86_64-linux-gnu/libmupen64plus.so.2");
-                    key_file.set_string("Global", "plugins-dir", "/usr/lib/x86_64-linux-gnu/mupen64plus");
+                    create_profile("Global");
                 }
             } catch (Error e) {
                 log(null, LogLevelFlags.LEVEL_ERROR, "Config File Error: " + e.message);
@@ -94,6 +88,31 @@ namespace MupenGUI.Services {
 
         public string[] available_profiles() {
             return key_file.get_groups();
+        }
+
+        public bool has_profile(string name) {
+            return key_file.has_group(name);
+        }
+
+        public void create_profile(string name) {
+            delete_profile(name);
+            key_file.set_string(name, "mupen-conf-file", "mupen64plus.cfg");
+            key_file.set_string(name, "video-plugin", "");
+            key_file.set_string(name, "audio-plugin", "");
+            key_file.set_string(name, "input-plugin", "");
+            key_file.set_string(name, "rsp-plugin", "");
+            key_file.set_string(name, "mupen64lib-path", "/usr/lib/x86_64-linux-gnu/libmupen64plus.so.2");
+            key_file.set_string(name, "plugins-dir", "/usr/lib/x86_64-linux-gnu/mupen64plus");
+        }
+
+        public void delete_profile(string name) {
+            if (key_file.has_group(name)) {
+                try {
+                    key_file.remove_group(name);
+                } catch (Error e) {
+                    log(null, LogLevelFlags.LEVEL_ERROR, "Error deleting profile " + name + ": " + e.message);
+                }
+            }
         }
 
         public void set_mupen64lib_path(string path) {
@@ -158,6 +177,9 @@ namespace MupenGUI.Services {
         }
 
         public string get_video_plugin() {
+            if (current_profile == null) {
+                return "";
+            }
             if (key_file == null) {
                 log(null, LogLevelFlags.LEVEL_ERROR, "SettingsProfileManager was not correctly initialized.");
                 return "";
@@ -171,6 +193,9 @@ namespace MupenGUI.Services {
         }
 
         public string get_audio_plugin() {
+            if (current_profile == null) {
+                return "";
+            }
             if (key_file == null) {
                 log(null, LogLevelFlags.LEVEL_ERROR, "SettingsProfileManager was not correctly initialized.");
                 return "";
@@ -184,6 +209,9 @@ namespace MupenGUI.Services {
         }
 
         public string get_input_plugin() {
+            if (current_profile == null) {
+                return "";
+            }
             if (key_file == null) {
                 log(null, LogLevelFlags.LEVEL_ERROR, "SettingsProfileManager was not correctly initialized.");
                 return "";
@@ -197,6 +225,9 @@ namespace MupenGUI.Services {
         }
 
         public string get_rsp_plugin() {
+            if (current_profile == null) {
+                return "";
+            }
             if (key_file == null) {
                 log(null, LogLevelFlags.LEVEL_ERROR, "SettingsProfileManager was not correctly initialized.");
                 return "";
@@ -210,6 +241,9 @@ namespace MupenGUI.Services {
         }
 
         public string get_mupen64lib_path() {
+            if (current_profile == null) {
+                return "";
+            }
             if (key_file == null) {
                 log(null, LogLevelFlags.LEVEL_ERROR, "SettingsProfileManager was not correctly initialized.");
                 return "";
@@ -223,6 +257,9 @@ namespace MupenGUI.Services {
         }
 
         public string get_plugins_dir() {
+            if (current_profile == null) {
+                return "";
+            }
             if (key_file == null) {
                 log(null, LogLevelFlags.LEVEL_ERROR, "SettingsProfileManager was not correctly initialized.");
                 return "";

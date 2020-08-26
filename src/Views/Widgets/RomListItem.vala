@@ -44,7 +44,21 @@ namespace MupenGUI.Views.Widgets {
             var config_image = new Gtk.Button.from_icon_name("document-properties", Gtk.IconSize.LARGE_TOOLBAR);
             config_image.tooltip_text = "Create Settings Profile for this ROM";
             config_image.clicked.connect(() => {
-                Services.SettingsProfileManager.instance.current_profile = label.label;
+                var profile_name = label.label;
+                profile_name.strip();
+                profile_name = profile_name.substring(0, profile_name.last_index_of(".z64"));
+                profile_name = profile_name.substring(0, profile_name.last_index_of(".n64"));
+                profile_name = profile_name.replace(" ", "");
+                profile_name = profile_name.replace("[!]", "");
+                profile_name = profile_name.replace(" ", "");
+
+                var profile_manager = Services.SettingsProfileManager.instance;
+                if (!profile_manager.has_profile(profile_name)) {
+                    profile_manager.create_profile(profile_name);
+                }
+                profile_manager.current_profile = profile_name;
+
+                print("I'VE SET CURRENT PROFILE TO BE: %s\n", profile_manager.current_profile);
                 Services.ActionManager.instance.dispatch(Actions.General.SETTINGS_OPEN, true);
             });
 

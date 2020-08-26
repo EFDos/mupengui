@@ -34,6 +34,11 @@ namespace MupenGUI.Views.Settings {
         private Gtk.ComboBoxText input_plugin_combo;
         private Gtk.ComboBoxText rsp_plugin_combo;
 
+        private Gtk.Entry lib_path_entry;
+        private Gtk.Entry plugins_dir_entry;
+
+        private Gtk.ComboBoxText profiles_combo;
+
         public GeneralSettingsPage () {
             Object (
                 //activable: true,
@@ -51,13 +56,13 @@ namespace MupenGUI.Views.Settings {
             var ui_settings = new UISettings();
 
             var profiles_label = new Gtk.Label(_("Settings Profiles:"));
-            var profiles_combo = new Gtk.ComboBoxText();
+            profiles_combo = new Gtk.ComboBoxText();
 
             var lib_path_label = new Gtk.Label(_("Mupen64Plus Core Library Path:"));
-            var lib_path_entry = new Gtk.Entry();
+            lib_path_entry = new Gtk.Entry();
 
             var plugins_dir_label = new Gtk.Label(_("Plugins Base Directory:"));
-            var plugins_dir_entry = new Gtk.Entry();
+            plugins_dir_entry = new Gtk.Entry();
 
             var video_plugin_label = new Gtk.Label(_("Video Plugin:"));
             video_plugin_combo = new Gtk.ComboBoxText();
@@ -79,24 +84,15 @@ namespace MupenGUI.Views.Settings {
             input_plugin_label.halign = Gtk.Align.END;
             rsp_plugin_label.halign = Gtk.Align.END;
 
-            lib_path_entry.set_text(settings_profile_manager.get_mupen64lib_path());
-            plugins_dir_entry.set_text(settings_profile_manager.get_plugins_dir());
-
             // Populate Profiles Combo
-            int i = 0;
-            foreach (var profile in settings_profile_manager.available_profiles()) {
-                profiles_combo.append_text(profile);
-                if (profile == settings_profile_manager.current_profile) {
-                    profiles_combo.active = i;
-                }
-                ++i;
-            }
-
-            populate_plugin_combos.begin(settings_profile_manager.get_plugins_dir());
+            on_profile_update();
 
             // Connect Widgets
 
             profiles_combo.changed.connect(() => {
+                if (profiles_combo.get_active_text() == null) {
+                    return;
+                }
                 settings_profile_manager.current_profile = profiles_combo.get_active_text();
                 lib_path_entry.set_text(settings_profile_manager.get_mupen64lib_path());
                 plugins_dir_entry.set_text(settings_profile_manager.get_plugins_dir());
@@ -193,6 +189,26 @@ namespace MupenGUI.Views.Settings {
             content_area.attach(input_plugin_combo, 1, 6, 1, 1);
             content_area.attach(rsp_plugin_label,   0, 7, 1, 1);
             content_area.attach(rsp_plugin_combo,   1, 7, 1, 1);
+        }
+
+        public void on_profile_update() {
+            var settings_profile_manager = SettingsProfileManager.instance;
+
+            profiles_combo.remove_all();
+            int i = 0;
+            int profile_idx = 0;
+            foreach (var profile in settings_profile_manager.available_profiles()) {
+                profiles_combo.append_text(profile);
+                if (profile == settings_profile_manager.current_profile) {
+                    profile_idx = i;
+                }
+                ++i;
+            }
+
+            profiles_combo.active = profile_idx;
+            lib_path_entry.set_text(settings_profile_manager.get_mupen64lib_path());
+            plugins_dir_entry.set_text(settings_profile_manager.get_plugins_dir());
+            populate_plugin_combos.begin(settings_profile_manager.get_plugins_dir());
         }
 
         private async void populate_plugin_combos(string plugins_dir) {

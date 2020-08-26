@@ -76,6 +76,14 @@ namespace MupenGUI.Views.Window {
                     manager.application_ref.grant_a_toast(_("No ROM is selected."));
                 }
             });
+
+            // React to when something else opens the Settings... This code seriously need to be refactored
+            // with some good architecture in mind.
+            manager.get_action(Actions.General.SETTINGS_OPEN, VariantType.BOOLEAN).activate.connect((profile_update) => {
+                button_settings.image = new Gtk.Image.from_icon_name("view-continuous-symbolic", Gtk.IconSize.MENU);
+                button_settings.tooltip_text = _("Rom List");
+                settings_open = true;
+            });
         }
     }
 }

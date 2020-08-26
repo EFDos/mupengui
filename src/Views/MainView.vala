@@ -90,9 +90,8 @@ namespace MupenGUI.Views {
             });
 
             manager.get_action(Actions.General.SETTINGS_OPEN, VariantType.BOOLEAN).activate.connect((profile_update) => {
-                print("We got here");
                 last_visible_child_name = stack.get_visible_child_name();
-                if (profile_update != null && profile_update as bool == true) {
+                if (profile_update.get_boolean() == true) {
                     settings_view.on_profile_update();
                 }
                 stack.set_visible_child_full("settings_view", Gtk.StackTransitionType.SLIDE_LEFT_RIGHT);

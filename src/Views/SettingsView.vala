@@ -27,13 +27,14 @@
 namespace MupenGUI.Views {
     public class SettingsView : Gtk.Paned {
         private Granite.HeaderLabel profile_label;
+        private Gtk.Stack stack;
 
         construct {
             Services.SettingsProfileManager.instance.init();
 
             var box = new Gtk.Box(Gtk.Orientation.VERTICAL, 0);
 
-            var stack = new Gtk.Stack();
+            stack = new Gtk.Stack();
 
             stack.add_named(new Views.Settings.GeneralSettingsPage (), "general_page");
             stack.add_named(new Views.Settings.DisplaySettingsPage (), "display_page");
@@ -55,8 +56,11 @@ namespace MupenGUI.Views {
         }
 
         public void on_profile_update() {
-            profile_label = new Granite.HeaderLabel("Profile: " +
-                Services.SettingsProfileManager.instance.current_profile);
+            var profile_string = Services.SettingsProfileManager.instance.current_profile;
+            profile_label.label = profile_string;
+
+            var general_page = stack.get_child_by_name("general_page") as Views.Settings.GeneralSettingsPage;
+            general_page.on_profile_update();
         }
     }
 }
