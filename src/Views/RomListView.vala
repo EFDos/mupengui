@@ -39,7 +39,7 @@ namespace MupenGUI.Views {
             dir_label = new Gtk.Label("Directory:");
 
             dir_label.set_halign(Gtk.Align.CENTER);
-            dir_label.get_style_context().add_class (Granite.STYLE_CLASS_H4_LABEL);
+            dir_label.get_style_context().add_class(Granite.STYLE_CLASS_H4_LABEL);
 
             this.orientation = Gtk.Orientation.VERTICAL;
             this.pack_start (dir_label, false, true, 0);
@@ -57,43 +57,43 @@ namespace MupenGUI.Views {
             });
         }
 
-        public async void populate_list (string dir_name) {
+        public async void populate_list(string dir_name) {
 
             Globals.CURRENT_ROM_PATH = null;
             this.clear_list ();
 
-            var rom_list = yield FileSystem.list_dir_files (Globals.CURRENT_ROM_DIR);
+            var rom_list = yield FileSystem.list_dir_files(Globals.CURRENT_ROM_DIR);
 
             if (rom_list.length == 0) {
-                ActionManager.instance.application_ref.grant_a_toast ("No N64 Roms found in directory");
-                var label = new Granite.HeaderLabel ("Romless Directory");
+                ActionManager.instance.application_ref.grant_a_toast("No N64 Roms found in directory");
+                var label = new Granite.HeaderLabel("Romless Directory");
                 label.halign = Gtk.Align.CENTER;
-                list.add (label);
-                list.show_all ();
+                list.add(label);
+                list.show_all();
                 return;
             }
 
             valid_dir = true;
             foreach (string s in rom_list) {
-                list.add (new Views.Widgets.RomListItem(s));
-                list.add (new Gtk.Separator (Gtk.Orientation.HORIZONTAL));
-                list.show_all ();
+                list.add(new Views.Widgets.RomListItem(s));
+                list.add(new Gtk.Separator(Gtk.Orientation.HORIZONTAL));
+                list.show_all();
             }
         }
 
-        public bool on_valid_dir () {
+        public bool on_valid_dir() {
             return valid_dir;
         }
 
-        public void clear_list () {
+        public void clear_list() {
             valid_dir = false;
             foreach (var child in list.get_children ()) {
-                list.remove (child);
-                child.destroy ();
+                list.remove(child);
+                child.destroy();
             }
         }
 
-        public void set_directory_name (string dir_name) {
+        public void set_directory_name(string dir_name) {
             //status_bar.push (0, "Directory: " + dir_name);
             dir_label.set_text("Directory: " + dir_name);
         }

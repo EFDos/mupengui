@@ -30,7 +30,7 @@ namespace MupenGUI.Views.Widgets {
 
         private Granite.HeaderLabel label;
 
-        public RomListItem (string str) {
+        public RomListItem(string str) {
             //base (Gtk.Orientation.HORIZONTAL, 0);
             orientation = Gtk.Orientation.HORIZONTAL;
             homogeneous = true;
@@ -40,9 +40,15 @@ namespace MupenGUI.Views.Widgets {
             label = new Granite.HeaderLabel(str);
             label.set_padding(4, 0);
             pack_start(label);
-            var config_image = new Gtk.Image.from_icon_name("document-properties", Gtk.IconSize.LARGE_TOOLBAR);
+
+            var config_image = new Gtk.Button.from_icon_name("document-properties", Gtk.IconSize.LARGE_TOOLBAR);
             config_image.tooltip_text = "Create Settings Profile for this ROM";
-            pack_end (config_image);
+            config_image.clicked.connect(() => {
+                Services.SettingsProfileManager.instance.current_profile = label.label;
+                Services.ActionManager.instance.dispatch(Actions.General.SETTINGS_OPEN, true);
+            });
+
+            pack_end(config_image);
         }
 
         public string get_name() {

@@ -50,22 +50,29 @@ namespace MupenGUI.Services {
             );
         }
 
-        public SimpleAction add_action(string action_name) {
-            var action = new SimpleAction(action_name, null);
+        public SimpleAction add_action(string action_name, VariantType? paramType = null) {
+            var action = new SimpleAction(action_name, paramType);
             action_group.add_action(action);
             return action;
         }
 
-        public SimpleAction get_action(string name) {
+        public SimpleAction get_action(string name, VariantType? paramType = null) {
             if (!this.action_group.has_action(name)) {
-                return this.add_action(name);
+                return this.add_action(name, paramType);
             }
 
             return this.action_group.lookup_action(name) as SimpleAction;
         }
 
-        public void dispatch(string name) {
-            this.action_group.activate_action(name, null);
+        public void dispatch(string name, Variant? param = null) {
+            if (param != null) {
+                if (param.get_type().equal(action_group.get_action_parameter_type(name))) {
+                    action_group.activate_action(name, param);
+                }
+            }
+            else {
+                action_group.activate_action(name, null);
+            }
         }
 
         public void remove(string name) {

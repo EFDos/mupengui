@@ -26,29 +26,37 @@
 /************************************************************************/
 namespace MupenGUI.Views {
     public class SettingsView : Gtk.Paned {
+        private Granite.HeaderLabel profile_label;
+
         construct {
-            Services.SettingsProfileManager.instance.init ();
+            Services.SettingsProfileManager.instance.init();
 
-            var box = new Gtk.Box (Gtk.Orientation.VERTICAL, 0);
+            var box = new Gtk.Box(Gtk.Orientation.VERTICAL, 0);
 
-            var stack = new Gtk.Stack ();
+            var stack = new Gtk.Stack();
 
-            stack.add_named (new Views.Settings.GeneralSettingsPage (), "general_page");
-            stack.add_named (new Views.Settings.DisplaySettingsPage (), "display_page");
-            stack.add_named (new Views.Settings.InputSettingsPage (), "input_page");
+            stack.add_named(new Views.Settings.GeneralSettingsPage (), "general_page");
+            stack.add_named(new Views.Settings.DisplaySettingsPage (), "display_page");
+            stack.add_named(new Views.Settings.InputSettingsPage (), "input_page");
 
-            var settings_sidebar = new Granite.SettingsSidebar (stack);
+            var settings_sidebar = new Granite.SettingsSidebar(stack);
 
-            var profile_label = new Granite.HeaderLabel ("Profile: Global");
-            profile_label.set_halign (Gtk.Align.CENTER);
-            profile_label.get_style_context ().add_class (Granite.STYLE_CLASS_H4_LABEL);
+            profile_label = new Granite.HeaderLabel("Profile: " +
+                Services.SettingsProfileManager.instance.current_profile);
+            profile_label.set_halign(Gtk.Align.CENTER);
+            profile_label.get_style_context().add_class(Granite.STYLE_CLASS_H4_LABEL);
 
-            box.pack_start (profile_label, false, true, 0);
-            box.pack_start (stack);
+            box.pack_start(profile_label, false, true, 0);
+            box.pack_start(stack);
             box.homogeneous = false;
 
-            add (settings_sidebar);
-            add (box);
+            add(settings_sidebar);
+            add(box);
+        }
+
+        public void on_profile_update() {
+            profile_label = new Granite.HeaderLabel("Profile: " +
+                Services.SettingsProfileManager.instance.current_profile);
         }
     }
 }

@@ -45,14 +45,14 @@ namespace MupenGUI.Views.Window {
             var manager = ActionManager.instance;
 
             button_settings.tooltip_text = _("Settings");
-            button_settings.clicked.connect (() => {
+            button_settings.clicked.connect(() => {
                 if (!settings_open) {
-                    manager.dispatch (Actions.General.SETTINGS_OPEN);
+                    manager.dispatch(Actions.General.SETTINGS_OPEN, false);
                     button_settings.image = new Gtk.Image.from_icon_name("view-continuous-symbolic", Gtk.IconSize.MENU);
                     button_settings.tooltip_text = _("Rom List");
                     settings_open = true;
                 } else {
-                    manager.dispatch (Actions.General.SETTINGS_CLOSE);
+                    manager.dispatch(Actions.General.SETTINGS_CLOSE);
                     button_settings.image = new Gtk.Image.from_icon_name("open-menu-symbolic", Gtk.IconSize.MENU);
                     button_settings.tooltip_text = _("Settings");
                     settings_open = false;
@@ -61,19 +61,19 @@ namespace MupenGUI.Views.Window {
 
             button_rom_dir.tooltip_text = _("Select Rom Directory");
             button_rom_dir.clicked.connect (() => {
-                var res = FileSystem.choose_dir (_("Select Roms Directory"));
+                var res = FileSystem.choose_dir(_("Select Roms Directory"));
                 if (res != null) {
                     Globals.CURRENT_ROM_DIR = res;
-                    manager.dispatch (Actions.Rom.DIRECTORY_CHOSEN);
+                    manager.dispatch(Actions.Rom.DIRECTORY_CHOSEN);
                 }
             });
 
             button_play_rom.tooltip_text = _("Play Selected Rom");
             button_play_rom.clicked.connect (() => {
                 if (Globals.CURRENT_ROM_PATH != null) {
-                    manager.dispatch (Actions.Rom.EXECUTION_REQUESTED);
+                    manager.dispatch(Actions.Rom.EXECUTION_REQUESTED);
                 } else {
-                    manager.application_ref.grant_a_toast (_("No ROM is selected."));
+                    manager.application_ref.grant_a_toast(_("No ROM is selected."));
                 }
             });
         }

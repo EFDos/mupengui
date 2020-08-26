@@ -44,7 +44,7 @@ namespace MupenGUI.Views {
                 var res = FileSystem.choose_dir ("Select Roms Directory");
                 if (res != null) {
                     Globals.CURRENT_ROM_DIR = res;
-                    ActionManager.instance.dispatch (Actions.Rom.DIRECTORY_CHOSEN);
+                    ActionManager.instance.dispatch(Actions.Rom.DIRECTORY_CHOSEN);
                 }
             });
         }
