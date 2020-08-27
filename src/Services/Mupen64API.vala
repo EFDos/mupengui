@@ -166,6 +166,8 @@ namespace MupenGUI.Services {
 
             m64_set_emustop_callback(_CAPICALLBACK_emulation_stop);
 
+            Services.ActionManager.instance.dispatch(MupenGUI.Actions.SettingsUpdate.MUPEN_SETTINGS_UPDATE);
+
             return initialized = true;
         }
 
@@ -211,20 +213,28 @@ namespace MupenGUI.Services {
             }
 
             if (command == m64Command.RomOpen) {
-                goodname = m64_get_rom_goodname ();
+                goodname = m64_get_rom_goodname();
                 if (goodname != null) {
                     rom_loaded = true;
                 }
 
                 var err = 0;
-                err = m64_load_plugin (m64PluginType.Video, plugins_dir + video_plugin);
-                if (err != 0) { stderr.printf ("Error code: %d\n", err); }
-                err = m64_load_plugin (m64PluginType.Audio, plugins_dir + audio_plugin);
-                if (err != 0) { stderr.printf ("Error code: %d\n", err); }
-                err = m64_load_plugin (m64PluginType.Input, plugins_dir + input_plugin);
-                if (err != 0) { stderr.printf ("Error code: %d\n", err); }
-                err = m64_load_plugin (m64PluginType.RSP, plugins_dir + rsp_plugin);
-                if (err != 0) { stderr.printf ("Error code: %d\n", err); }
+                err = m64_load_plugin(m64PluginType.Video, plugins_dir + video_plugin);
+                if (err != 0) {
+                    log(null, LogLevelFlags.LEVEL_ERROR, "Failed to load: %s", plugins_dir + video_plugin);
+                }
+                err = m64_load_plugin(m64PluginType.Audio, plugins_dir + audio_plugin);
+                if (err != 0) {
+                    log(null, LogLevelFlags.LEVEL_ERROR, "Failed to load: %s", plugins_dir + audio_plugin);
+                }
+                err = m64_load_plugin(m64PluginType.Input, plugins_dir + input_plugin);
+                if (err != 0) {
+                    log(null, LogLevelFlags.LEVEL_ERROR, "Failed to load: %s", plugins_dir + input_plugin);
+                }
+                err = m64_load_plugin(m64PluginType.RSP, plugins_dir + rsp_plugin);
+                if (err != 0) {
+                    log(null, LogLevelFlags.LEVEL_ERROR, "Failed to load: %s", plugins_dir + rsp_plugin);
+                }
             }
 
             return true;

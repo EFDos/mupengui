@@ -206,9 +206,42 @@ namespace MupenGUI.Views.Settings {
             }
 
             profiles_combo.active = profile_idx;
+
+            var mupen_api = Mupen64API.instance;
+            if (lib_path_entry.text != settings_profile_manager.get_mupen64lib_path()) {
+                mupen_api.shutdown();
+                mupen_api.init(settings_profile_manager.get_mupen64lib_path());
+            }
+            if (plugins_dir_entry.text != settings_profile_manager.get_plugins_dir()) {
+                mupen_api.plugins_dir = plugins_dir_entry.get_text();
+            }
             lib_path_entry.set_text(settings_profile_manager.get_mupen64lib_path());
             plugins_dir_entry.set_text(settings_profile_manager.get_plugins_dir());
             populate_plugin_combos.begin(settings_profile_manager.get_plugins_dir());
+
+            if (video_plugin_combo.get_active_text() == "") {
+                return;
+            }
+            Mupen64API.instance.video_plugin = video_plugin_combo.get_active_text();
+            settings_profile_manager.set_video_plugin(video_plugin_combo.get_active_text());
+
+            if (audio_plugin_combo.get_active_text() == "") {
+                return;
+            }
+            Mupen64API.instance.audio_plugin = audio_plugin_combo.get_active_text();
+            settings_profile_manager.set_audio_plugin(audio_plugin_combo.get_active_text());
+
+            if (input_plugin_combo.get_active_text() == "") {
+                return;
+            }
+            Mupen64API.instance.input_plugin = input_plugin_combo.get_active_text();
+            settings_profile_manager.set_input_plugin(input_plugin_combo.get_active_text());
+
+            if (rsp_plugin_combo.get_active_text() == "") {
+                return;
+            }
+            Mupen64API.instance.rsp_plugin = rsp_plugin_combo.get_active_text();
+            settings_profile_manager.set_rsp_plugin(rsp_plugin_combo.get_active_text());
         }
 
         private async void populate_plugin_combos(string plugins_dir) {

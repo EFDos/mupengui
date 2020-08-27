@@ -28,6 +28,11 @@ using MupenGUI.Services;
 
 namespace MupenGUI.Views.Settings {
     public class DisplaySettingsPage : Granite.SimpleSettingsPage {
+        private Gtk.Switch fullscreen_switch;
+        private Gtk.Switch vsync_switch;
+        private Gtk.Entry resolution_x_entry;
+        private Gtk.Entry resolution_y_entry;
+
         public DisplaySettingsPage () {
             Object (
                 //activable: true,
@@ -41,27 +46,20 @@ namespace MupenGUI.Views.Settings {
         construct {
 
             var fullscreen_label = new Gtk.Label (_("Fullscreen:"));
-            var fullscreen_switch = new Gtk.Switch ();
+            fullscreen_switch = new Gtk.Switch ();
 
             var vsync_label = new Gtk.Label(_("VSync:"));
-            var vsync_switch = new Gtk.Switch ();
+            vsync_switch = new Gtk.Switch ();
 
             var resolution_label = new Gtk.Label(_("Resolution:"));
-            var resolution_x_entry = new Gtk.Entry ();
-            var resolution_y_entry = new Gtk.Entry ();
+            resolution_x_entry = new Gtk.Entry ();
+            resolution_y_entry = new Gtk.Entry ();
 
-            bool fullscreen_state = Mupen64API.instance.get_parameter_bool ("Video-General", "Fullscreen");
-            bool vsync_state = Mupen64API.instance.get_parameter_bool ("Video-General", "VerticalSync");
 
-            int res_x = Mupen64API.instance.get_parameter_int ("Video-General", "ScreenWidth");
-            int res_y = Mupen64API.instance.get_parameter_int ("Video-General", "ScreenHeight");
 
             fullscreen_label.halign = Gtk.Align.END;
             vsync_label.halign = Gtk.Align.END;
             resolution_label.halign = Gtk.Align.END;
-
-            fullscreen_switch.state_set (fullscreen_state);
-            vsync_switch.state_set (vsync_state);
 
             fullscreen_switch.state_set.connect ((state) => {
                 Mupen64API.instance.set_parameter_bool ("Video-General", "Fullscreen", state);
@@ -75,8 +73,6 @@ namespace MupenGUI.Views.Settings {
             resolution_y_entry.max_length = 4;
             resolution_x_entry.set_size_request (0, 0);
             resolution_y_entry.set_size_request (0, 0);
-            resolution_x_entry.text = res_x.to_string ();
-            resolution_y_entry.text = res_y.to_string ();
 
             resolution_x_entry.activate.connect (() => {
                 Mupen64API.instance.set_parameter_int(
@@ -104,6 +100,26 @@ namespace MupenGUI.Views.Settings {
             content_area.attach (resolution_label, 0, 2, 1, 1);
             content_area.attach (resolution_x_entry, 2, 2, 1, 1);
             content_area.attach (resolution_y_entry, 3, 2, 1, 1);
+
+            update_settings();
+
+            Services.ActionManager.instance.get_action(MupenGUI.Actions.SettingsUpdate.MUPEN_SETTINGS_UPDATE).activate.connect(() => {
+                update_settings();
+            });
+        }
+
+        private void update_settings() {
+            bool fullscreen_state = Mupen64API.instance.get_parameter_bool ("Video-General", "Fullscreen");
+            bool vsync_state = Mupen64API.instance.get_parameter_bool ("Video-General", "VerticalSync");
+
+            int res_x = Mupen64API.instance.get_parameter_int ("Video-General", "ScreenWidth");
+            int res_y = Mupen64API.instance.get_parameter_int ("Video-General", "ScreenHeight");
+
+            fullscreen_switch.state_set(fullscreen_state);
+            vsync_switch.state_set (vsync_state);
+
+            resolution_x_entry.text = res_x.to_string ();
+            resolution_y_entry.text = res_y.to_string ();
         }
     }
 }

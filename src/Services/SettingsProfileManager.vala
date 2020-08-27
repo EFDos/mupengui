@@ -102,7 +102,7 @@ namespace MupenGUI.Services {
             key_file.set_string(name, "input-plugin", "");
             key_file.set_string(name, "rsp-plugin", "");
             key_file.set_string(name, "mupen64lib-path", "/usr/lib/x86_64-linux-gnu/libmupen64plus.so.2");
-            key_file.set_string(name, "plugins-dir", "/usr/lib/x86_64-linux-gnu/mupen64plus");
+            key_file.set_string(name, "plugins-dir", "/usr/lib/x86_64-linux-gnu/mupen64plus/");
         }
 
         public void delete_profile(string name) {

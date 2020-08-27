@@ -33,7 +33,12 @@ namespace MupenGUI.Actions {
     }
 
     namespace General {
-        public const string SETTINGS_OPEN = "MupenGUI.Actions.GSO";
-        public const string SETTINGS_CLOSE = "MupenGUI.Actions.GSC";
+        public const string SETTINGS_OPEN = "MupenGUI.Action.GSO";
+        public const string SETTINGS_CLOSE = "MupenGUI.Action.GSC";
+    }
+
+    namespace SettingsUpdate {
+        public const string SETTINGS_PROFILE_UPDATE = "MupenGUI.Action.SPU";
+        public const string MUPEN_SETTINGS_UPDATE = "MupenGUI.Action.MSU";
     }
 }
