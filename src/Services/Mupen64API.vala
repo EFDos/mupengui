@@ -140,7 +140,7 @@ namespace MupenGUI.Services {
             Mupen64API.instance.on_emulation_stop();
         }
 
-        public bool init(string library_path) {
+        public bool init(string library_path, string? config_file = null) {
             if (library_path.length == 0) {
                 //log(null, LogLevelFlags.LEVEL_ERROR, "Error: Invalid library path");
                 show_not_initialized_alert();
@@ -156,7 +156,7 @@ namespace MupenGUI.Services {
                 return false;
             }
 
-            result = m64_start_corelib(null, null);
+            result = m64_start_corelib(config_file, null);
             if (result != 0) {
                 log(null, LogLevelFlags.LEVEL_ERROR,
                     "Error: Failed to initialize Mupen64Plus Core. Error code: %d\n", result);

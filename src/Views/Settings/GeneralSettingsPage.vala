@@ -97,6 +97,19 @@ namespace MupenGUI.Views.Settings {
                 lib_path_entry.set_text(settings_profile_manager.get_mupen64lib_path());
                 plugins_dir_entry.set_text(settings_profile_manager.get_plugins_dir());
                 populate_plugin_combos.begin(settings_profile_manager.get_plugins_dir());
+                Mupen64API.instance.shutdown();
+
+                if (Mupen64API.instance.init(settings_profile_manager.get_mupen64lib_path(), settings_profile_manager.get_mupen64cfg_path())) {
+                    var message_dialog = new Granite.MessageDialog.with_image_from_icon_name (
+                        _("Mupen64Plus Initalized!"),
+                        _("The Mupen64Plus core library has been found and loaded succesfully! " +
+                        "This program is happy now."),
+                        "face-smile-symbolic",
+                        Gtk.ButtonsType.CLOSE
+                    );
+                    message_dialog.run ();
+                    message_dialog.destroy ();
+                }
             });
 
             lib_path_entry.activate.connect (() => {
@@ -104,7 +117,7 @@ namespace MupenGUI.Views.Settings {
                 settings_profile_manager.set_mupen64lib_path(mupen64pluslib_path);
                 Mupen64API.instance.shutdown();
 
-                if (Mupen64API.instance.init(mupen64pluslib_path)) {
+                if (Mupen64API.instance.init(mupen64pluslib_path, settings_profile_manager.get_mupen64cfg_path())) {
                     var message_dialog = new Granite.MessageDialog.with_image_from_icon_name (
                         _("Mupen64Plus Initalized!"),
                         _("The Mupen64Plus core library has been found and loaded succesfully! " +
@@ -207,14 +220,6 @@ namespace MupenGUI.Views.Settings {
 
             profiles_combo.active = profile_idx;
 
-            var mupen_api = Mupen64API.instance;
-            if (lib_path_entry.text != settings_profile_manager.get_mupen64lib_path()) {
-                mupen_api.shutdown();
-                mupen_api.init(settings_profile_manager.get_mupen64lib_path());
-            }
-            if (plugins_dir_entry.text != settings_profile_manager.get_plugins_dir()) {
-                mupen_api.plugins_dir = plugins_dir_entry.get_text();
-            }
             lib_path_entry.set_text(settings_profile_manager.get_mupen64lib_path());
             plugins_dir_entry.set_text(settings_profile_manager.get_plugins_dir());
             populate_plugin_combos.begin(settings_profile_manager.get_plugins_dir());

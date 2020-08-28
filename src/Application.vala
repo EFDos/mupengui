@@ -54,9 +54,9 @@ namespace MupenGUI {
         protected override void activate() {
             // Set and initialize Mupen64 from GeneralSettings
             var mupen_api_instance = Mupen64API.instance;
-            var settings_profile_manager = SettingsProfileManager.instance;
+            var profile_manager = SettingsProfileManager.instance;
 
-            settings_profile_manager.init();
+            profile_manager.init();
 
             /*mupen_api_instance.plugins_dir = general_settings.mupen64plugin_dir;
             mupen_api_instance.video_plugin = general_settings.mupen64plugin_video;
@@ -64,7 +64,7 @@ namespace MupenGUI {
             mupen_api_instance.input_plugin = general_settings.mupen64plugin_input;
             mupen_api_instance.rsp_plugin = general_settings.mupen64plugin_rsp;*/
 
-            mupen_api_instance.init(settings_profile_manager.get_mupen64lib_path());
+            mupen_api_instance.init(profile_manager.get_mupen64lib_path(), profile_manager.get_mupen64cfg_path());
 
             // Initialize JoystickListener
             JoystickListener.instance.init();

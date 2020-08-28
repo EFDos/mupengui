@@ -96,7 +96,26 @@ namespace MupenGUI.Services {
 
         public void create_profile(string name) {
             delete_profile(name);
-            key_file.set_string(name, "mupen-conf-file", "mupen64plus.cfg");
+
+            var original_config_dir = Path.build_filename(Environment.get_user_config_dir(), "mupen64plus/");
+            var prof_config_dir = Path.build_filename(original_config_dir, name);
+
+            DirUtils.create_with_parents(prof_config_dir, 0774);
+
+            // Create configuration file if it doesn't exist
+            if (!FileUtils.test(Path.build_filename(prof_config_dir, "/mupen64plus.cfg"), FileTest.EXISTS)) {
+                File original_file = File.new_build_filename(original_config_dir, "mupen64plus.cfg");
+
+                File config_file = File.new_build_filename(prof_config_dir, "/mupen64plus.cfg");
+
+                try {
+                    original_file.copy(config_file, FileCopyFlags.NONE);
+                } catch (Error e) {
+                    log(null, LogLevelFlags.LEVEL_ERROR, "Error copying original mupen64plus.cfg file: " + e.message);
+                }
+            }
+
+            key_file.set_string(name, "mupen-conf-path", prof_config_dir);
             key_file.set_string(name, "video-plugin", "");
             key_file.set_string(name, "audio-plugin", "");
             key_file.set_string(name, "input-plugin", "");
@@ -116,6 +135,10 @@ namespace MupenGUI.Services {
         }
 
         public void set_mupen64lib_path(string path) {
+            if (current_profile == null) {
+                log(null, LogLevelFlags.LEVEL_ERROR, "SettingsProfileManager::current_profile should not be null!");
+                return;
+            }
             if (key_file == null) {
                 log(null, LogLevelFlags.LEVEL_ERROR, "SettingsProfileManager was not correctly initialized.");
                 return;
@@ -124,6 +147,10 @@ namespace MupenGUI.Services {
         }
 
         public void set_plugins_dir(string dir) {
+            if (current_profile == null) {
+                log(null, LogLevelFlags.LEVEL_ERROR, "SettingsProfileManager::current_profile should not be null!");
+                return;
+            }
             if (key_file == null) {
                 log(null, LogLevelFlags.LEVEL_ERROR, "SettingsProfileManager was not correctly initialized.");
                 return;
@@ -131,8 +158,9 @@ namespace MupenGUI.Services {
             key_file.set_string(current_profile, "plugins-dir", dir);
         }
 
-        public void set_video_plugin(string? plugin_name) {
-            if (plugin_name == null) {
+        public void set_video_plugin(string plugin_name) {
+            if (current_profile == null) {
+                log(null, LogLevelFlags.LEVEL_ERROR, "SettingsProfileManager::current_profile should not be null!");
                 return;
             }
             if (key_file == null) {
@@ -142,8 +170,9 @@ namespace MupenGUI.Services {
             key_file.set_string(current_profile, "video-plugin", plugin_name);
         }
 
-        public void set_audio_plugin(string? plugin_name) {
-            if (plugin_name == null) {
+        public void set_audio_plugin(string plugin_name) {
+            if (current_profile == null) {
+                log(null, LogLevelFlags.LEVEL_ERROR, "SettingsProfileManager::current_profile should not be null!");
                 return;
             }
             if (key_file == null) {
@@ -153,8 +182,9 @@ namespace MupenGUI.Services {
             key_file.set_string(current_profile, "audio-plugin", plugin_name);
         }
 
-        public void set_input_plugin(string? plugin_name) {
-            if (plugin_name == null) {
+        public void set_input_plugin(string plugin_name) {
+            if (current_profile == null) {
+                log(null, LogLevelFlags.LEVEL_ERROR, "SettingsProfileManager::current_profile should not be null!");
                 return;
             }
             if (key_file == null) {
@@ -165,8 +195,9 @@ namespace MupenGUI.Services {
 
         }
 
-        public void set_rsp_plugin(string? plugin_name) {
-            if (plugin_name == null) {
+        public void set_rsp_plugin(string plugin_name) {
+            if (current_profile == null) {
+                log(null, LogLevelFlags.LEVEL_ERROR, "SettingsProfileManager::current_profile should not be null!");
                 return;
             }
             if (key_file == null) {
@@ -178,6 +209,7 @@ namespace MupenGUI.Services {
 
         public string get_video_plugin() {
             if (current_profile == null) {
+                log(null, LogLevelFlags.LEVEL_ERROR, "SettingsProfileManager::current_profile should not be null!");
                 return "";
             }
             if (key_file == null) {
@@ -194,6 +226,7 @@ namespace MupenGUI.Services {
 
         public string get_audio_plugin() {
             if (current_profile == null) {
+                log(null, LogLevelFlags.LEVEL_ERROR, "SettingsProfileManager::current_profile should not be null!");
                 return "";
             }
             if (key_file == null) {
@@ -210,6 +243,7 @@ namespace MupenGUI.Services {
 
         public string get_input_plugin() {
             if (current_profile == null) {
+                log(null, LogLevelFlags.LEVEL_ERROR, "SettingsProfileManager::current_profile should not be null!");
                 return "";
             }
             if (key_file == null) {
@@ -226,6 +260,7 @@ namespace MupenGUI.Services {
 
         public string get_rsp_plugin() {
             if (current_profile == null) {
+                log(null, LogLevelFlags.LEVEL_ERROR, "SettingsProfileManager::current_profile should not be null!");
                 return "";
             }
             if (key_file == null) {
@@ -242,6 +277,7 @@ namespace MupenGUI.Services {
 
         public string get_mupen64lib_path() {
             if (current_profile == null) {
+                log(null, LogLevelFlags.LEVEL_ERROR, "SettingsProfileManager::current_profile should not be null!");
                 return "";
             }
             if (key_file == null) {
@@ -256,8 +292,25 @@ namespace MupenGUI.Services {
             }
         }
 
+        public string get_mupen64cfg_path() {
+            if (current_profile == null) {
+                log(null, LogLevelFlags.LEVEL_ERROR, "SettingsProfileManager::current_profile should not be null!");
+                return "";
+            }
+            if (key_file == null) {
+                log(null, LogLevelFlags.LEVEL_ERROR, "SettingsProfileManager was not correctly initialized.");
+            }
+            try {
+                return key_file.get_string(current_profile, "mupen-conf-path");
+            } catch (Error e) {
+                log(null, LogLevelFlags.LEVEL_ERROR, "Error: " + e.message);
+                return "";
+            }
+        }
+
         public string get_plugins_dir() {
             if (current_profile == null) {
+                log(null, LogLevelFlags.LEVEL_ERROR, "SettingsProfileManager::current_profile should not be null!");
                 return "";
             }
             if (key_file == null) {
