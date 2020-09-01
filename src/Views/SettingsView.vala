@@ -53,12 +53,15 @@ namespace MupenGUI.Views {
 
             add(settings_sidebar);
             add(box);
+
+            var action_manager = Services.ActionManager.instance;
+            action_manager.get_action(Actions.SettingsUpdate.SETTINGS_PROFILE_NAME_UPDATE).activate.connect(() => {
+                var profile_string = Services.SettingsProfileManager.instance.current_profile;
+                profile_label.label = profile_string;
+            });
         }
 
         public void on_profile_update() {
-            var profile_string = Services.SettingsProfileManager.instance.current_profile;
-            profile_label.label = profile_string;
-
             var general_page = stack.get_child_by_name("general_page") as Views.Settings.GeneralSettingsPage;
             general_page.on_profile_update();
         }

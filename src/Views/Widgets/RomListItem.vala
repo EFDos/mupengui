@@ -42,7 +42,7 @@ namespace MupenGUI.Views.Widgets {
             pack_start(label);
 
             var config_image = new Gtk.Button.from_icon_name("document-properties", Gtk.IconSize.LARGE_TOOLBAR);
-            config_image.tooltip_text = "Create Settings Profile for this ROM";
+            config_image.tooltip_text = _("Create Settings Profile for this ROM");
             config_image.clicked.connect(() => {
                 var profile_name = label.label;
                 profile_name.strip();
@@ -58,7 +58,6 @@ namespace MupenGUI.Views.Widgets {
                 }
                 profile_manager.current_profile = profile_name;
 
-                print("I'VE SET CURRENT PROFILE TO BE: %s\n", profile_manager.current_profile);
                 Services.ActionManager.instance.dispatch(Actions.General.SETTINGS_OPEN, true);
             });
 

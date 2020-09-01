@@ -27,7 +27,7 @@
 using MupenGUI.Services;
 
 namespace MupenGUI.Services {
-    public class SettingsProfileManager {
+    public class SettingsProfileManager : Object {
         private static SettingsProfileManager _instance = null;
         private string cached_path;
         private KeyFile key_file;
@@ -44,6 +44,11 @@ namespace MupenGUI.Services {
         }
 
         SettingsProfileManager() {
+            this.notify.connect((sender, property) => {
+                if (property.name == "current-profile") {
+                    Services.ActionManager.instance.dispatch(Actions.SettingsUpdate.SETTINGS_PROFILE_NAME_UPDATE);
+                }
+            });
         }
 
         public void init() {

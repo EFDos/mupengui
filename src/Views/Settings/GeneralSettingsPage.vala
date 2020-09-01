@@ -90,14 +90,15 @@ namespace MupenGUI.Views.Settings {
                     return;
                 }
                 settings_profile_manager.current_profile = profiles_combo.get_active_text();
-                plugins_dir_entry.set_text(settings_profile_manager.get_plugins_dir());
-                plugins_dir_entry.activate();
                 lib_path_entry.set_text(settings_profile_manager.get_mupen64lib_path());
                 lib_path_entry.activate();
+                plugins_dir_entry.set_text(settings_profile_manager.get_plugins_dir());
+                plugins_dir_entry.activate();
             });
 
             lib_path_entry.activate.connect (() => {
                 string mupen64pluslib_path = lib_path_entry.get_text();
+                print("mupen64pluslib_path " + mupen64pluslib_path);
                 settings_profile_manager.set_mupen64lib_path(mupen64pluslib_path);
                 Mupen64API.instance.shutdown();
 

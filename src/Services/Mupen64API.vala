@@ -112,6 +112,12 @@ namespace MupenGUI.Services {
             StateSaveComplete
         }
 
+        private enum InitError {
+            LibraryPathNotDefined,
+            LibraryNotFound,
+            ConfigNotFound
+        }
+
         private static Mupen64API _instance = null;
 
         public string plugins_dir {set; get;}
@@ -124,6 +130,7 @@ namespace MupenGUI.Services {
         private bool initialized = false;
         private bool rom_loaded = false;
         private bool already_alerted = false;
+        private InitError init_error = InitError.LibraryNotFound;
 
         public static Mupen64API instance {
             get {
@@ -143,16 +150,18 @@ namespace MupenGUI.Services {
         public bool init(string library_path, string? config_file = null) {
             if (library_path.length == 0) {
                 //log(null, LogLevelFlags.LEVEL_ERROR, "Error: Invalid library path");
-                show_not_initialized_alert();
+                init_error = InitError.LibraryPathNotDefined;
+                show_not_initialized_alert(init_error);
                 return false;
             }
 
+            log(null, LogLevelFlags.LEVEL_DEBUG, "Initializing Mupen64Plus with: " + library_path + " : " + config_file);
             var result = m64_load_corelib(library_path);
 
             if (result != 0) {
                 log(null, LogLevelFlags.LEVEL_ERROR,
                     "Error: Failed to load Mupen64Plus Dynamic Library. Error code: %d\n", result);
-                show_not_initialized_alert();
+                show_not_initialized_alert(init_error);
                 return false;
             }
 
@@ -160,20 +169,22 @@ namespace MupenGUI.Services {
             if (result != 0) {
                 log(null, LogLevelFlags.LEVEL_ERROR,
                     "Error: Failed to initialize Mupen64Plus Core. Error code: %d\n", result);
-                show_not_initialized_alert();
+                init_error = InitError.ConfigNotFound;
+                show_not_initialized_alert(init_error);
                 return false;
             }
 
             m64_set_emustop_callback(_CAPICALLBACK_emulation_stop);
 
+            initialized = true;
+
             Services.ActionManager.instance.dispatch(MupenGUI.Actions.SettingsUpdate.MUPEN_SETTINGS_UPDATE);
 
-            return initialized = true;
+            return true;
         }
 
         public void shutdown() {
             if (!initialized) {
-                show_not_initialized_alert ();
                 return;
             }
 
@@ -201,7 +212,7 @@ namespace MupenGUI.Services {
 
         public bool run_command (m64Command command, int param_int = 0, void* param_ptr = null) {
             if (!initialized) {
-                show_not_initialized_alert ();
+                show_not_initialized_alert(init_error);
                 return false;
             }
             var result = m64_command (command, param_int, param_ptr);
@@ -242,7 +253,7 @@ namespace MupenGUI.Services {
 
         public async void start_emulation() {
             if (!initialized) {
-                show_not_initialized_alert ();
+                show_not_initialized_alert(init_error);
                 return;
             }
             if (!initialized || !rom_loaded) {
@@ -260,7 +271,7 @@ namespace MupenGUI.Services {
 
         public void set_controller_device(uint controller, int device_id) {
             if (!initialized) {
-                show_not_initialized_alert();
+                show_not_initialized_alert(init_error);
                 return;
             }
             int retval = m64_enable_ctrl_config(controller, true);
@@ -278,7 +289,7 @@ namespace MupenGUI.Services {
 
         public void set_parameter_bool (string section_name, string param_name, bool param) {
             if (!initialized) {
-                show_not_initialized_alert ();
+                show_not_initialized_alert(init_error);
                 return;
             }
 
@@ -291,7 +302,7 @@ namespace MupenGUI.Services {
 
         public void set_parameter_int (string section_name, string param_name, int param) {
             if (!initialized) {
-                show_not_initialized_alert ();
+                show_not_initialized_alert(init_error);
                 return;
             }
 
@@ -304,7 +315,7 @@ namespace MupenGUI.Services {
 
         public bool get_parameter_bool (string section_name, string param_name) {
             if (!initialized) {
-                show_not_initialized_alert ();
+                show_not_initialized_alert(init_error);
                 return false;
             }
 
@@ -324,7 +335,7 @@ namespace MupenGUI.Services {
 
         public int get_parameter_int (string section_name, string param_name) {
             if (!initialized) {
-                show_not_initialized_alert ();
+                show_not_initialized_alert(init_error);
                 return -1;
             }
 
@@ -376,7 +387,7 @@ namespace MupenGUI.Services {
 
         public void bind_controller_button (uint controller, ButtonConfig button, int? axis_mod) {
             if (!initialized) {
-                show_not_initialized_alert ();
+                show_not_initialized_alert(init_error);
                 return;
             }
             string button_string = "";
@@ -472,7 +483,7 @@ namespace MupenGUI.Services {
                                           int? mod2)
         {
             if (!initialized) {
-                show_not_initialized_alert ();
+                show_not_initialized_alert(init_error);
                 return;
             }
             if (axis1.button_id != axis2.button_id || axis1.input_type != axis2.input_type) {
@@ -531,7 +542,7 @@ namespace MupenGUI.Services {
 
         public void save_current_settings () {
             if (!initialized) {
-                show_not_initialized_alert ();
+                show_not_initialized_alert(init_error);
                 return;
             }
 
@@ -557,21 +568,37 @@ namespace MupenGUI.Services {
             save_current_settings ();
         }
 
-        private void show_not_initialized_alert() {
+        private void show_not_initialized_alert(InitError error) {
             if (already_alerted) {
                 return;
             }
 
+            string error_string = "";
+            switch (error) {
+                case InitError.LibraryPathNotDefined:
+                    error_string = _("The library path was no defined." +
+                    "You can manually set the correct file on the settings page." +
+                    "Most functionalities of this program can not be run on this state.");
+                    break;
+                case InitError.LibraryNotFound:
+                    error_string = _("The library libmupen64plus.so.2 could not be loaded. It might not have been found or it could be" +
+                    " either corrupted or incompatible. You can manually set the correct file on the settings page." +
+                    "Most functionalities of this program can not be run on this state.");
+                    break;
+                case InitError.ConfigNotFound:
+                    error_string = _("The config file could not be loaded for the current profile." +
+                    "You can manually set the correct file on the settings page." +
+                    "Most functionalities of this program can not be run on this state.");
+                    break;
+            }
             var message_dialog = new Granite.MessageDialog.with_image_from_icon_name (
                     "Mupen64Plus Not Initalized",
-                    "The library libmupen64plus.so.2 could not be loaded. It might not have been found or it could be" +
-                    " either corrupted or incompatible. You can manually set the correct file on the settings page." +
-                    "Most functionalities of this program can not be run on this state.",
+                    error_string,
                     "dialog-error",
                     Gtk.ButtonsType.CLOSE
             );
-            message_dialog.run ();
-            message_dialog.destroy ();
+            message_dialog.run();
+            message_dialog.destroy();
             already_alerted = true;
         }
     }

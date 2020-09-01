@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: com.github.efdos.mupengui\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-01-26 17:08-0200\n"
+"POT-Creation-Date: 2020-09-01 03:37-0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -23,42 +23,34 @@ msgid "MupenGUI"
 msgstr ""
 
 #: data/com.github.efdos.mupengui.appdata.xml.in:9
-msgid "Sexy Mupen64Plus FrontEnd"
+msgid "Easy Mupen64Plus FrontEnd"
 msgstr ""
 
 #: data/com.github.efdos.mupengui.appdata.xml.in:11
-msgid ""
-"Mupen64Plus FrontEnd that allows for an easy configuration of Keyboard and "
-"Joystick bindings, to play your favourite N64 games."
+msgid "Easy to use Mupen64Plus front-end to play your favourite N64 games."
 msgstr ""
 
 #: data/com.github.efdos.mupengui.appdata.xml.in:12
-msgid ""
-"Note: This is the first public release, it may still contain bugs and "
-"incomplete features."
-msgstr ""
-
-#: data/com.github.efdos.mupengui.appdata.xml.in:13
 msgid "Features:"
 msgstr ""
 
-#: data/com.github.efdos.mupengui.appdata.xml.in:15
+#: data/com.github.efdos.mupengui.appdata.xml.in:14
 msgid "Mupen64Plus Plugins Selection"
 msgstr ""
 
-#: data/com.github.efdos.mupengui.appdata.xml.in:16
+#: data/com.github.efdos.mupengui.appdata.xml.in:15
 msgid "Keyboard/Joystick Input Binding"
+msgstr ""
+
+#: data/com.github.efdos.mupengui.appdata.xml.in:16
+msgid "Settings Profiles"
 msgstr ""
 
 #: data/com.github.efdos.mupengui.appdata.xml.in:17
 msgid "Rom Directory Listing"
 msgstr ""
 
-#: data/com.github.efdos.mupengui.appdata.xml.in:18
-msgid "Fullscreen Mode"
-msgstr ""
-
-#: data/com.github.efdos.mupengui.appdata.xml.in:56
+#: data/com.github.efdos.mupengui.appdata.xml.in:55
 msgid "Douglas Muratore"
 msgstr ""
 
@@ -74,96 +66,108 @@ msgstr ""
 msgid "Nintendo;Emulator;64;N64;Gaming;"
 msgstr ""
 
-#: src/Views/MainView.vala:86
+#: src/Views/MainView.vala:85
 msgid "Executing Rom: "
 msgstr ""
 
-#: src/Views/MainView.vala:89
+#: src/Views/MainView.vala:88
 msgid "Error loading Rom File: "
 msgstr ""
 
-#: src/Views/Window/HeaderBar.vala:49
+#: src/Views/Window/HeaderBar.vala:47 src/Views/Window/HeaderBar.vala:57
 msgid "Settings"
 msgstr ""
 
-#: src/Views/Window/HeaderBar.vala:60
-msgid "Select Rom Directory"
+#: src/Views/Window/HeaderBar.vala:52 src/Views/Window/HeaderBar.vala:84
+msgid "Rom List"
 msgstr ""
 
 #: src/Views/Window/HeaderBar.vala:62
+msgid "Select Rom Directory"
+msgstr ""
+
+#: src/Views/Window/HeaderBar.vala:64
 msgid "Select Roms Directory"
 msgstr ""
 
-#: src/Views/Window/HeaderBar.vala:69
+#: src/Views/Window/HeaderBar.vala:71
 msgid "Play Selected Rom"
 msgstr ""
 
-#: src/Views/Window/HeaderBar.vala:74
+#: src/Views/Window/HeaderBar.vala:76
 msgid "No ROM is selected."
 msgstr ""
 
-#: src/Views/Settings/DisplaySettingsPage.vala:33
+#: src/Views/Settings/DisplaySettingsPage.vala:39
 msgid "Configure Mupen64 Display Settings."
 msgstr ""
 
-#: src/Views/Settings/DisplaySettingsPage.vala:34
+#: src/Views/Settings/DisplaySettingsPage.vala:40
 #: src/Views/Settings/InputSettingsPage.vala:63
 msgid "Emulator"
 msgstr ""
 
-#: src/Views/Settings/DisplaySettingsPage.vala:36
+#: src/Views/Settings/DisplaySettingsPage.vala:42
 msgid "Display Settings"
 msgstr ""
 
-#: src/Views/Settings/DisplaySettingsPage.vala:42
-msgid "Fullscreen"
+#: src/Views/Settings/DisplaySettingsPage.vala:48
+msgid "Fullscreen:"
 msgstr ""
 
-#: src/Views/Settings/GeneralSettingsPage.vala:40
+#: src/Views/Settings/DisplaySettingsPage.vala:51
+msgid "VSync:"
+msgstr ""
+
+#: src/Views/Settings/DisplaySettingsPage.vala:54
+msgid "Resolution:"
+msgstr ""
+
+#: src/Views/Settings/GeneralSettingsPage.vala:45
 msgid "Configure MupenGUI General Settings."
 msgstr ""
 
-#: src/Views/Settings/GeneralSettingsPage.vala:41
+#: src/Views/Settings/GeneralSettingsPage.vala:46
 msgid "Frontend"
 msgstr ""
 
-#: src/Views/Settings/GeneralSettingsPage.vala:43
+#: src/Views/Settings/GeneralSettingsPage.vala:48
 msgid "General Settings"
 msgstr ""
 
-#: src/Views/Settings/GeneralSettingsPage.vala:52
-msgid "Mupen64Plus Core Library Directory:"
-msgstr ""
-
-#: src/Views/Settings/GeneralSettingsPage.vala:55
-msgid "Plugins Base Directory:"
-msgstr ""
-
 #: src/Views/Settings/GeneralSettingsPage.vala:58
-msgid "Video Plugin:"
+msgid "Settings Profiles:"
 msgstr ""
 
 #: src/Views/Settings/GeneralSettingsPage.vala:61
-msgid "Audio Plugin:"
+msgid "Mupen64Plus Core Library Path:"
 msgstr ""
 
 #: src/Views/Settings/GeneralSettingsPage.vala:64
-msgid "Input Plugin:"
+msgid "Plugins Base Directory:"
 msgstr ""
 
 #: src/Views/Settings/GeneralSettingsPage.vala:67
+msgid "Video Plugin:"
+msgstr ""
+
+#: src/Views/Settings/GeneralSettingsPage.vala:70
+msgid "Audio Plugin:"
+msgstr ""
+
+#: src/Views/Settings/GeneralSettingsPage.vala:73
+msgid "Input Plugin:"
+msgstr ""
+
+#: src/Views/Settings/GeneralSettingsPage.vala:76
 msgid "RSP Plugin:"
 msgstr ""
 
-#: src/Views/Settings/GeneralSettingsPage.vala:88
-msgid "Mupen64Plus Initalized!"
-msgstr ""
-
-#: src/Views/Settings/GeneralSettingsPage.vala:145
+#: src/Views/Settings/GeneralSettingsPage.vala:157
 msgid "Light Mode"
 msgstr ""
 
-#: src/Views/Settings/GeneralSettingsPage.vala:146
+#: src/Views/Settings/GeneralSettingsPage.vala:158
 msgid "Dark Mode"
 msgstr ""
 

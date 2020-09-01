@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: com.github.efdos.mupengui\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-01-26 17:08-0200\n"
+"POT-Creation-Date: 2020-09-01 03:37-0300\n"
 "PO-Revision-Date: 2020-08-31 18:24+0100\n"
 "Last-Translator: André Barata <andretiagob@protonmail.com>\n"
 "Language-Team: Portuguese\n"
@@ -24,46 +24,37 @@ msgid "MupenGUI"
 msgstr "MupenGUI"
 
 #: data/com.github.efdos.mupengui.appdata.xml.in:9
-msgid "Sexy Mupen64Plus FrontEnd"
+#, fuzzy
+msgid "Easy Mupen64Plus FrontEnd"
 msgstr "Interface para o Mupen64Plus"
 
 #: data/com.github.efdos.mupengui.appdata.xml.in:11
-msgid ""
-"Mupen64Plus FrontEnd that allows for an easy configuration of Keyboard and "
-"Joystick bindings, to play your favourite N64 games."
-msgstr ""
-"Interface que permite uma fácil configuração do teclado e joystick, para "
-"jogar os seus jogos favoritos da Nintendo 64."
+#, fuzzy
+msgid "Easy to use Mupen64Plus front-end to play your favourite N64 games."
+msgstr "Interface de uso fácil para o Mupen64Plus"
 
 #: data/com.github.efdos.mupengui.appdata.xml.in:12
-msgid ""
-"Note: This is the first public release, it may still contain bugs and "
-"incomplete features."
-msgstr ""
-"Nota: Este é um lançamento beta e deve ainda conter problemas e funções "
-"incompletas."
-
-#: data/com.github.efdos.mupengui.appdata.xml.in:13
 msgid "Features:"
 msgstr "Funcionalidades:"
 
-#: data/com.github.efdos.mupengui.appdata.xml.in:15
+#: data/com.github.efdos.mupengui.appdata.xml.in:14
 msgid "Mupen64Plus Plugins Selection"
 msgstr "Seleção de Plugins do Mupen64Plus"
 
-#: data/com.github.efdos.mupengui.appdata.xml.in:16
+#: data/com.github.efdos.mupengui.appdata.xml.in:15
 msgid "Keyboard/Joystick Input Binding"
 msgstr "Configuração de Teclado e Joystick"
+
+#: data/com.github.efdos.mupengui.appdata.xml.in:16
+#, fuzzy
+msgid "Settings Profiles"
+msgstr "Definições"
 
 #: data/com.github.efdos.mupengui.appdata.xml.in:17
 msgid "Rom Directory Listing"
 msgstr "Listagem de diretório de ROMs"
 
-#: data/com.github.efdos.mupengui.appdata.xml.in:18
-msgid "Fullscreen Mode"
-msgstr "Modo de Ecrã Inteiro"
-
-#: data/com.github.efdos.mupengui.appdata.xml.in:56
+#: data/com.github.efdos.mupengui.appdata.xml.in:55
 msgid "Douglas Muratore"
 msgstr "Douglas Muratore"
 
@@ -79,96 +70,111 @@ msgstr "com.github.efdos.mupengui"
 msgid "Nintendo;Emulator;64;N64;Gaming;"
 msgstr "Nintendo;Emulador;64;N64;Jogos;"
 
-#: src/Views/MainView.vala:86
+#: src/Views/MainView.vala:85
 msgid "Executing Rom: "
 msgstr "A executar o Rom: "
 
-#: src/Views/MainView.vala:89
+#: src/Views/MainView.vala:88
 msgid "Error loading Rom File: "
 msgstr "Erro ao carregar o ficheiro Rom: "
 
-#: src/Views/Window/HeaderBar.vala:49
+#: src/Views/Window/HeaderBar.vala:47 src/Views/Window/HeaderBar.vala:57
 msgid "Settings"
 msgstr "Definições"
 
-#: src/Views/Window/HeaderBar.vala:60
+#: src/Views/Window/HeaderBar.vala:52 src/Views/Window/HeaderBar.vala:84
+msgid "Rom List"
+msgstr "Lista de ROMs"
+
+#: src/Views/Window/HeaderBar.vala:62
 msgid "Select Rom Directory"
 msgstr "Selecionar o diretório de ROMs"
 
-#: src/Views/Window/HeaderBar.vala:62
+#: src/Views/Window/HeaderBar.vala:64
 msgid "Select Roms Directory"
 msgstr "Selecionar o diretório de ROMs"
 
-#: src/Views/Window/HeaderBar.vala:69
+#: src/Views/Window/HeaderBar.vala:71
 msgid "Play Selected Rom"
 msgstr "Jogue a ROM selecionada"
 
-#: src/Views/Window/HeaderBar.vala:74
+#: src/Views/Window/HeaderBar.vala:76
 msgid "No ROM is selected."
 msgstr "Nenhum ROM selecionado."
 
-#: src/Views/Settings/DisplaySettingsPage.vala:33
+#: src/Views/Settings/DisplaySettingsPage.vala:39
 msgid "Configure Mupen64 Display Settings."
 msgstr "Configurar as Definições de Vídeo do Mupen64."
 
-#: src/Views/Settings/DisplaySettingsPage.vala:34
+#: src/Views/Settings/DisplaySettingsPage.vala:40
 #: src/Views/Settings/InputSettingsPage.vala:63
 msgid "Emulator"
 msgstr "Emulador"
 
-#: src/Views/Settings/DisplaySettingsPage.vala:36
+#: src/Views/Settings/DisplaySettingsPage.vala:42
 msgid "Display Settings"
 msgstr "Definições de Vídeo"
 
-#: src/Views/Settings/DisplaySettingsPage.vala:42
-msgid "Fullscreen"
+#: src/Views/Settings/DisplaySettingsPage.vala:48
+#, fuzzy
+msgid "Fullscreen:"
 msgstr "Ecrã Inteiro"
 
-#: src/Views/Settings/GeneralSettingsPage.vala:40
+#: src/Views/Settings/DisplaySettingsPage.vala:51
+msgid "VSync:"
+msgstr "VSync"
+
+#: src/Views/Settings/DisplaySettingsPage.vala:54
+msgid "Resolution:"
+msgstr "Resolução"
+
+#: src/Views/Settings/GeneralSettingsPage.vala:45
 msgid "Configure MupenGUI General Settings."
 msgstr "Configurar as Definições Gerais do MupenGUI."
 
-#: src/Views/Settings/GeneralSettingsPage.vala:41
+#: src/Views/Settings/GeneralSettingsPage.vala:46
 msgid "Frontend"
 msgstr "Interface"
 
-#: src/Views/Settings/GeneralSettingsPage.vala:43
+#: src/Views/Settings/GeneralSettingsPage.vala:48
 msgid "General Settings"
 msgstr "Definições Gerais"
 
-#: src/Views/Settings/GeneralSettingsPage.vala:52
-msgid "Mupen64Plus Core Library Directory:"
+#: src/Views/Settings/GeneralSettingsPage.vala:58
+#, fuzzy
+msgid "Settings Profiles:"
+msgstr "Definições"
+
+#: src/Views/Settings/GeneralSettingsPage.vala:61
+#, fuzzy
+msgid "Mupen64Plus Core Library Path:"
 msgstr "Diretório da Biblioteca Fonte do Mupen64Plus:"
 
-#: src/Views/Settings/GeneralSettingsPage.vala:55
+#: src/Views/Settings/GeneralSettingsPage.vala:64
 msgid "Plugins Base Directory:"
 msgstr "Diretório Base de Plugins:"
 
-#: src/Views/Settings/GeneralSettingsPage.vala:58
+#: src/Views/Settings/GeneralSettingsPage.vala:67
 msgid "Video Plugin:"
 msgstr "Plugin de Vídeo:"
 
-#: src/Views/Settings/GeneralSettingsPage.vala:61
+#: src/Views/Settings/GeneralSettingsPage.vala:70
 msgid "Audio Plugin:"
 msgstr "Plugin de Áudio:"
 
-#: src/Views/Settings/GeneralSettingsPage.vala:64
+#: src/Views/Settings/GeneralSettingsPage.vala:73
 msgid "Input Plugin:"
 msgstr "Plugin de Input:"
 
-#: src/Views/Settings/GeneralSettingsPage.vala:67
+#: src/Views/Settings/GeneralSettingsPage.vala:76
 msgid "RSP Plugin:"
 msgstr "Plugin RSP:"
 
-#: src/Views/Settings/GeneralSettingsPage.vala:88
-msgid "Mupen64Plus Initalized!"
-msgstr "Mupen64Plus Inicializado!"
-
-#: src/Views/Settings/GeneralSettingsPage.vala:145
+#: src/Views/Settings/GeneralSettingsPage.vala:157
 msgid "Light Mode"
 msgstr "Modo Claro"
 
-#: src/Views/Settings/GeneralSettingsPage.vala:146
+#: src/Views/Settings/GeneralSettingsPage.vala:158
 msgid "Dark Mode"
 msgstr "Modo Escuro"
 
@@ -230,3 +236,23 @@ msgstr "Pressione uma Tecla"
 #: src/Views/Settings/InputSettingsPage.vala:182
 msgid "Press a Joystick Button or Axis"
 msgstr "Pressione um botão do Joystick ou mova um eixo"
+
+#~ msgid ""
+#~ "Mupen64Plus FrontEnd that allows for an easy configuration of Keyboard "
+#~ "and Joystick bindings, to play your favourite N64 games."
+#~ msgstr ""
+#~ "Interface que permite uma fácil configuração do teclado e joystick, para "
+#~ "jogar os seus jogos favoritos da Nintendo 64."
+
+#~ msgid ""
+#~ "Note: This is the first public release, it may still contain bugs and "
+#~ "incomplete features."
+#~ msgstr ""
+#~ "Nota: Este é um lançamento beta e deve ainda conter problemas e funções "
+#~ "incompletas."
+
+#~ msgid "Fullscreen Mode"
+#~ msgstr "Modo de Ecrã Inteiro"
+
+#~ msgid "Mupen64Plus Initalized!"
+#~ msgstr "Mupen64Plus Inicializado!"

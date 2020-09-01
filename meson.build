@@ -1,5 +1,5 @@
 # project name and programming language
-project('com.github.efdos.mupengui', 'vala', 'c', version: '0.9.1')
+project('com.github.efdos.mupengui', 'vala', 'c', version: '0.10.0')
 
 message ('project name and programming language')
 
@@ -107,7 +107,6 @@ code_files = files(
     'src/Services/Mupen64API.vala',
     'src/Services/JoystickListener.vala',
     'src/Services/Settings.vala',
-    'src/Services/SettingsProfile.vala',
     'src/Services/SettingsProfileManager.vala',
     'src/Services/FileSystem.vala',
     'src/Services/ActionManager.vala',

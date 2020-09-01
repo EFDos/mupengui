@@ -1,11 +1,12 @@
-com.github.efdos.mupengui (1.0.0) xenial; urgency=low
+com.github.efdos.mupengui (0.10.0) xenial; urgency=low
 
   [ Doug Muratore ]
   * 'Mupen64 Core not found' alert only shows once
   * Updated visual elements
   * Most errors now using Glib.log
   * Better handling of new mupen64 configuration files (sets a default parameter when it's not present in file)
-    -- Douglas Muratore <douglas.muratore@gmail.com>  Tue, 30 Jun 2020 23:15:00 -0200
+  * First implementation of SettingsProfile (It will probably change a bit in the future)
+    -- Douglas Muratore <douglas.muratore@gmail.com>  Tue, 01 Sep 2020 03:26:00 -0200
 
 com.github.efdos.mupengui (0.9.1) xenial; urgency=low
 

@@ -39,6 +39,8 @@ namespace MupenGUI.Actions {
 
     namespace SettingsUpdate {
         public const string SETTINGS_PROFILE_UPDATE = "MupenGUI.Action.SPU";
+        //TODO Yes, this is stupid and should be removed in the future
+        public const string SETTINGS_PROFILE_NAME_UPDATE = "MupenGUI.Action.SPNU";
         public const string MUPEN_SETTINGS_UPDATE = "MupenGUI.Action.MSU";
     }
 }
