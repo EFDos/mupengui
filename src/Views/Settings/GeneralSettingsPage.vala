@@ -84,32 +84,16 @@ namespace MupenGUI.Views.Settings {
             input_plugin_label.halign = Gtk.Align.END;
             rsp_plugin_label.halign = Gtk.Align.END;
 
-            // Populate Profiles Combo
-            on_profile_update();
-
             // Connect Widgets
-
             profiles_combo.changed.connect(() => {
                 if (profiles_combo.get_active_text() == null) {
                     return;
                 }
                 settings_profile_manager.current_profile = profiles_combo.get_active_text();
-                lib_path_entry.set_text(settings_profile_manager.get_mupen64lib_path());
                 plugins_dir_entry.set_text(settings_profile_manager.get_plugins_dir());
-                populate_plugin_combos.begin(settings_profile_manager.get_plugins_dir());
-                Mupen64API.instance.shutdown();
-
-                if (Mupen64API.instance.init(settings_profile_manager.get_mupen64lib_path(), settings_profile_manager.get_mupen64cfg_path())) {
-                    var message_dialog = new Granite.MessageDialog.with_image_from_icon_name (
-                        _("Mupen64Plus Initalized!"),
-                        _("The Mupen64Plus core library has been found and loaded succesfully! " +
-                        "This program is happy now."),
-                        "face-smile-symbolic",
-                        Gtk.ButtonsType.CLOSE
-                    );
-                    message_dialog.run ();
-                    message_dialog.destroy ();
-                }
+                plugins_dir_entry.activate();
+                lib_path_entry.set_text(settings_profile_manager.get_mupen64lib_path());
+                lib_path_entry.activate();
             });
 
             lib_path_entry.activate.connect (() => {
@@ -117,21 +101,11 @@ namespace MupenGUI.Views.Settings {
                 settings_profile_manager.set_mupen64lib_path(mupen64pluslib_path);
                 Mupen64API.instance.shutdown();
 
-                if (Mupen64API.instance.init(mupen64pluslib_path, settings_profile_manager.get_mupen64cfg_path())) {
-                    var message_dialog = new Granite.MessageDialog.with_image_from_icon_name (
-                        _("Mupen64Plus Initalized!"),
-                        _("The Mupen64Plus core library has been found and loaded succesfully! " +
-                        "This program is happy now."),
-                        "face-smile-symbolic",
-                        Gtk.ButtonsType.CLOSE
-                    );
-                    message_dialog.run ();
-                    message_dialog.destroy ();
-                }
+                Mupen64API.instance.init(mupen64pluslib_path, settings_profile_manager.get_mupen64cfg_path());
             });
 
             plugins_dir_entry.activate.connect(() => {
-                if (!plugins_dir_entry.get_text ().has_suffix("/")) {
+                if (!plugins_dir_entry.get_text().has_suffix("/")) {
                     var str = plugins_dir_entry.get_text().concat("/");
                     plugins_dir_entry.set_text(str);
                 }
@@ -170,6 +144,9 @@ namespace MupenGUI.Views.Settings {
                 Mupen64API.instance.rsp_plugin = rsp_plugin_combo.get_active_text();
                 settings_profile_manager.set_rsp_plugin(rsp_plugin_combo.get_active_text());
             });
+
+            // Populate Profiles Combo
+            on_profile_update();
 
             var mode_switch = new Granite.ModeSwitch.from_icon_name("display-brightness-symbolic",
                     "weather-clear-night-symbolic");
@@ -219,34 +196,6 @@ namespace MupenGUI.Views.Settings {
             }
 
             profiles_combo.active = profile_idx;
-
-            lib_path_entry.set_text(settings_profile_manager.get_mupen64lib_path());
-            plugins_dir_entry.set_text(settings_profile_manager.get_plugins_dir());
-            populate_plugin_combos.begin(settings_profile_manager.get_plugins_dir());
-
-            if (video_plugin_combo.get_active_text() == "") {
-                return;
-            }
-            Mupen64API.instance.video_plugin = video_plugin_combo.get_active_text();
-            settings_profile_manager.set_video_plugin(video_plugin_combo.get_active_text());
-
-            if (audio_plugin_combo.get_active_text() == "") {
-                return;
-            }
-            Mupen64API.instance.audio_plugin = audio_plugin_combo.get_active_text();
-            settings_profile_manager.set_audio_plugin(audio_plugin_combo.get_active_text());
-
-            if (input_plugin_combo.get_active_text() == "") {
-                return;
-            }
-            Mupen64API.instance.input_plugin = input_plugin_combo.get_active_text();
-            settings_profile_manager.set_input_plugin(input_plugin_combo.get_active_text());
-
-            if (rsp_plugin_combo.get_active_text() == "") {
-                return;
-            }
-            Mupen64API.instance.rsp_plugin = rsp_plugin_combo.get_active_text();
-            settings_profile_manager.set_rsp_plugin(rsp_plugin_combo.get_active_text());
         }
 
         private async void populate_plugin_combos(string plugins_dir) {
@@ -293,7 +242,9 @@ namespace MupenGUI.Views.Settings {
                 }
             }
             video_plugin_combo.active = v_active_id;
+            //video_plugin_combo.changed();
             audio_plugin_combo.active = a_active_id;
+            //audio_plugin_combo.changed();
             input_plugin_combo.active = i_active_id;
             rsp_plugin_combo.active = r_active_id;
         }
